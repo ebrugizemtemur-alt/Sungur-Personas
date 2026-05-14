@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sungur Personas | TK Cargo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; color: white; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 48px; font-weight: 800; text-align: center; margin-bottom: 8px; background: linear-gradient(135deg, #dc2626, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { text-align: center; color: #94a3b8; margin-bottom: 48px; font-size: 18px; }
+        .modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .module { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 24px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
+        .module:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); }
+        .module-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .module-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: white; }
+        .module h2 { font-size: 18px; font-weight: 700; }
+        .module p { font-size: 12px; color: #94a3b8; margin-bottom: 16px; }
+        .persona-list { display: flex; flex-direction: column; gap: 8px; }
+        .persona-link { display: block; padding: 10px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; color: #e2e8f0; text-decoration: none; font-size: 13px; transition: all 0.2s; }
+        .persona-link:hover { background: rgba(255,255,255,0.15); transform: translateX(4px); }
+        .flm .module-icon { background: linear-gradient(135deg, #0ea5e9, #06b6d4); }
+        .pcm .module-icon { background: linear-gradient(135deg, #f59e0b, #eab308); }
+        .bkr .module-icon { background: linear-gradient(135deg, #dc2626, #f43f5e); }
+        .cam .module-icon { background: linear-gradient(135deg, #8b5cf6, #a855f7); }
+        .com .module-icon { background: linear-gradient(135deg, #10b981, #34d399); }
+        .asm .module-icon { background: linear-gradient(135deg, #6366f1, #818cf8); }
+        .trm .module-icon { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        .scm .module-icon { background: linear-gradient(135deg, #14b8a6, #2dd4bf); }
+        .cra .module-icon { background: linear-gradient(135deg, #f97316, #fb923c); }
+        .prm .module-icon { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .footer { text-align: center; margin-top: 48px; color: #64748b; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛫 Sungur Personas</h1>
+        <p class="subtitle">TK Cargo COMIS Modül Personaları</p>
+        
+        <div class="modules">
+            <div class="module flm">
+                <div class="module-header"><div class="module-icon">FLM</div><h2>Flight Management</h2></div>
+                <p>Uçuş planlama ve network yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_FLM_Network_Planner.html" class="persona-link">Network Planner</a>
+                    <a href="Persona_FLM_Schedule_Planner.html" class="persona-link">Schedule Planner</a>
+                    <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link">COCC Coordinator</a>
+                    <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link">Revenue Capacity Analyst</a>
+                    <a href="Persona_FLM_Solution_Specialist.html" class="persona-link">Solution Specialist</a>
+                </div>
+            </div>
+            
+            <div class="module pcm">
+                <div class="module-header"><div class="module-icon">PCM</div><h2>Pricing Management</h2></div>
+                <p>Fiyatlandırma ve tarife yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link">Pricing Specialist</a>
+                    <a href="Persona_PCM_RM_Analyst.html" class="persona-link">RM Analyst</a>
+                    <a href="Persona_PCM_Interline_Specialist.html" class="persona-link">Interline Specialist</a>
+                    <a href="Persona_PCM_Sales_Manager.html" class="persona-link">Sales Manager</a>
+                    <a href="Persona_PCM_Station_User.html" class="persona-link">Station User</a>
+                </div>
+            </div>
+            
+            <div class="module bkr">
+                <div class="module-header"><div class="module-icon">BKR</div><h2>Booking & Reservation</h2></div>
+                <p>Rezervasyon ve kapasite yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_Domestic_Reservation.html" class="persona-link">Domestic Reservation</a>
+                    <a href="Persona_IST_General_Reservation.html" class="persona-link">IST General Reservation</a>
+                    <a href="Persona_IST_Special_Cargo.html" class="persona-link">IST Special Cargo</a>
+                    <a href="Persona_Capacity_Planning.html" class="persona-link">Capacity Planning</a>
+                    <a href="Persona_GSA_International_Station.html" class="persona-link">GSA International Station</a>
+                    <a href="Persona_Operations_CargoAcceptance.html" class="persona-link">Cargo Acceptance</a>
+                    <a href="BKR_Persona_Hub.html" class="persona-link">📊 BKR Hub Overview</a>
+                </div>
+            </div>
+            
+            <div class="module cam">
+                <div class="module-header"><div class="module-icon">CAM</div><h2>Capacity & Allotment</h2></div>
+                <p>Kapasite ve allotment yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link">Capacity Analyst</a>
+                    <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link">Flight Optimizer</a>
+                    <a href="Persona_CAM_Sales_User.html" class="persona-link">Sales User</a>
+                </div>
+            </div>
+            
+            <div class="module com">
+                <div class="module-header"><div class="module-icon">COM</div><h2>Customer Order Mgmt</h2></div>
+                <p>Embargo, restriction ve yaptırım yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_COM_Embargo_Specialist.html" class="persona-link">Embargo Specialist</a>
+                    <a href="Persona_COM_Restriction_Specialist.html" class="persona-link">Restriction Specialist</a>
+                    <a href="Persona_COM_Sanctions_Officer.html" class="persona-link">Sanctions Officer</a>
+                    <a href="Persona_COM_Hub_Operations.html" class="persona-link">Hub Operations</a>
+                    <a href="Persona_COM_Service_Standards.html" class="persona-link">Service Standards</a>
+                </div>
+            </div>
+            
+            <div class="module asm">
+                <div class="module-header"><div class="module-icon">ASM</div><h2>Agency Sales Mgmt</h2></div>
+                <p>Acente satış ve stok yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link">Messaging Specialist</a>
+                    <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link">Stock Management Specialist</a>
+                </div>
+            </div>
+            
+            <div class="module trm">
+                <div class="module-header"><div class="module-icon">TRM</div><h2>Track & Trace</h2></div>
+                <p>Kargo takip ve RFS yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link">RFS Schedule Planner</a>
+                </div>
+            </div>
+            
+            <div class="module scm">
+                <div class="module-header"><div class="module-icon">SCM</div><h2>Schedule Management</h2></div>
+                <p>Özel kargo ve schedule yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link">Special Cargo Consultant</a>
+                </div>
+            </div>
+            
+            <div class="module cra">
+                <div class="module-header"><div class="module-icon">CRA</div><h2>Revenue Accounting</h2></div>
+                <p>Gelir muhasebesi ve CASS yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link">Domestic Revenue Accountant</a>
+                    <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link">International CASS Specialist</a>
+                    <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link">Interline Billing Specialist</a>
+                    <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link">Revenue Accounting Supervisor</a>
+                </div>
+            </div>
+            
+            <div class="module prm">
+                <div class="module-header"><div class="module-icon">PRM</div><h2>Partner Management</h2></div>
+                <p>GSA, acente ve müşteri yönetimi</p>
+                <div class="persona-list">
+                    <a href="Persona_PRM_Master_Data_Specialist.html" class="persona-link">Master Data Specialist</a>
+                    <a href="Persona_PRM_GSA_Account_Manager.html" class="persona-link">GSA Account Manager</a>
+                    <a href="Persona_PRM_Credit_Customer_Specialist.html" class="persona-link">Credit Customer Specialist</a>
+                    <a href="Persona_PRM_Agent_Compliance_Officer.html" class="persona-link">Agent Compliance Officer</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Sungur Personas © 2026 | TK Cargo COMIS Project</p>
+        </div>
+    </div>
+</body>
+</html>
