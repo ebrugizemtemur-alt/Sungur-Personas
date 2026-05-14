@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BKR Persona Hub | THY Cargo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .brand h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand p {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #22c55e;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Main Content */
+        .main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        /* Persona Grid */
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .persona-card {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .persona-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .persona-card.completed {
+            cursor: pointer;
+        }
+
+        .persona-card.pending {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .persona-card.pending:hover {
+            transform: none;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.15;
+            z-index: 0;
+        }
+
+        /* Color Themes */
+        .persona-card[data-theme="indigo"] .card-header::before { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .persona-card[data-theme="indigo"] .persona-number { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .persona-card[data-theme="indigo"] .card-header { border-bottom: 3px solid #4f46e5; }
+
+        .persona-card[data-theme="red"] .card-header::before { background: linear-gradient(135deg, #dc2626, #f97316); }
+        .persona-card[data-theme="red"] .persona-number { background: linear-gradient(135deg, #dc2626, #f97316); }
+        .persona-card[data-theme="red"] .card-header { border-bottom: 3px solid #dc2626; }
+
+        .persona-card[data-theme="green"] .card-header::before { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .persona-card[data-theme="green"] .persona-number { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .persona-card[data-theme="green"] .card-header { border-bottom: 3px solid #16a34a; }
+
+        .persona-card[data-theme="blue"] .card-header::before { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .persona-card[data-theme="blue"] .persona-number { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .persona-card[data-theme="blue"] .card-header { border-bottom: 3px solid #2563eb; }
+
+        .persona-card[data-theme="orange"] .card-header::before { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .persona-card[data-theme="orange"] .persona-number { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .persona-card[data-theme="orange"] .card-header { border-bottom: 3px solid #ea580c; }
+
+        .persona-card[data-theme="purple"] .card-header::before { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .persona-card[data-theme="purple"] .persona-number { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .persona-card[data-theme="purple"] .card-header { border-bottom: 3px solid #7c3aed; }
+
+        .persona-card[data-theme="teal"] .card-header::before { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .persona-card[data-theme="teal"] .persona-number { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .persona-card[data-theme="teal"] .card-header { border-bottom: 3px solid #0d9488; }
+
+        .card-header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .persona-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .persona-info {
+            flex: 1;
+        }
+
+        .persona-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .persona-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .persona-subtitle {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .key-points {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        .key-point-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(34, 197, 94, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.7rem;
+            color: #22c55e;
+        }
+
+        .screens-used {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .screen-tag {
+            background: rgba(255,255,255,0.08);
+            padding: 0.35rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: 'SF Mono', Monaco, monospace;
+            color: #94a3b8;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-badge.completed {
+            color: #22c55e;
+        }
+
+        .status-badge.pending {
+            color: #f59e0b;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-badge.completed .status-dot {
+            background: #22c55e;
+            box-shadow: 0 0 10px #22c55e;
+        }
+
+        .status-badge.pending .status-dot {
+            background: #f59e0b;
+        }
+
+        .view-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .view-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .persona-card.pending .view-btn {
+            display: none;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-top: 2rem;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .process-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .process-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .process-step:nth-child(1) .process-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .process-step:nth-child(2) .process-icon { background: linear-gradient(135deg, #dc2626, #f97316); }
+        .process-step:nth-child(3) .process-icon { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .process-step:nth-child(4) .process-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .process-step:nth-child(5) .process-icon { background: linear-gradient(135deg, #16a34a, #22c55e); }
+
+        .process-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+
+        .process-sublabel {
+            font-size: 0.75rem;
+            color: #64748b;
+            margin-top: 0.25rem;
+        }
+
+        .process-arrow {
+            font-size: 1.5rem;
+            color: #475569;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .persona-card {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .persona-card:nth-child(1) { animation-delay: 0.1s; }
+        .persona-card:nth-child(2) { animation-delay: 0.2s; }
+        .persona-card:nth-child(3) { animation-delay: 0.3s; }
+        .persona-card:nth-child(4) { animation-delay: 0.4s; }
+        .persona-card:nth-child(5) { animation-delay: 0.5s; }
+        .persona-card:nth-child(6) { animation-delay: 0.6s; }
+        .persona-card:nth-child(7) { animation-delay: 0.7s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .persona-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .process-flow {
+                flex-direction: column;
+            }
+
+            .process-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo">BKR</div>
+                <div class="brand">
+                    <h1>Persona Hub</h1>
+                    <p>THY Cargo • Booking & Reservation</p>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="stat-value">7/7</div>
+                    <div class="stat-label">Tamamlanan</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">9</div>
+                    <div class="stat-label">Bölüm/Persona</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">TR/EN</div>
+                    <div class="stat-label">Dil Desteği</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="section-title">
+            <h2>🎯 BKR Kullanıcı Personaları</h2>
+            <p>MoM workshop dokümanlarından çıkarılan kullanıcı profilleri</p>
+        </div>
+
+        <div class="persona-grid">
+            <!-- Persona 1: IST Genel Rezervasyon -->
+            <div class="persona-card completed" data-theme="indigo" onclick="openPersona('Persona_IST_General_Reservation.html')">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="persona-number">1</div>
+                        <div class="persona-info">
+                            <div class="persona-badge">GENEL REZ</div>
+                            <div class="persona-title">IST Genel Rezervasyon</div>
+                            <div class="persona-subtitle">Standart kargo rezervasyonları</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="key-points">
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Günlük 400-500 AWB işlemi</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Özel kargo Özel Kargo ekibine yönlendirilir</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Embargo toggle yetkisi YOK</span>
+                        </div>
+                    </div>
+                    <div class="screens-used">
+                        <span class="screen-tag">CAP018</span>
+                        <span class="screen-tag">FLT028</span>
+                        <span class="screen-tag">AWB036</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-badge completed">
+                            <div class="status-dot"></div>
+                            Tamamlandı
+                        </div>
+                        <button class="view-btn">Görüntüle →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persona 2: IST Özel Kargo -->
+            <div class="persona-card completed" data-theme="red" onclick="openPersona('Persona_IST_Special_Cargo.html')">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="persona-number">2</div>
+                        <div class="persona-info">
+                            <div class="persona-badge">ÖZEL KARGO</div>
+                            <div class="persona-title">IST Özel Kargo</div>
+                            <div class="persona-subtitle">DG, PER, AVI, VAL, HUM, RAD</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="key-points">
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>6 özel kargo tipi uzmanlığı</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Embargo toggle yetkisi VAR</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>CGOAPR onay kodu kullanımı</span>
+                        </div>
+                    </div>
+                    <div class="screens-used">
+                        <span class="screen-tag">CAP018</span>
+                        <span class="screen-tag">NOTOC</span>
+                        <span class="screen-tag">EMB</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-badge completed">
+                            <div class="status-dot"></div>
+                            Tamamlandı
+                        </div>
+                        <button class="view-btn">Görüntüle →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persona 3: Yurtiçi Rezervasyon -->
+            <div class="persona-card completed" data-theme="green" onclick="openPersona('Persona_Domestic_Reservation.html')">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="persona-number">3</div>
+                        <div class="persona-info">
+                            <div class="persona-badge">YURTİÇİ</div>
+                            <div class="persona-title">Yurtiçi Rezervasyon</div>
+                            <div class="persona-subtitle">Domestic cargo operations</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="key-points">
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>%60 walk-in müşteri</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>IST: Aylık 12.000 AWB</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Tek kişi tüm işleri yapar</span>
+                        </div>
+                    </div>
+                    <div class="screens-used">
+                        <span class="screen-tag">OPR026</span>
+                        <span class="screen-tag">AWB</span>
+                        <span class="screen-tag">WALKINCUST</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-badge completed">
+                            <div class="status-dot"></div>
+                            Tamamlandı
+                        </div>
+                        <button class="view-btn">Görüntüle →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persona 4: Kapasite Planlama -->
+            <div class="persona-card completed" data-theme="blue" onclick="openPersona('Persona_Capacity_Planning.html')">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="persona-number">4</div>
+                        <div class="persona-info">
+                            <div class="persona-badge">KAPASİTE</div>
+                            <div class="persona-title">Kapasite Planlama</div>
+                            <div class="persona-subtitle">Capacity management</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="key-points">
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Doluluk oranı yönetimi</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Smart / Premium / Urgent segmentler</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Reject / Re-plan / Backup statüleri</span>
+                        </div>
+                    </div>
+                    <div class="screens-used">
+                        <span class="screen-tag">FLT028</span>
+                        <span class="screen-tag">CAP</span>
+                        <span class="screen-tag">ALLOT</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-badge completed">
+                            <div class="status-dot"></div>
+                            Tamamlandı
+                        </div>
+                        <button class="view-btn">Görüntüle →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persona 5: Operasyon & Mal Kabul -->
+            <div class="persona-card completed" data-theme="orange" onclick="openPersona('Persona_Operations_CargoAcceptance.html')">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="persona-number">5</div>
+                        <div class="persona-info">
+                            <div class="persona-badge">OPERASYON</div>
+                            <div class="persona-title">Operasyon & Mal Kabul</div>
+                            <div class="persona-subtitle">Cargo acceptance & execution</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="key-points">
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>4 ağırlık tipi (Gross/Vol/Chrg/Adj)</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Execute → Reopen → Execute döngüsü</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>ULD vs Bulk loading kararı</span>
+                        </div>
+                    </div>
+                    <div class="screens-used">
+                        <span class="screen-tag">OPR</span>
+                        <span class="screen-tag">EXECUTE</span>
+                        <span class="screen-tag">MANIFEST</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-badge completed">
+                            <div class="status-dot"></div>
+                            Tamamlandı
+                        </div>
+                        <button class="view-btn">Görüntüle →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persona 6: GSA / Yurtdışı İstasyon -->
+            <div class="persona-card completed" data-theme="purple" onclick="openPersona('Persona_GSA_International_Station.html')">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="persona-number">6</div>
+                        <div class="persona-info">
+                            <div class="persona-badge">YURTDIŞI</div>
+                            <div class="persona-title">GSA / Yurtdışı İstasyon</div>
+                            <div class="persona-subtitle">International stations</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="key-points">
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Tek kişi satış+rez+operasyon</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Agent station → Origin auto</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Non-IATA firmalarla çalışabilir</span>
+                        </div>
+                    </div>
+                    <div class="screens-used">
+                        <span class="screen-tag">CAP018</span>
+                        <span class="screen-tag">FLT002</span>
+                        <span class="screen-tag">CMT008</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-badge completed">
+                            <div class="status-dot"></div>
+                            Tamamlandı
+                        </div>
+                        <button class="view-btn">Görüntüle →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Persona 7: Çözüm / Teknik Ekibi -->
+            <div class="persona-card completed" data-theme="teal" onclick="openPersona('Persona_Solution_Technical_Team.html')">
+                <div class="card-header">
+                    <div class="card-header-content">
+                        <div class="persona-number">7</div>
+                        <div class="persona-info">
+                            <div class="persona-badge">TEKNİK</div>
+                            <div class="persona-title">Çözüm / Teknik Ekibi</div>
+                            <div class="persona-subtitle">Solution & IT team</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="key-points">
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>104 farklı rol yönetimi</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>Precondition & validation kuralları</span>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <span>ACRM, Accuity, Comis entegrasyonu</span>
+                        </div>
+                    </div>
+                    <div class="screens-used">
+                        <span class="screen-tag">API</span>
+                        <span class="screen-tag">ACRM</span>
+                        <span class="screen-tag">Accuity</span>
+                    </div>
+                    <div class="card-footer">
+                        <div class="status-badge completed">
+                            <div class="status-dot"></div>
+                            Tamamlandı
+                        </div>
+                        <button class="view-btn">Görüntüle →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Process Flow Summary -->
+        <div class="summary-section">
+            <div class="summary-title">
+                📊 Kargo Rezervasyon Akışı (End-to-End)
+            </div>
+            <div class="process-flow">
+                <div class="process-step">
+                    <div class="process-icon">📝</div>
+                    <div class="process-label">Rezervasyon</div>
+                    <div class="process-sublabel">Genel / Özel / Yurtiçi</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="process-icon">📊</div>
+                    <div class="process-label">Kapasite</div>
+                    <div class="process-sublabel">Planlama & Onay</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="process-icon">📦</div>
+                    <div class="process-label">Mal Kabul</div>
+                    <div class="process-sublabel">Fiziksel Teslimat</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="process-icon">✈️</div>
+                    <div class="process-label">Execute</div>
+                    <div class="process-sublabel">Uçuşa Yükleme</div>
+                </div>
+                <div class="process-arrow">→</div>
+                <div class="process-step">
+                    <div class="process-icon">✅</div>
+                    <div class="process-label">Tamamlandı</div>
+                    <div class="process-sublabel">Manifest</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>BKR Persona Hub • THY Cargo • MoM Workshop Analysis • 2025</p>
+    </footer>
+
+    <script>
+        function openPersona(filename) {
+            window.open(filename, '_blank');
+        }
+    </script>
+</body>
+</html>

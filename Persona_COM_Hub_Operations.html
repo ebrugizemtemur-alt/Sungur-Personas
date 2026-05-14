@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub Operations Specialist | Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #ea580c, #f97316);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 11px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
+        .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+        .nav-item[data-theme="purple"].active { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .nav-item[data-theme="blue"].active { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .nav-item[data-theme="red"].active { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .nav-item[data-theme="teal"].active { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .nav-item[data-theme="orange"].active { background: linear-gradient(135deg, #ea580c, #f97316); }
+
+        .nav-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 12px 10px; }
+        .module-links { display: flex; flex-direction: column; gap: 4px; padding: 0 10px 16px; }
+        .module-link { width: 52px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.05); transition: all 0.3s; }
+        .module-link:hover { background: rgba(255,255,255,0.15); color: white; }
+
+        
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.trm { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #f59e0b; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+
+        .hero {
+            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 50%, #fdba74 100%);
+            padding: 48px 40px;
+            position: relative;
+            border-bottom: 4px solid #ea580c;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(234,88,12,0.15); color: #ea580c; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #ea580c; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; color: #1f2937; }
+        .hero h1 span { color: #ea580c; }
+        .hero-subtitle { font-size: 16px; color: #6b7280; max-width: 600px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #ea580c; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; background: rgba(255,255,255,0.5); padding: 16px; border-radius: 0 8px 8px 0; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title { flex: 1; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #ea580c; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-1 { border-left: 4px solid #ea580c; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-8 { border-left: 4px solid #059669; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(234,88,12,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(234,88,12,0.1); }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo { background: #fff7ed; border: 1px solid #fdba74; }
+        .segment-col.demo h4 { color: #ea580c; border-color: #ea580c; }
+        .segment-col.behav { background: #fffbeb; border: 1px solid #fde68a; }
+        .segment-col.behav h4 { color: #b45309; border-color: #b45309; }
+        .segment-col.psycho { background: #f0fdf4; border: 1px solid #86efac; }
+        .segment-col.psycho h4 { color: #16a34a; border-color: #16a34a; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 8px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 90px; font-weight: 500; }
+        
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px; background: #fff7ed; border-radius: 12px; margin-bottom: 12px; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; border: 2px solid #fcd34d; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; border: 2px solid #93c5fd; }
+        .flow-step.decision { background: #fce7f3; color: #be185d; border: 2px solid #f9a8d4; }
+        .flow-step.critical { background: #ea580c; color: white; border: 2px solid #c2410c; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.08); border-left: 4px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.08); border-left: 4px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.08); border-left: 4px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #ea580c, #f97316); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; background: linear-gradient(135deg, #ea580c 0%, #f97316 50%, #fb923c 100%); }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #d1fae5; color: #047857; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #ea580c, #f97316); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #e0e7ff; color: #4338ca; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { display: flex; flex-direction: column; gap: 12px; }
+        .timeline-item { padding: 16px; border-radius: 12px; border-left: 4px solid; }
+        .timeline-item.mvp { background: #dcfce7; border-color: #16a34a; }
+        .timeline-item.short { background: #e0e7ff; border-color: #4f46e5; }
+        .timeline-item.long { background: #f1f5f9; border-color: #64748b; }
+        .timeline-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .timeline-badge.mvp { background: #16a34a; color: white; }
+        .timeline-badge.short { background: #4f46e5; color: white; }
+        .timeline-badge.long { background: #64748b; color: white; }
+        .timeline-item h5 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 12px; color: #6b7280; }
+        
+        .summary-box { background: #f9fafb; padding: 16px; border-radius: 10px; font-size: 13px; line-height: 1.7; margin-bottom: 12px; border: 1px solid #e5e7eb; }
+        .summary-box h4 { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px; }
+        
+        .evidence { margin-top: 16px; padding: 16px; background: #fff7ed; border-left: 4px solid #ea580c; border-radius: 0 8px 8px 0; font-size: 12px; color: #c2410c; }
+        .evidence strong { display: block; margin-bottom: 8px; color: #9a3412; }
+        
+        /* CRUD Matrix Styles */
+        .crud-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .crud-table th, .crud-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .crud-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .crud-badge { display: inline-block; width: 24px; height: 24px; border-radius: 4px; text-align: center; line-height: 24px; font-size: 11px; font-weight: 700; }
+        .crud-badge.yes { background: #d1fae5; color: #047857; }
+        .crud-badge.no { background: #f3f4f6; color: #9ca3af; }
+        
+        .intent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .intent-item { background: rgba(0,0,0,0.02); padding: 14px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); }
+        .intent-item h5 { font-size: 12px; font-weight: 700; color: #ea580c; margin-bottom: 6px; }
+        .intent-item p { font-size: 11px; color: #6b7280; line-height: 1.5; }
+        .intent-badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 9px; font-weight: 700; margin-top: 8px; text-transform: uppercase; }
+        .intent-badge.high { background: #fef2f2; color: #dc2626; }
+        .intent-badge.medium { background: #fefce8; color: #b45309; }
+        .intent-badge.low { background: #f0fdf4; color: #16a34a; }
+        
+        .warning-box { background: #fef2f2; border: 2px solid #fecaca; padding: 16px; border-radius: 10px; margin: 16px 0; }
+        .warning-box h4 { color: #dc2626; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+        .warning-box p { font-size: 12px; color: #991b1b; }
+        
+        .status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+        .status-card { padding: 14px; border-radius: 10px; text-align: center; }
+        .status-card h5 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .status-card p { font-size: 10px; }
+        .status-card.error { background: #fef2f2; border: 2px solid #fecaca; color: #dc2626; }
+        .status-card.warning { background: #fffbeb; border: 2px solid #fde68a; color: #b45309; }
+        .status-card.info { background: #eff6ff; border: 2px solid #bfdbfe; color: #2563eb; }
+        
+        .footer { margin-top: 32px; padding: 24px; text-align: center; background: linear-gradient(135deg, #1e293b, #334155); color: rgba(255,255,255,0.8); border-radius: 16px; font-size: 13px; }
+        .footer p { margin-bottom: 8px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.trm { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #f59e0b; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 60px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()" title="Tüm Modüller">COM</div>
+        <div class="nav-items">
+            <a href="Persona_COM_Embargo_Specialist.html" class="nav-item" data-theme="purple">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Embargo</span>
+            </a>
+            <a href="Persona_COM_Restriction_Specialist.html" class="nav-item" data-theme="blue">
+                <span class="nav-num">2</span>
+                <span class="nav-label">Restriction</span>
+            </a>
+            <a href="Persona_COM_Sanctions_Officer.html" class="nav-item" data-theme="red">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Sanctions</span>
+            </a>
+            <a href="Persona_COM_Service_Standards.html" class="nav-item" data-theme="teal">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Servis Std</span>
+            </a>
+            <a href="Persona_COM_Hub_Operations.html" class="nav-item active" data-theme="orange">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Hub Ops</span>
+            </a>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="module-links">
+            <a href="Persona_FLM_Network_Planner.html" class="module-link" title="FLM Module">FLM</a>
+            <a href="Persona_ASM_Stock_Management_Specialist.html" class="module-link" title="ASM Module">ASM</a>
+            <a href="BKR_Persona_Hub.html" class="module-link" title="BKR Module">BKR</a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header"><span class="mega-menu-title">📦 Tüm Modüller</span><button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button></div>
+        
+        <!-- PCM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span>Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span>RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span>Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span>Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span>Station User</a>
+            </div>
+        </div>
+        
+        <!-- FLM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span>Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span>Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span>COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span>Revenue Capacity Analyst</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span>Solution Specialist</a>
+            </div>
+        </div>
+        
+        <!-- BKR -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div>
+            <div class="persona-list">
+                <a href="Persona_BKR_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span>IST General Reservation</a>
+                <a href="Persona_BKR_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span>IST Special Cargo</a>
+                <a href="Persona_BKR_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span>Domestic Reservation</a>
+                <a href="Persona_BKR_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span>GSA International Station</a>
+                <a href="Persona_BKR_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span>Capacity Planning</a>
+                <a href="Persona_BKR_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span>Operations Cargo Acceptance</a>
+                <a href="Persona_BKR_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span>Solution Technical Team</a>
+            </div>
+        </div>
+        
+        <!-- CAM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span>Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span>Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span>Sales User</a>
+            </div>
+        </div>
+        
+        <!-- COM -->
+        <div class="module-section">
+            <div class="module-header active"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span>Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span>Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span>Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link current"><span class="persona-num">4</span>Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span>Service Standards</a>
+            </div>
+        </div>
+        
+        <!-- ASM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Controller.html" class="persona-link"><span class="persona-num">1</span>Stock Controller</a>
+                <a href="Persona_ASM_Station_Agent.html" class="persona-link"><span class="persona-num">2</span>Station Agent</a>
+            </div>
+        </div>
+        
+        <!-- TRM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div>
+            <div class="persona-list">
+                <a href="Persona_TRM_Trucking_Coordinator.html" class="persona-link"><span class="persona-num">1</span>Trucking Coordinator</a>
+            </div>
+
+        <!-- SCM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span>Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    <div class="main-content">
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-header">
+            <span class="badge">COM · HUB OPERATIONS · PERSONA #5</span>
+            <div class="lang-toggle">
+                <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                <button class="lang-btn" onclick="switchLang('en')">EN</button>
+            </div>
+        </div>
+        <h1>
+            <span class="tr">Hub Operations <span>Specialist</span></span>
+            <span class="en">Hub Operations <span>Specialist</span></span>
+        </h1>
+        <p class="hero-subtitle">
+            <span class="tr">İstanbul hub'da kargo kabul, X-ray tarama, BUILDUP işlemleri yapan, embargo/restriction kontrollerinin operasyonel etkisini yaşayan saha uzmanı.</span>
+            <span class="en">Field specialist performing cargo acceptance, X-ray screening, BUILDUP operations at Istanbul hub, experiencing operational impact of embargo/restriction controls.</span>
+        </p>
+        <div class="hero-quote">
+            <span class="tr">"The cargo arrives at the hub but just says ERROR. No detail given why. We're looking for the problem after cargo already arrived - too late!" — MoM 2025-12-24</span>
+            <span class="en">"The cargo arrives at the hub but just says ERROR. No detail given why. We're looking for the problem after cargo already arrived - too late!" — MoM 2025-12-24</span>
+        </div>
+        <div class="hero-meta">
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#ea580c;"></span>
+                <span><strong>User:</strong> <span class="tr">Hub Operasyon Ekibi</span><span class="en">Hub Operations Team</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#f59e0b;"></span>
+                <span><strong>Criticality:</strong> <span style="color:#ea580c;">★★★★★</span> <span class="tr">Kritik (Saha)</span><span class="en">Critical (Field)</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#3b82f6;"></span>
+                <span><strong>Transactions:</strong> BUILDUP, X-ray, Acceptance</span>
+            </div>
+            <div class="hero-meta-item source-card">
+                <span class="dot" style="background:#10b981;"></span>
+                <span><strong>Source:</strong> 3 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                <div class="source-tooltip">
+                    <div style="font-weight:700; margin-bottom:10px; color:#fdba74;">📄 Source MoM Documents</div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-24</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2026-03-31</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-2025-12-30</span><span style="color:#93c5fd;">Solution Team</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="board">
+
+    <!-- SECTION 1: PERSONA PROFILE -->
+    <section class="card section-1">
+        <div class="card-header">
+            <div class="card-icon">1</div>
+            <div class="card-title">
+                <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                <p><span class="tr">Kim, ne yapar, temel özellikler</span><span class="en">Who, what they do, key attributes</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s1-chart" class="view-pane active">
+                <div class="profile-grid">
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Rol</span><span class="en">Role</span></div>
+                        <div class="pf-value"><span class="tr">Hub Operasyon Uzmanı</span><span class="en">Hub Operations Specialist</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div>
+                        <div class="pf-value"><span class="tr">Kargo Operasyonları</span><span class="en">Cargo Operations</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kullanıcı Tipi</span><span class="en">User Type</span></div>
+                        <div class="pf-value"><span class="tr">İç kullanıcı / Operasyonel + Saha</span><span class="en">Internal / Operational + Field</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kullanım Sıklığı</span><span class="en">Usage Frequency</span></div>
+                        <div class="pf-value"><span class="tr">7/24 sürekli - her işlem</span><span class="en">24/7 continuous - every transaction</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Bilinen Kişi</span><span class="en">Known Person</span></div>
+                        <div class="pf-value">Ramazan Yıkıcı</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Lokasyon</span><span class="en">Location</span></div>
+                        <div class="pf-value">IST Hub (Depo/Apron)</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Bağlı Olduğu</span><span class="en">Reports To</span></div>
+                        <div class="pf-value"><span class="tr">Hub Operasyon Müdürü</span><span class="en">Hub Operations Manager</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Karar Yetkisi</span><span class="en">Decision Authority</span></div>
+                        <div class="pf-value"><span class="tr">Kabul/Red (fiziksel)</span><span class="en">Accept/Reject (physical)</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">İşlemler</span><span class="en">Transactions</span></div>
+                        <div class="pf-value">BUILDUP, X-ray, Acceptance</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Çalışma Ortamı</span><span class="en">Work Environment</span></div>
+                        <div class="pf-value"><span class="tr">Depo/Apron, vardiyalı</span><span class="en">Warehouse/Apron, shift-based</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Sorun</span><span class="en">Problem</span></div>
+                        <div class="pf-value"><span class="tr">Sadece ERROR/WARNING</span><span class="en">Only ERROR/WARNING</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kritiklik</span><span class="en">Criticality</span></div>
+                        <div class="pf-value"><span class="tr">Çok Yüksek (Fiziksel)</span><span class="en">Very High (Physical)</span></div>
+                    </div>
+                </div>
+                
+                <div class="segment-card">
+                    <div class="segment-col demo">
+                        <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Deneyim:</span><span class="en">Experience:</span></strong> <span class="tr">Saha operasyonları (yüksek)</span><span class="en">Field operations (high)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Konum:</span><span class="en">Location:</span></strong> <span class="tr">IST Hub - Depo/Apron</span><span class="en">IST Hub - Warehouse/Apron</span></div>
+                        <div class="segment-item"><strong><span class="tr">Çalışma:</span><span class="en">Work:</span></strong> <span class="tr">7/24 vardiyalı</span><span class="en">24/7 shift-based</span></div>
+                        <div class="segment-item"><strong><span class="tr">Ekipman:</span><span class="en">Equipment:</span></strong> <span class="tr">El terminali, forklift</span><span class="en">Handheld, forklift</span></div>
+                    </div>
+                    <div class="segment-col behav">
+                        <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Giriş:</span><span class="en">Input:</span></strong> <span class="tr">Fiziksel kargo gelişi</span><span class="en">Physical cargo arrival</span></div>
+                        <div class="segment-item"><strong><span class="tr">Kontrol:</span><span class="en">Check:</span></strong> <span class="tr">X-ray, ağırlık, boyut</span><span class="en">X-ray, weight, dimension</span></div>
+                        <div class="segment-item"><strong><span class="tr">Çıkış:</span><span class="en">Output:</span></strong> <span class="tr">ULD yükleme</span><span class="en">ULD loading</span></div>
+                        <div class="segment-item"><strong><span class="tr">Tempo:</span><span class="en">Tempo:</span></strong> <span class="tr">Yüksek (uçuş saati)</span><span class="en">High (flight time)</span></div>
+                    </div>
+                    <div class="segment-col psycho">
+                        <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Motivasyon:</span><span class="en">Motivation:</span></strong> <span class="tr">Zamanında uçuş</span><span class="en">On-time flight</span></div>
+                        <div class="segment-item"><strong><span class="tr">Stres:</span><span class="en">Stress:</span></strong> <span class="tr">Geç keşfedilen sorun</span><span class="en">Late discovered problem</span></div>
+                        <div class="segment-item"><strong><span class="tr">İhtiyaç:</span><span class="en">Need:</span></strong> <span class="tr">Proaktif uyarı</span><span class="en">Proactive alert</span></div>
+                        <div class="segment-item"><strong><span class="tr">Korku:</span><span class="en">Fear:</span></strong> <span class="tr">Uçuş kaçırma</span><span class="en">Missing flight</span></div>
+                    </div>
+                </div>
+                
+                <!-- Kapsam Dışı -->
+                <div style="margin-top:16px; padding:12px; background:#fef3c7; border-radius:8px; border-left:3px solid #f59e0b;">
+                    <h4 style="font-size:11px; color:#b45309; margin-bottom:6px;"><span class="tr">⚠️ BU PERSONA KAPSAMI DIŞINDA</span><span class="en">⚠️ OUT OF SCOPE FOR THIS PERSONA</span></h4>
+                    <p style="font-size:11px; color:#92400e; margin:0;">
+                        <span class="tr">Embargo tanımları (Mustafa), Restriction tanımları (Kemal), Yaptırım taraması (Gizem/Nurseli), Service Standards sorguları (Burcu), Booking işlemleri (Rez ekibi)</span>
+                        <span class="en">Embargo definitions (Mustafa), Restriction definitions (Kemal), Sanctions screening (Gizem/Nurseli), Service Standards queries (Burcu), Booking operations (Res team)</span>
+                    </p>
+                </div>
+            </div>
+            <div id="s1-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Hub Operations Specialist, İstanbul hub'da fiziksel kargo işlemlerini yürütür: Kargo kabul, X-ray güvenlik taraması, BUILDUP (ULD yükleme). Embargo/restriction kontrolleri booking aşamasında yapılsa da, bazen kargo hub'a geldiğinde "ERROR" mesajıyla karşılaşır. "Neden ERROR?" sorusunun cevabı yok - problem tespiti çok geç oluyor.</span>
+                    <span class="en">Hub Operations Specialist executes physical cargo operations at Istanbul hub: Cargo acceptance, X-ray security screening, BUILDUP (ULD loading). Although embargo/restriction checks are done at booking stage, sometimes encounters "ERROR" message when cargo arrives at hub. No answer to "Why ERROR?" - problem detection happens too late.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: STATUS LEVELS -->
+    <section class="card section-2">
+        <div class="card-header">
+            <div class="card-icon">2</div>
+            <div class="card-title">
+                <h2><span class="tr">Status Seviyeleri</span><span class="en">Status Levels</span></h2>
+                <p><span class="tr">ERROR / WARNING / INFO</span><span class="en">ERROR / WARNING / INFO</span></p>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="status-grid">
+                <div class="status-card error">
+                    <h5>🔴 ERROR</h5>
+                    <p><span class="tr">İşlem durdurulur. Kargo kabul edilemez. Neden? → Bilinmiyor!</span>
+                    <span class="en">Operation stopped. Cargo cannot be accepted. Why? → Unknown!</span></p>
+                </div>
+                <div class="status-card warning">
+                    <h5>🟡 WARNING</h5>
+                    <p><span class="tr">Dikkat gerekir. İşleme devam edilebilir ama risk var.</span>
+                    <span class="en">Attention required. Can continue but there's risk.</span></p>
+                </div>
+                <div class="status-card info">
+                    <h5>🔵 INFO</h5>
+                    <p><span class="tr">Bilgi amaçlı. Talep: Daha parametrik sistem!</span>
+                    <span class="en">Informational. Request: More parametric system!</span></p>
+                </div>
+            </div>
+            
+            <div class="warning-box">
+                <h4>⚠️ <span class="tr">MEVCUT SORUN</span><span class="en">CURRENT PROBLEM</span></h4>
+                <p><span class="tr">"Sistem sadece ERROR veya WARNING diyor, ama NEDEN olduğunu söylemiyor! Kargo hub'a gelmiş, ULD'ye yüklenecek, tam o anda ERROR çıkıyor. Sorunu araştırmak için çok geç."</span>
+                <span class="en">"System only says ERROR or WARNING, but doesn't say WHY! Cargo has arrived at hub, about to be loaded to ULD, ERROR appears at that moment. Too late to investigate the problem."</span></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: WORKFLOW -->
+    <section class="card section-3">
+        <div class="card-header">
+            <div class="card-icon">3</div>
+            <div class="card-title">
+                <h2><span class="tr">İş Akışı</span><span class="en">Workflow</span></h2>
+                <p><span class="tr">Hub operasyon süreci</span><span class="en">Hub operation process</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s3-chart" class="view-pane active">
+                <!-- Tetikleyiciler ve Çıktılar -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                    <div style="background:#fef3c7; padding:12px; border-radius:8px; border-left:3px solid #f59e0b;">
+                        <h4 style="font-size:11px; color:#b45309; margin-bottom:8px;"><span class="tr">🔔 TETİKLEYİCİLER (TRIGGERS)</span><span class="en">🔔 TRIGGERS</span></h4>
+                        <ul style="font-size:11px; color:#92400e; margin:0; padding-left:16px;">
+                            <li><span class="tr">Kargo depoya fiziksel olarak geldiğinde</span><span class="en">When cargo physically arrives at warehouse</span></li>
+                            <li><span class="tr">X-ray tarama zamanı geldiğinde</span><span class="en">When X-ray scan time comes</span></li>
+                            <li><span class="tr">BUILDUP (ULD yükleme) başlangıcında</span><span class="en">At BUILDUP (ULD loading) start</span></li>
+                            <li><span class="tr">Uçuşa yakın operasyon baskısı</span><span class="en">Near-flight operational pressure</span></li>
+                            <li><span class="tr">Sistem ERROR/WARNING mesajı</span><span class="en">System ERROR/WARNING message</span></li>
+                        </ul>
+                    </div>
+                    <div style="background:#dbeafe; padding:12px; border-radius:8px; border-left:3px solid #3b82f6;">
+                        <h4 style="font-size:11px; color:#1e40af; margin-bottom:8px;"><span class="tr">📤 ÇIKTILAR (OUTPUTS)</span><span class="en">📤 OUTPUTS</span></h4>
+                        <ul style="font-size:11px; color:#1e3a8a; margin:0; padding-left:16px;">
+                            <li><span class="tr">Kargo kabul/red kararı (fiziksel)</span><span class="en">Cargo accept/reject decision (physical)</span></li>
+                            <li><span class="tr">ULD yükleme tamamlama</span><span class="en">ULD loading completion</span></li>
+                            <li><span class="tr">X-ray tarama sonucu</span><span class="en">X-ray scan result</span></li>
+                            <li><span class="tr">Sorun escalation (rez ekibine)</span><span class="en">Issue escalation (to res team)</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Sorumluluklar ve KPIs -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                    <div style="background:#eff6ff; padding:12px; border-radius:8px; border-left:3px solid #3b82f6;">
+                        <h4 style="font-size:11px; color:#1e40af; margin-bottom:8px;"><span class="tr">📋 ANA SORUMLULUKLAR</span><span class="en">📋 PRIMARY RESPONSIBILITIES</span></h4>
+                        <ul style="font-size:11px; color:#1e3a8a; margin:0; padding-left:16px;">
+                            <li><span class="tr">Fiziksel kargo kabul işlemleri</span><span class="en">Physical cargo acceptance operations</span></li>
+                            <li><span class="tr">X-ray güvenlik taraması</span><span class="en">X-ray security screening</span></li>
+                            <li><span class="tr">Ağırlık/boyut doğrulama</span><span class="en">Weight/dimension verification</span></li>
+                            <li><span class="tr">ULD yükleme (BUILDUP)</span><span class="en">ULD loading (BUILDUP)</span></li>
+                            <li><span class="tr">Sorun tespiti ve escalation</span><span class="en">Problem detection and escalation</span></li>
+                        </ul>
+                    </div>
+                    <div style="background:#ecfdf5; padding:12px; border-radius:8px; border-left:3px solid #10b981;">
+                        <h4 style="font-size:11px; color:#047857; margin-bottom:8px;"><span class="tr">📊 KPI'LAR & BAŞARI KRİTERLERİ</span><span class="en">📊 KPIs & SUCCESS CRITERIA</span></h4>
+                        <ul style="font-size:11px; color:#065f46; margin:0; padding-left:16px;">
+                            <li><span class="tr">Uçuş kaçırma oranı: %0</span><span class="en">Flight miss rate: 0%</span></li>
+                            <li><span class="tr">BUILDUP tamamlama süresi (SLA)</span><span class="en">BUILDUP completion time (SLA)</span></li>
+                            <li><span class="tr">X-ray güvenlik uyumu: %100</span><span class="en">X-ray security compliance: 100%</span></li>
+                            <li><span class="tr">Geç keşfedilen sorun: 0</span><span class="en">Late discovered issue: 0</span></li>
+                            <li><span class="tr">Fiziksel hasar oranı: %0</span><span class="en">Physical damage rate: 0%</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#0284c7; margin-bottom:12px;"><span class="tr">KARGO KABUL AKIŞI</span><span class="en">CARGO ACCEPTANCE FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="tr">Kargo Teslim</span><span class="en">Cargo Delivery</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">Acceptance Kontrol</span><span class="en">Acceptance Check</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">Embargo/Rest?</span><span class="en">Embargo/Rest?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step critical"><span class="tr">X-ray Tarama</span><span class="en">X-ray Scan</span></div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#ea580c; margin:24px 0 12px;"><span class="tr">BUILDUP AKIŞI</span><span class="en">BUILDUP FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step auto"><span class="tr">ULD Seçimi</span><span class="en">ULD Selection</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">Kargo Yükleme</span><span class="en">Cargo Loading</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">Son Kontrol</span><span class="en">Final Check</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background:#fecaca; color:#991b1b; border:2px solid #f87171;"><span class="tr">❌ ERROR!</span><span class="en">❌ ERROR!</span></div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#dc2626; margin:24px 0 12px;"><span class="tr">GEÇ KEŞİF SORUNU</span><span class="en">LATE DISCOVERY PROBLEM</span></h4>
+                <div class="flow-h" style="background:#fef2f2;">
+                    <div class="flow-step manual"><span class="tr">Booking ✓</span><span class="en">Booking ✓</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">Kargo Geldi</span><span class="en">Cargo Arrived</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">Hub'a Ulaştı</span><span class="en">Reached Hub</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step critical"><span class="tr">BUILDUP</span><span class="en">BUILDUP</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background:#fecaca; color:#991b1b; border:2px solid #f87171;"><span class="tr">ERROR - ÇOK GEÇ!</span><span class="en">ERROR - TOO LATE!</span></div>
+                </div>
+            </div>
+            <div id="s3-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Problem: Embargo/restriction kontrolü booking aşamasında yapılıyor ama bazen değişiklikler oluyor veya kontrol kaçırılıyor. Kargo fiziksel olarak hub'a gelip BUILDUP işlemine girdiğinde ERROR çıkıyor. Bu noktada problem tespiti çok geç - kargo zaten burda!</span>
+                    <span class="en">Problem: Embargo/restriction check is done at booking stage but sometimes changes occur or check is missed. When cargo physically arrives at hub and enters BUILDUP, ERROR appears. At this point problem detection is too late - cargo is already here!</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: DATA & SYSTEMS -->
+    <section class="card section-4">
+        <div class="card-header">
+            <div class="card-icon">4</div>
+            <div class="card-title">
+                <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                <p><span class="tr">CRUD, yetkiler, sistem bağımlılıkları</span><span class="en">CRUD, permissions, system dependencies</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s4-chart" class="view-pane active">
+                <h4 style="font-size:11px; color:#ea580c; margin-bottom:8px;"><span class="tr">CRUD MATRİSİ - VERİ ERİŞİM YETKİLERİ</span><span class="en">CRUD MATRIX - DATA ACCESS PERMISSIONS</span></h4>
+                <p style="font-size:11px; color:#6b7280; margin-bottom:12px; padding:8px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                    <span class="tr"><strong>C</strong>=Create | <strong>R</strong>=Read | <strong>U</strong>=Update | <strong>D</strong>=Delete — <span style="color:#047857;">✓ Yetkili</span> | <span style="color:#9ca3af;">- Yetkisiz</span></span>
+                    <span class="en"><strong>C</strong>=Create | <strong>R</strong>=Read | <strong>U</strong>=Update | <strong>D</strong>=Delete — <span style="color:#047857;">✓ Authorized</span> | <span style="color:#9ca3af;">- Not Authorized</span></span>
+                </p>
+                <table class="crud-table">
+                    <thead>
+                        <tr>
+                            <th><span class="tr">Veri/Sistem</span><span class="en">Data/System</span></th>
+                            <th>C</th>
+                            <th>R</th>
+                            <th>U</th>
+                            <th>D</th>
+                            <th><span class="tr">Not</span><span class="en">Note</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>BUILDUP Transaction</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">ULD yükleme işlemi, ERROR/WARNING okuma</span><span class="en">ULD loading operation, ERROR/WARNING reading</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>X-ray Screening</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Güvenlik tarama sonucu kaydetme</span><span class="en">Security screening result recording</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Acceptance Screen</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Kargo kabul işlemi</span><span class="en">Cargo acceptance operation</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Embargo/Restriction Rules</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Sadece ERROR/WARNING görüntüleme</span><span class="en">Only ERROR/WARNING display</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weight Check</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Ağırlık kontrolü ve güncelleme</span><span class="en">Weight check and update</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4 style="font-size:11px; color:#ea580c; margin:24px 0 12px;"><span class="tr">SİSTEM ENTEGRASYONLARI</span><span class="en">SYSTEM INTEGRATIONS</span></h4>
+                <div class="intent-grid">
+                    <div class="intent-item">
+                        <h5>Embargo/Restriction Check</h5>
+                        <p><span class="tr">BUILDUP sırasında otomatik tetiklenir. Sadece ERROR veya WARNING döner.</span><span class="en">Auto-triggered during BUILDUP. Only returns ERROR or WARNING.</span></p>
+                        <span class="intent-badge high">AUTO</span>
+                    </div>
+                    <div class="intent-item">
+                        <h5>Error Resolution</h5>
+                        <p><span class="tr">ERROR durumunda manuel araştırma. Hangi kural tetikledi bilinmiyor.</span><span class="en">Manual investigation on ERROR. Unknown which rule triggered.</span></p>
+                        <span class="intent-badge medium">MANUAL</span>
+                    </div>
+                    <div class="intent-item">
+                        <h5>Email Communication</h5>
+                        <p><span class="tr">HQ ile email trafiği. Problem keşfi sonrası iletişim.</span><span class="en">Email traffic with HQ. Communication after problem discovery.</span></p>
+                        <span class="intent-badge medium">MANUAL</span>
+                    </div>
+                    <div class="intent-item">
+                        <h5>Proactive Alert (YOK)</h5>
+                        <p><span class="tr">Kargo hub'a yaklaşırken uyarı yok. Talep edilen: Erken bildirim sistemi.</span><span class="en">No alert when cargo approaches hub. Requested: Early notification system.</span></p>
+                        <span class="intent-badge high">GAP</span>
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <h4><span class="tr">⚠️ KRİTİK EKSİK: Detaylı Hata Mesajı</span><span class="en">⚠️ CRITICAL MISSING: Detailed Error Message</span></h4>
+                    <p><span class="tr">Sistem sadece "ERROR" diyor. Hangi embargo/restriction tetikledi? Neden? Detay yok. Kargo zaten hub'da, geri göndermek maliyetli.</span>
+                    <span class="en">System just says "ERROR". Which embargo/restriction triggered? Why? No detail. Cargo already at hub, returning is costly.</span></p>
+                </div>
+            </div>
+            <div id="s4-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Hub Operations sadece Read ve Update yetkisine sahip. BUILDUP, X-ray, Acceptance işlemleri yapılır. Embargo/Restriction kuralları sadece okunur - ERROR/WARNING görüntülenir ama detay yok. Kritik eksikler: (1) Hata sebebi bilinmiyor, (2) Proaktif uyarı yok, (3) Sistem dinamik değil (sadece ERROR/WARNING, INFO yok).</span>
+                    <span class="en">Hub Operations has only Read and Update permission. BUILDUP, X-ray, Acceptance operations performed. Embargo/Restriction rules only read - ERROR/WARNING displayed but no detail. Critical missing: (1) Error reason unknown, (2) No proactive alert, (3) System not dynamic (only ERROR/WARNING, no INFO).</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: PAIN POINTS -->
+    <section class="card section-5">
+        <div class="card-header">
+            <div class="card-icon">5</div>
+            <div class="card-title">
+                <h2><span class="tr">Pain Points</span><span class="en">Pain Points</span></h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="pain-list">
+                <div class="pain-item high">
+                    <span class="pain-code">P1</span>
+                    <div class="pain-text">
+                        <h5><span class="tr">🔴 ERROR Sebebi Bilinmiyor</span><span class="en">🔴 ERROR Reason Unknown</span></h5>
+                        <p><span class="tr">"Just says ERROR. No detail given why. We're looking for the problem after cargo already arrived." Hangi embargo/restriction tetikledi? Bilinmiyor.</span>
+                        <span class="en">"Just says ERROR. No detail given why. We're looking for the problem after cargo already arrived." Which embargo/restriction triggered? Unknown.</span></p>
+                    </div>
+                </div>
+                <div class="pain-item high">
+                    <span class="pain-code">P2</span>
+                    <div class="pain-text">
+                        <h5><span class="tr">🔴 Geç Keşif - Kargo Zaten Hub'da</span><span class="en">🔴 Late Discovery - Cargo Already at Hub</span></h5>
+                        <p><span class="tr">Problem BUILDUP aşamasında keşfediliyor. Kargo fiziksel olarak burada, geri göndermek maliyetli.</span>
+                        <span class="en">Problem discovered at BUILDUP stage. Cargo physically here, returning is costly.</span></p>
+                    </div>
+                </div>
+                <div class="pain-item medium">
+                    <span class="pain-code">P3</span>
+                    <div class="pain-text">
+                        <h5><span class="tr">Sadece Binary: ERROR/WARNING</span><span class="en">Only Binary: ERROR/WARNING</span></h5>
+                        <p><span class="tr">"Sistem dinamik değil, sadece ERROR veya WARNING. INFO seviyesi yok, parametrik kurallar yok." Gradation eksik.</span>
+                        <span class="en">"System not dynamic, only ERROR or WARNING. No INFO level, no parametric rules." Gradation missing.</span></p>
+                    </div>
+                </div>
+                <div class="pain-item medium">
+                    <span class="pain-code">P4</span>
+                    <div class="pain-text">
+                        <h5><span class="tr">Proaktif Uyarı Yok</span><span class="en">No Proactive Alert</span></h5>
+                        <p><span class="tr">Kargo hub'a yaklaştığında uyarı yok. "Dikkat, bu kargoda potential issue var" diye bildirim olmalı.</span>
+                        <span class="en">No alert when cargo approaches hub. Should have notification "Attention, this cargo has potential issue."</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: EMPATHY -->
+    <section class="card section-6">
+        <div class="card-header">
+            <div class="card-icon">6</div>
+            <div class="card-title">
+                <h2><span class="tr">Zihinsel Model</span><span class="en">Mental Model</span></h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="empathy-grid">
+                <div class="empathy-quad says">
+                    <h4>💬 <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                    <div class="empathy-item"><span class="tr">"ERROR diyor ama neden bilmiyorum"</span><span class="en">"It says ERROR but I don't know why"</span></div>
+                    <div class="empathy-item"><span class="tr">"Kargo zaten burada, ne yapacağız?"</span><span class="en">"Cargo is already here, what do we do?"</span></div>
+                </div>
+                <div class="empathy-avatar">
+                    <div class="empathy-avatar-circle">🏭</div>
+                    <div style="margin-top:10px; font-size:12px; font-weight:700; color:#ea580c;">Hub Ops</div>
+                </div>
+                <div class="empathy-quad thinks">
+                    <h4>💭 <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                    <div class="empathy-item"><span class="tr">"Keşke önceden bilseydim, hazırlık yapardım"</span><span class="en">"Wish I knew earlier, I would have prepared"</span></div>
+                </div>
+                <div class="empathy-quad does">
+                    <h4>⚡ <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                    <div class="empathy-item"><span class="tr">Manuel araştırma, telefon, email</span><span class="en">Manual investigation, phone, email</span></div>
+                </div>
+                <div class="empathy-quad feels">
+                    <h4>❤️ <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                    <div class="empathy-item"><span class="tr">Frustration, zaman baskısı, belirsizlik</span><span class="en">Frustration, time pressure, uncertainty</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: COLLABORATION & SUPPORT -->
+    <section class="card section-7">
+        <div class="card-header">
+            <div class="card-icon">7</div>
+            <div class="card-title">
+                <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                <p><span class="tr">Paydaşlar, koordinasyon</span><span class="en">Stakeholders, coordination</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s7-chart" class="view-pane active">
+                <div class="stakeholder-map">
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node provider"><span class="tr">📞 Rezervasyon Ekibi</span><span class="en">📞 Reservation Team</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">🛡️ Compliance Team</span><span class="en">🛡️ Compliance Team</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">✈️ Flight Operations</span><span class="en">✈️ Flight Operations</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node persona"><span class="tr">🏭 HUB OPERASYON UZMANI</span><span class="en">🏭 HUB OPERATIONS SPECIALIST</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓ ↔️</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node partner"><span class="tr">🔒 Security Team</span><span class="en">🔒 Security Team</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">📦 Warehouse Team</span><span class="en">📦 Warehouse Team</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">🚛 Ground Handling</span><span class="en">🚛 Ground Handling</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node consumer"><span class="tr">✈️ Aircraft Loading</span><span class="en">✈️ Aircraft Loading</span></div>
+                        <div class="stakeholder-node consumer"><span class="tr">📊 Operations Control</span><span class="en">📊 Operations Control</span></div>
+                        <div class="stakeholder-node consumer"><span class="tr">📋 Audit/Compliance</span><span class="en">📋 Audit/Compliance</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s7-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Hub Operations uzmanı rezervasyon ekibinden booking bilgisi, compliance team'den kural bilgisi, flight operations'dan uçuş bilgisi alır. Security team ile X-ray koordinasyonu, warehouse team ile depo yerleşimi, ground handling ile apron operasyonları koordine edilir. Çıktılar aircraft loading'e (ULD), operations control'e ve audit trail'e yansır.</span>
+                    <span class="en">Hub Operations specialist receives booking info from reservation team, rule info from compliance team, flight info from flight operations. Coordinates X-ray with security team, warehouse layout with warehouse team, apron operations with ground handling. Outputs reflect to aircraft loading (ULD), operations control and audit trail.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 8: OPPORTUNITIES -->
+    <section class="card section-8">
+        <div class="card-header">
+            <div class="card-icon">8</div>
+            <div class="card-title">
+                <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                <div class="timeline-item mvp">
+                    <span class="timeline-badge mvp">MVP</span>
+                    <h5><span class="tr">Detailed Error Reason Display</span><span class="en">Detailed Error Reason Display</span></h5>
+                    <p><span class="tr">ERROR/WARNING yanında hangi embargo/restriction kuralı tetikledi göster. "REC001-FISH-BUD-PEK" gibi referans ver.</span><span class="en">Show which embargo/restriction rule triggered alongside ERROR/WARNING. Give reference like "REC001-FISH-BUD-PEK".</span></p>
+                </div>
+                <div class="timeline-item mvp">
+                    <span class="timeline-badge mvp">MVP</span>
+                    <h5><span class="tr">Proactive Alert System</span><span class="en">Proactive Alert System</span></h5>
+                    <p><span class="tr">Kargo hub'a gelmeden önce potential issue varsa uyarı gönder. "Bu AWB için embargo kontrolü gerekiyor."</span><span class="en">Send alert if potential issue exists before cargo arrives at hub. "Embargo check required for this AWB."</span></p>
+                </div>
+                <div class="timeline-item short">
+                    <span class="timeline-badge short">SHORT TERM</span>
+                    <h5><span class="tr">INFO Level & Parametric Rules</span><span class="en">INFO Level & Parametric Rules</span></h5>
+                    <p><span class="tr">Binary ERROR/WARNING yerine INFO seviyesi ekle. Parametrik kurallarla daha dinamik sistem.</span><span class="en">Add INFO level instead of binary ERROR/WARNING. More dynamic system with parametric rules.</span></p>
+                </div>
+            </div>
+            </div>
+            <div id="s8-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">3 ana fırsat tanımlandı: MVP seviyesinde Detailed Error Reason Display ve Proactive Alert System. Kısa vadede INFO Level & Parametric Rules. Bu çözümler geç keşfedilen sorun ve belirsizlik problemlerini çözebilir.</span>
+                    <span class="en">3 main opportunities identified: At MVP level Detailed Error Reason Display and Proactive Alert System. Short term INFO Level & Parametric Rules. These solutions can solve late discovered issue and uncertainty problems.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 9: AI SUPPORT -->
+    <section class="card section-9">
+        <div class="card-header">
+            <div class="card-icon">9</div>
+            <div class="card-title">
+                <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                <p><span class="tr">AI potansiyeli</span><span class="en">AI potential</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s9-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;"><span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span><span class="en">Maximum automation level AI can safely reach for this persona</span></p>
+                
+                <!-- Gradient Slider -->
+                <div style="display:flex; gap:24px; margin-bottom:32px;">
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:100px; padding:8px 0;">
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 FORBIDDEN</span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI yapmamalı</span><span class="en">AI must not do</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ APPROVAL</span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">Onay gerekli</span><span class="en">Needs approval</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ SAFE</span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI devam edebilir</span><span class="en">AI can proceed</span></div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex:1; position:relative;">
+                        <div style="height:240px; border-radius:12px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fed7aa 17%, #fed7aa 50%, #dcfce7 50%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            <div style="position:absolute; left:12px; top:4%; font-size:10px; color:#dc2626; font-weight:600;">6 - 🚫 <span class="tr">ULD yükleme, uçuş karar</span><span class="en">ULD loading, flight decision</span></div>
+                            <div style="position:absolute; left:12px; top:21%; font-size:10px; color:#ea580c; font-weight:600;">5 - ⚠️ <span class="tr">Kargo kabul öneri</span><span class="en">Cargo accept suggestion</span></div>
+                            
+                            <div style="position:absolute; left:0; right:0; top:50%; height:3px; background:#0891b2; z-index:10;"></div>
+                            <div style="position:absolute; right:8px; top:48%; background:#0891b2; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">⬆️ TRUST LINE</div>
+                            
+                            <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">4 - 💡 <span class="tr">ERROR/WARNING açıklama</span><span class="en">ERROR/WARNING explanation</span> — ← P1</div>
+                            <div style="position:absolute; left:12px; top:68%; font-size:10px; color:#15803d; font-weight:600;">3 - ⚙️ <span class="tr">Proaktif sorun tahmini</span><span class="en">Proactive issue prediction</span> — ← P4</div>
+                            <div style="position:absolute; left:12px; top:81%; font-size:10px; color:#15803d; font-weight:600;">2 - 📝 <span class="tr">ULD optimizasyon önerisi</span><span class="en">ULD optimization suggestion</span></div>
+                            <div style="position:absolute; left:12px; top:94%; font-size:10px; color:#15803d; font-weight:600;">1 - 📊 <span class="tr">Geçmiş case analizi</span><span class="en">Past case analysis</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="two-col" style="margin-top:20px;">
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">📋 ERROR/WARNING sebebi açıklama önerisi</span><span class="en">📋 ERROR/WARNING reason explanation suggestion</span></div>
+                        <div class="list-item"><span class="tr">⏰ Proaktif sorun tahmini (uçuştan önce)</span><span class="en">⏰ Proactive issue prediction (before flight)</span></div>
+                        <div class="list-item"><span class="tr">📊 ULD yükleme optimizasyonu önerisi</span><span class="en">📊 ULD loading optimization suggestion</span></div>
+                        <div class="list-item"><span class="tr">🔍 Geçmiş similar case analizi</span><span class="en">🔍 Past similar case analysis</span></div>
+                        <div class="list-item"><span class="tr">📈 Operasyon darboğaz tahmini</span><span class="en">📈 Operation bottleneck prediction</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #dc2626;">
+                        <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">🚫 Fiziksel kargo kabul/red kararı</span><span class="en">🚫 Physical cargo accept/reject decision</span></div>
+                        <div class="list-item"><span class="tr">🚫 X-ray güvenlik değerlendirmesi</span><span class="en">🚫 X-ray security assessment</span></div>
+                        <div class="list-item"><span class="tr">🚫 ULD son yükleme kararı</span><span class="en">🚫 ULD final loading decision</span></div>
+                        <div class="list-item"><span class="tr">🚫 Uçuşa yetişememe kararı</span><span class="en">🚫 Flight miss decision</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s9-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">AI hub operasyonlarında bilgi sunma ve tahmin seviyelerinde destek sağlayabilir: ERROR açıklaması, proaktif sorun tahmini, ULD optimizasyon önerisi. Ancak fiziksel kabul kararı, X-ray değerlendirmesi, ULD yükleme kararı kesinlikle insan kontrolünde kalmalı - güvenlik ve operasyon riski çok yüksek.</span>
+                    <span class="en">AI can support hub operations at information and prediction levels: ERROR explanation, proactive issue prediction, ULD optimization suggestion. However, physical acceptance decision, X-ray assessment, ULD loading decision must absolutely remain under human control - security and operation risk too high.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer class="footer">
+    <p><span class="tr">📅 Analiz: 12 Mayıs 2026 | 📄 3 Kaynak MoM | 🏭 Hub Operations Specialist</span>
+    <span class="en">📅 Analysis: May 12, 2026 | 📄 3 Source MoMs | 🏭 Hub Operations Specialist</span></p>
+    <p>COM - Compliance Management | THY Cargo | Sungur Product Team</p>
+</footer>
+    </div>
+
+    <script>
+    function switchLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+        });
+    }
+    function toggleView(btn, section, view) {
+        btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(section + '-chart').classList.remove('active');
+        document.getElementById(section + '-text').classList.remove('active');
+        document.getElementById(section + '-' + view).classList.add('active');
+    }
+
+    function toggleMegaMenu() {
+        document.querySelector('.mega-menu').classList.toggle('open');
+        document.querySelector('.mega-overlay').classList.toggle('open');
+    }
+    </script>
+</body>
+</html>

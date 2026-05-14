@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yurtiçi Rezervasyon Ekibi | Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        /* ===== SIDE NAVIGATION ===== */
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .nav-item .nav-num {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .nav-item .nav-label {
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .nav-item.pending {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 12px 10px;
+        }
+        .nav-item[data-theme="indigo"].active { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .nav-item[data-theme="red"].active { background: linear-gradient(135deg, #dc2626, #f97316); }
+        .nav-item[data-theme="green"].active { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .nav-item[data-theme="blue"].active { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .nav-item[data-theme="orange"].active { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .nav-item[data-theme="purple"].active { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .nav-item[data-theme="teal"].active { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+
+        
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #0ea5e9; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content {
+            margin-left: 72px;
+        }
+
+        
+        /* Hero - Green theme for Domestic */
+        .hero {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%);
+            padding: 48px 40px;
+            position: relative;
+            border-bottom: 4px solid #16a34a;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(22,163,74,0.15); color: #16a34a; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #16a34a; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; color: #1f2937; }
+        .hero h1 span { color: #16a34a; }
+        .hero-subtitle { font-size: 16px; color: #6b7280; max-width: 600px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #16a34a; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; background: rgba(255,255,255,0.5); padding: 16px; border-radius: 0 8px 8px 0; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .meta-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6b7280; background: white; padding: 8px 12px; border-radius: 8px; }
+        .meta-dot { width: 8px; height: 8px; border-radius: 50%; }
+        /* Source Tooltip */
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .source-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 24px;
+            width: 12px;
+            height: 12px;
+            background: #1f2937;
+            transform: rotate(45deg);
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+
+        
+        /* Board */
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        /* Card */
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title { flex: 1; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        /* Toggle */
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #16a34a; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Section Colors */
+        .section-1 .card-icon { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .section-1 { border-left: 4px solid #16a34a; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        /* Components */
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(22,163,74,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(22,163,74,0.1); }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo { background: #f0fdf4; border: 1px solid #86efac; }
+        .segment-col.demo h4 { color: #16a34a; border-color: #16a34a; }
+        .segment-col.behav { background: #fffbeb; border: 1px solid #fde68a; }
+        .segment-col.behav h4 { color: #b45309; border-color: #b45309; }
+        .segment-col.psycho { background: #faf5ff; border: 1px solid #d8b4fe; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 8px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 90px; font-weight: 500; }
+        
+        .compare-box { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0; }
+        .compare-col { padding: 16px; border-radius: 12px; }
+        .compare-col.domestic { background: #f0fdf4; border: 2px solid #16a34a; }
+        .compare-col.international { background: #f5f5f5; border: 2px solid #9ca3af; }
+        .compare-col h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .compare-item { font-size: 12px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .compare-item:last-child { border-bottom: none; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #16a34a, #22c55e); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px; background: #f0fdf4; border-radius: 12px; margin-bottom: 12px; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; border: 2px solid #fcd34d; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; border: 2px solid #93c5fd; }
+        .flow-step.unique { background: #16a34a; color: white; border: 2px solid #15803d; }
+        .flow-step.critical { background: #dc2626; color: white; border: 2px solid #b91c1c; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.08); border-left: 4px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.08); border-left: 4px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.08); border-left: 4px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { 
+            display: grid; 
+            grid-template-columns: 1fr auto 1fr; 
+            grid-template-rows: auto auto; 
+            gap: 16px; 
+            align-items: stretch; 
+        }
+        .empathy-avatar {
+            grid-row: span 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-width: 130px;
+        }
+        .empathy-avatar-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 8px 32px rgba(22,163,74,0.35);
+            border: 4px solid white;
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 50%, #4ade80 100%);
+        }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.15); }
+        .empathy-quad.does h4 { color: #d97706; }
+        .empathy-quad.does h4 span.icon { background: rgba(245,158,11,0.15); }
+        .empathy-quad.feels { background: rgba(22,163,74,0.06); border-color: rgba(22,163,74,0.15); }
+        .empathy-quad.feels h4 { color: #16a34a; }
+        .empathy-quad.feels h4 span.icon { background: rgba(22,163,74,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
+        .stakeholder-node.partner { background: #dcfce7; color: #166534; border: 2px solid #86efac; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #16a34a, #22c55e); color: white; font-weight: 700; padding: 14px 24px; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+        .stakeholder-arrow { font-size: 20px; color: #9ca3af; }
+        
+        .timeline { display: flex; flex-direction: column; gap: 12px; }
+        .timeline-item { padding: 16px; border-radius: 12px; border-left: 4px solid; }
+        .timeline-item.mvp { background: #dcfce7; border-color: #16a34a; }
+        .timeline-item.short { background: #e0e7ff; border-color: #4f46e5; }
+        .timeline-item.long { background: #f1f5f9; border-color: #64748b; }
+        .timeline-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .timeline-badge.mvp { background: #16a34a; color: white; }
+        .timeline-badge.short { background: #4f46e5; color: white; }
+        .timeline-badge.long { background: #64748b; color: white; }
+        .timeline-item h5 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 12px; color: #6b7280; }
+        
+        .ai-pyramid { display: flex; flex-direction: column; gap: 6px; align-items: center; margin: 20px 0; }
+        .ai-level { padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; color: white; }
+        
+        .evidence { margin-top: 16px; padding: 16px; background: #f0fdf4; border-left: 4px solid #16a34a; border-radius: 0 8px 8px 0; font-size: 12px; color: #166534; }
+        .evidence strong { display: block; margin-bottom: 8px; color: #14532d; }
+        
+        .summary-box { background: #f9fafb; padding: 16px; border-radius: 10px; font-size: 13px; line-height: 1.7; margin-bottom: 12px; border: 1px solid #e5e7eb; }
+        .summary-box h4 { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px; }
+        
+        .highlight-box { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #16a34a; padding: 16px; border-radius: 10px; margin: 16px 0; }
+        .highlight-box h4 { color: #16a34a; font-size: 12px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .highlight-box p { font-size: 12px; color: #166534; }
+        
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+        .stat-box { background: white; border: 2px solid #e5e7eb; padding: 16px; border-radius: 10px; text-align: center; }
+        .stat-box.highlight { border-color: #16a34a; background: #f0fdf4; }
+        .stat-value { font-size: 24px; font-weight: 800; color: #16a34a; }
+        .stat-label { font-size: 10px; color: #6b7280; text-transform: uppercase; margin-top: 4px; }
+        
+        .footer { margin-top: 32px; padding: 24px; text-align: center; background: linear-gradient(135deg, #1e293b, #334155); color: rgba(255,255,255,0.8); border-radius: 16px; font-size: 13px; }
+        .footer p { margin-bottom: 8px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #0ea5e9; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 60px; }
+            .nav-item { width: 44px; height: 44px; }
+            .nav-item .nav-num { font-size: 14px; }
+            .nav-item .nav-label { font-size: 7px; }
+            .segment-card, .two-col, .three-col, .empathy-grid, .compare-box, .stat-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 24px; }
+            .flow-h { justify-content: center; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <!-- SIDE NAVIGATION -->
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()" title="Tüm Modüller">BKR</div>
+        <div class="nav-items">
+            <a href="Persona_IST_General_Reservation.html" class="nav-item" data-theme="indigo">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Genel Rez</span>
+            </a>
+            <a href="Persona_IST_Special_Cargo.html" class="nav-item" data-theme="red">
+                <span class="nav-num">2</span>
+                <span class="nav-label">Özel Kargo</span>
+            </a>
+            <a href="Persona_Domestic_Reservation.html" class="nav-item active" data-theme="green">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Yurtiçi</span>
+            </a>
+            <a href="Persona_Capacity_Planning.html" class="nav-item" data-theme="blue">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Kapasite</span>
+            </a>
+            <a href="Persona_Operations_CargoAcceptance.html" class="nav-item" data-theme="orange">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Operasyon</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="Persona_GSA_International_Station.html" class="nav-item" data-theme="purple">
+                <span class="nav-num">6</span>
+                <span class="nav-label">GSA</span>
+            </a>
+            <a href="Persona_Solution_Technical_Team.html" class="nav-item" data-theme="teal">
+                <span class="nav-num">7</span>
+                <span class="nav-label">Teknik</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header"><span class="mega-menu-title">📦 Tüm Modüller</span><button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button></div>
+        <div class="module-section"><div class="module-header active"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div><div class="persona-list">
+            <a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a>
+            <a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a>
+            <a href="Persona_Domestic_Reservation.html" class="persona-link current"><span class="persona-num">3</span> Domestic Reservation</a>
+            <a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a>
+            <a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a>
+            <a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a>
+            <a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a>
+        </div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div><div class="persona-list">
+            <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a>
+            <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a>
+            <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a>
+            <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a>
+            <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a>
+        </div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div><div class="persona-list">
+            <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a>
+            <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a>
+        </div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a><a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a><a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a><a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a><a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a><a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a><a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a><a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a><a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a></div></div>
+        <div class="module-section"><div class="module-header active"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div><div class="persona-list"><a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a><a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a><a href="Persona_Domestic_Reservation.html" class="persona-link current"><span class="persona-num">3</span> Domestic Reservation</a><a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a><a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a><a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a><a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div><div class="persona-list"><a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a><a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a><a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div><div class="persona-list">
+            <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a>
+            <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a>
+            <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a>
+            <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">4</span> Service Standards</a>
+            <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">5</span> Hub Operations</a>
+        </div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div><div class="persona-list"><a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a><a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a></div></div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-header">
+            <span class="badge">BKR · YURTİÇİ · PERSONA #3</span>
+            <div class="lang-toggle">
+                <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                <button class="lang-btn" onclick="switchLang('en')">EN</button>
+            </div>
+        </div>
+        <h1>
+            <span class="tr">Yurtiçi <span>Rezervasyon</span> Ekibi</span>
+            <span class="en">Domestic <span>Reservation</span> Team</span>
+        </h1>
+        <p class="hero-subtitle">
+            <span class="tr">Türkiye içi kargo rezervasyonlarını yöneten TK personeli. %60 walk-in müşteri ile çalışır. Tek ekip olarak hem rezervasyon hem mal kabul yapar. OPR026 (Capture AWB) ekranını kullanır - CAP018 kullanmaz.</span>
+            <span class="en">TK staff managing domestic cargo reservations within Turkey. Works with 60% walk-in customers. Single team handles both reservation and cargo acceptance. Uses OPR026 (Capture AWB) screen - does NOT use CAP018.</span>
+        </p>
+        <div class="hero-quote">
+            <span class="tr">"Yurtiçi ekipleri CAP018 hiç kullanmaz; sadece OPR026-Capture AWB ekranını kullanırlar. Tek ekip tüm işlemleri yapar - rezervasyon, mal kabul, dokümantasyon hepsi aynı anda, aynı ekranda. Müşteri walk-in gelir, kargo tartılır, ölçülür, sonra sisteme girilir."</span>
+            <span class="en">"Domestic teams don't use CAP018 at all; they only use OPR026-Capture AWB screen. Single team does all tasks - reservation, cargo acceptance, documentation all at once, same screen. Customer walks in, cargo is weighed, measured, then entered into system."</span>
+        </div>
+        <div class="hero-meta">
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#16a34a;"></span>
+                <span><strong>User:</strong> <span class="tr">TK Yurtiçi Personeli</span><span class="en">TK Domestic Staff</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#f59e0b;"></span>
+                <span><strong>Criticality:</strong> <span style="color:#f59e0b;">★★★★☆</span> <span class="tr">Yüksek</span><span class="en">High</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#3b82f6;"></span>
+                <span><strong>Main Screen:</strong> OPR026 (Capture AWB)</span>
+            </div>
+            <div class="hero-meta-item source-card">
+                <span class="dot" style="background:#ec4899;"></span>
+                <span><strong>Source:</strong> 2 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                <div class="source-tooltip">
+                    <div style="font-weight:700; margin-bottom:10px; color:#a5f3fc; font-size:12px;">📄 Source MoM Documents</div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-15</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-2026-01-06</span><span style="color:#86efac;">Key User</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BOARD -->
+<div class="board">
+
+    <!-- SECTION 1: PERSONA PROFILE -->
+    <section class="card section-1">
+        <div class="card-header">
+            <div class="card-icon">1</div>
+            <div class="card-title">
+                <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                <p><span class="tr">Kim, ne yapar, temel özellikler</span><span class="en">Who, what they do, key attributes</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s1-chart" class="view-pane active">
+                <div class="stat-grid">
+                    <div class="stat-box highlight">
+                        <div class="stat-value">12K</div>
+                        <div class="stat-label"><span class="tr">Aylık AWB (IST)</span><span class="en">Monthly AWB (IST)</span></div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" style="color:#f59e0b;">60%</div>
+                        <div class="stat-label"><span class="tr">Walk-in Müşteri</span><span class="en">Walk-in Customer</span></div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" style="color:#0284c7;">1</div>
+                        <div class="stat-label"><span class="tr">Ekip (Tüm İşler)</span><span class="en">Team (All Tasks)</span></div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value" style="color:#9333ea;">TL</div>
+                        <div class="stat-label"><span class="tr">Para Birimi</span><span class="en">Currency</span></div>
+                    </div>
+                </div>
+                
+                <div class="profile-grid">
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Rol</span><span class="en">Role</span></div>
+                        <div class="pf-value"><span class="tr">Yurtiçi Kargo Personeli</span><span class="en">Domestic Cargo Staff</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div>
+                        <div class="pf-value"><span class="tr">Yurtiçi Operasyon</span><span class="en">Domestic Operations</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Ana Ekran</span><span class="en">Main Screen</span></div>
+                        <div class="pf-value">OPR026 - Capture AWB</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">CAP018 Kullanımı</span><span class="en">CAP018 Usage</span></div>
+                        <div class="pf-value" style="color:#dc2626;"><span class="tr">❌ Kullanmaz</span><span class="en">❌ Not Used</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">İstasyonlar</span><span class="en">Stations</span></div>
+                        <div class="pf-value">THYIST, THYCOV (ADA), THYESB</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Uçak Tipi</span><span class="en">Aircraft Type</span></div>
+                        <div class="pf-value"><span class="tr">Sadece Yolcu Uçağı</span><span class="en">Passenger Aircraft Only</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Müşteri Tipi</span><span class="en">Customer Type</span></div>
+                        <div class="pf-value"><span class="tr">Walk-in (%60) + Kredili</span><span class="en">Walk-in (60%) + Credit</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">AWB Stok</span><span class="en">AWB Stock</span></div>
+                        <div class="pf-value"><span class="tr">İstasyona Atanmış</span><span class="en">Station Assigned</span></div>
+                    </div>
+                </div>
+                
+                <div class="segment-card">
+                    <div class="segment-col demo">
+                        <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Lokasyon:</span><span class="en">Location:</span></strong> <span class="tr">IST, ADA, ESB, ADB, AYT...</span><span class="en">IST, ADA, ESB, ADB, AYT...</span></div>
+                        <div class="segment-item"><strong><span class="tr">Dil:</span><span class="en">Language:</span></strong> <span class="tr">Sadece Türkçe</span><span class="en">Turkish Only</span></div>
+                        <div class="segment-item"><strong><span class="tr">Çalışma:</span><span class="en">Work:</span></strong> <span class="tr">Counter/Fiziksel</span><span class="en">Counter/Physical</span></div>
+                        <div class="segment-item"><strong><span class="tr">Teknik:</span><span class="en">Technical:</span></strong> <span class="tr">COMIS OPR026 Uzmanı</span><span class="en">COMIS OPR026 Expert</span></div>
+                    </div>
+                    <div class="segment-col behav">
+                        <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Tempo:</span><span class="en">Pace:</span></strong> <span class="tr">Çok hızlı, son dakika</span><span class="en">Very fast, last minute</span></div>
+                        <div class="segment-item"><strong><span class="tr">Veri:</span><span class="en">Data:</span></strong> <span class="tr">Gerçek değerler (tartılmış)</span><span class="en">Real values (weighed)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Müşteri:</span><span class="en">Customer:</span></strong> <span class="tr">Yüz yüze, counter</span><span class="en">Face-to-face, counter</span></div>
+                        <div class="segment-item"><strong><span class="tr">Form:</span><span class="en">Form:</span></strong> <span class="tr">Manuel form + damga</span><span class="en">Manual form + stamp</span></div>
+                    </div>
+                    <div class="segment-col psycho">
+                        <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Stres:</span><span class="en">Stress:</span></strong> <span class="tr">Yüksek (son dakika)</span><span class="en">High (last minute)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Değer:</span><span class="en">Value:</span></strong> <span class="tr">Hız > Detay</span><span class="en">Speed > Detail</span></div>
+                        <div class="segment-item"><strong><span class="tr">Beklenti:</span><span class="en">Expectation:</span></strong> <span class="tr">Az tıklama, hızlı giriş</span><span class="en">Few clicks, fast entry</span></div>
+                        <div class="segment-item"><strong><span class="tr">Frustrasyon:</span><span class="en">Frustration:</span></strong> <span class="tr">Yavaş sistem</span><span class="en">Slow system</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s1-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Yurtiçi personeli uluslararası rezervasyondan tamamen farklı çalışır: Agent yoktur, müşteri walk-in gelir (%60), kargo fiziksel olarak tartılıp ölçülür, sonra sisteme gerçek değerlerle girilir. Tek ekip tüm işleri yapar - rezervasyon, mal kabul, dokümantasyon. CAP018 kullanmaz, OPR026 ekranı ile çalışır.</span>
+                    <span class="en">Domestic staff works completely different from international reservation: No agents, customers walk in (60%), cargo is physically weighed/measured, then entered with real values. Single team does all tasks - reservation, cargo acceptance, documentation. Doesn't use CAP018, works with OPR026 screen.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-15:</strong> "Domestic teams do not use CAP018 at all; they only use OPR026-Capture AWB screen."<br>
+                    "Since domestic teams handle reservation, cargo acceptance, and documentation simultaneously, OPR026 allows them to perform all functions on a single screen."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: GOALS & MOTIVATION -->
+    <section class="card section-2">
+        <div class="card-header">
+            <div class="card-icon">2</div>
+            <div class="card-title">
+                <h2><span class="tr">Hedefler & Motivasyon</span><span class="en">Goals & Motivation</span></h2>
+                <p><span class="tr">Ne istiyor, neden, korkuları</span><span class="en">What they want, why, fears</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s2-chart" class="view-pane active">
+                <div class="goal-pyramid">
+                    <div class="goal-level primary"><span class="tr">🎯 Son dakika kargolarını hızla işlemek</span><span class="en">🎯 Process last-minute cargo quickly</span></div>
+                    <div class="goal-level secondary"><span class="tr">📋 Az tıklama ile veri girişi | Walk-in müşteri memnuniyeti</span><span class="en">📋 Data entry with few clicks | Walk-in customer satisfaction</span></div>
+                    <div class="goal-level tertiary"><span class="tr">⌨️ Klavye kısayolları | Hızlı form doldurma | Kuyruk yönetimi</span><span class="en">⌨️ Keyboard shortcuts | Fast form filling | Queue management</span></div>
+                </div>
+                
+                <div class="three-col">
+                    <div class="list-box motivators">
+                        <h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                        <div class="list-item"><span class="tr">Hızlı işlem tamamlama</span><span class="en">Fast transaction completion</span></div>
+                        <div class="list-item"><span class="tr">Müşteri memnun ayrılması</span><span class="en">Customer leaving satisfied</span></div>
+                        <div class="list-item"><span class="tr">Son dakika kargo yetişmesi</span><span class="en">Last minute cargo making flight</span></div>
+                        <div class="list-item"><span class="tr">Kuyrukların hızla erimesi</span><span class="en">Queues clearing quickly</span></div>
+                        <div class="list-item"><span class="tr">Tek ekranda her şeyi yapabilmek</span><span class="en">Doing everything on one screen</span></div>
+                    </div>
+                    <div class="list-box demotivators">
+                        <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                        <div class="list-item"><span class="tr">Çok fazla tıklama gerektiren sistem</span><span class="en">System requiring too many clicks</span></div>
+                        <div class="list-item"><span class="tr">Klavye kısayolu olmaması</span><span class="en">No keyboard shortcuts</span></div>
+                        <div class="list-item"><span class="tr">Yavaş sistem yanıtı</span><span class="en">Slow system response</span></div>
+                        <div class="list-item"><span class="tr">Uzayan müşteri kuyrukları</span><span class="en">Growing customer queues</span></div>
+                        <div class="list-item"><span class="tr">Manuel form zorunluluğu</span><span class="en">Manual form requirement</span></div>
+                    </div>
+                    <div class="list-box fears">
+                        <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item"><span class="tr">Uçağı kaçıran son dakika kargo</span><span class="en">Last minute cargo missing flight</span></div>
+                        <div class="list-item"><span class="tr">Müşteri şikayetleri</span><span class="en">Customer complaints</span></div>
+                        <div class="list-item"><span class="tr">Yanlış müşteri kaydı</span><span class="en">Wrong customer record</span></div>
+                        <div class="list-item"><span class="tr">Depoda kayıp kargo</span><span class="en">Lost cargo in warehouse</span></div>
+                        <div class="list-item"><span class="tr">Form/damga eksikliği</span><span class="en">Missing form/stamp</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s2-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Yurtiçi ekibi için hız en kritik faktör. Son dakika kargo talepleri çok yoğun. Mevcut sistemde çok fazla tıklama gerekiyor ve klavye kısayolları yok - bu en büyük frustrasyon kaynağı.</span>
+                    <span class="en">Speed is the most critical factor for domestic team. Last-minute cargo requests are very intense. Current system requires too many clicks and lacks keyboard shortcuts - this is the biggest frustration source.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2026-01-06:</strong> "Speed is a critical issue; especially last-minute cargo requests are very intense in Domestic operations."<br>
+                    "The process steps within the application require too many clicks."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: WORKFLOW -->
+    <section class="card section-3">
+        <div class="card-header">
+            <div class="card-icon">3</div>
+            <div class="card-title">
+                <h2><span class="tr">İş Akışı & Niyetler</span><span class="en">Workflow & Intents</span></h2>
+                <p><span class="tr">Yurtiçi rezervasyon süreci</span><span class="en">Domestic reservation process</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s3-chart" class="view-pane active">
+                <h4 style="font-size:11px; color:#0284c7; margin-bottom:12px;"><span class="tr">YURTİÇİ AKIŞI (Uluslararasıdan FARKLI)</span><span class="en">DOMESTIC FLOW (DIFFERENT from International)</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step unique"><span class="tr">🚶 Müşteri Walk-in</span><span class="en">🚶 Customer Walk-in</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step unique"><span class="tr">⚖️ Fiziksel Tartım/Ölçüm</span><span class="en">⚖️ Physical Weigh/Measure</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">📝 Manuel Form</span><span class="en">📝 Manual Form</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">💻 OPR026 Giriş</span><span class="en">💻 OPR026 Entry</span></div>
+                </div>
+                <div class="flow-h">
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">Müşteri Kodu (WALKINCUSTOMERS)</span><span class="en">Customer Code (WALKINCUSTOMERS)</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">AWB Atama (İstasyon Stoku)</span><span class="en">AWB Assign (Station Stock)</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background:#dcfce7; color:#166534; border:2px solid #86efac;"><span class="tr">Execute (Tek Adım)</span><span class="en">Execute (Single Step)</span></div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4>✨ <span class="tr">TEMEL FARK: TEK EKİP, TEK EKRAN</span><span class="en">KEY DIFFERENCE: SINGLE TEAM, SINGLE SCREEN</span></h4>
+                    <p><span class="tr">"Yurtiçi uçuşlarda rezervasyon kaydedilmek yerine, tüm operasyonlar doğrudan rezervasyonu yapan kişi tarafından execute edilir. Uluslararasında farklı ekranlar için farklı görevler varken, yurtiçinde tek ekranda (OPR026) her şey yapılır."</span>
+                    <span class="en">"In domestic flights, instead of saving the reservation, all operations are executed directly by the person making the reservation. While international has different screens for different tasks, domestic does everything on single screen (OPR026)."</span></p>
+                </div>
+                
+                <h4 style="font-size:11px; color:#0284c7; margin:24px 0 12px;"><span class="tr">ULUSLARARASI vs YURTİÇİ KARŞILAŞTIRMA</span><span class="en">INTERNATIONAL vs DOMESTIC COMPARISON</span></h4>
+                <div class="compare-box">
+                    <div class="compare-col domestic">
+                        <h4>🇹🇷 <span class="tr">YURTİÇİ</span><span class="en">DOMESTIC</span></h4>
+                        <div class="compare-item">✅ <span class="tr">OPR026 - Capture AWB</span><span class="en">OPR026 - Capture AWB</span></div>
+                        <div class="compare-item">✅ <span class="tr">Tek ekip (rez + mal kabul + dok)</span><span class="en">Single team (res + acceptance + doc)</span></div>
+                        <div class="compare-item">✅ <span class="tr">Walk-in müşteri (%60)</span><span class="en">Walk-in customer (60%)</span></div>
+                        <div class="compare-item">✅ <span class="tr">Gerçek tartılmış değerler</span><span class="en">Real weighed values</span></div>
+                        <div class="compare-item">✅ <span class="tr">İstasyona atanmış AWB stok</span><span class="en">Station-assigned AWB stock</span></div>
+                        <div class="compare-item">✅ <span class="tr">TL para birimi otomatik</span><span class="en">TL currency automatic</span></div>
+                        <div class="compare-item">✅ <span class="tr">Sadece yolcu uçağı</span><span class="en">Passenger aircraft only</span></div>
+                    </div>
+                    <div class="compare-col international">
+                        <h4>🌍 <span class="tr">ULUSLARARASI</span><span class="en">INTERNATIONAL</span></h4>
+                        <div class="compare-item">❌ <span class="tr">CAP018 - Maintain Booking</span><span class="en">CAP018 - Maintain Booking</span></div>
+                        <div class="compare-item">❌ <span class="tr">Ayrı ekipler (rez ≠ operasyon)</span><span class="en">Separate teams (res ≠ operations)</span></div>
+                        <div class="compare-item">❌ <span class="tr">Agent tabanlı</span><span class="en">Agent based</span></div>
+                        <div class="compare-item">❌ <span class="tr">Tahmini değerler</span><span class="en">Estimated values</span></div>
+                        <div class="compare-item">❌ <span class="tr">Agent'ın kendi AWB stoku</span><span class="en">Agent's own AWB stock</span></div>
+                        <div class="compare-item">❌ <span class="tr">Çoklu para birimi</span><span class="en">Multiple currencies</span></div>
+                        <div class="compare-item">❌ <span class="tr">Yolcu + kargo uçağı</span><span class="en">Passenger + cargo aircraft</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s3-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Yurtiçi akışı uluslararasından tamamen farklı: Müşteri fiziksel olarak gelir (walk-in), kargo tartılır/ölçülür, gerçek değerlerle sisteme girilir ve tek seferde execute edilir. Agent kavramı yok - müşteriler WALKINCUSTOMERS kodu altında veya kredili müşteri olarak kaydedilir.</span>
+                    <span class="en">Domestic flow is completely different from international: Customer comes physically (walk-in), cargo is weighed/measured, entered with real values and executed in single step. No agent concept - customers recorded under WALKINCUSTOMERS code or as credit customers.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-15:</strong> "Unlike international processes, domestic cargo is weighed and measured at the counter before the reservation is entered into the system."<br>
+                    "If the customer is new, their information is recorded under the code 'WALKINCUSTOMERS'."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: DATA & INTEGRATION -->
+    <section class="card section-4">
+        <div class="card-header">
+            <div class="card-icon">4</div>
+            <div class="card-title">
+                <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                <p><span class="tr">Ekranlar, müşteri yönetimi</span><span class="en">Screens, customer management</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s4-chart" class="view-pane active">
+                <h4 style="font-size:11px; color:#0d9488; margin-bottom:12px;"><span class="tr">YURTİÇİ MÜŞTERİ TİPLERİ</span><span class="en">DOMESTIC CUSTOMER TYPES</span></h4>
+                <div class="three-col">
+                    <div class="list-box" style="border-left:3px solid #f59e0b;">
+                        <h4 style="color:#f59e0b;"><span class="tr">🚶 WALK-IN (%60)</span><span class="en">🚶 WALK-IN (60%)</span></h4>
+                        <div class="list-item"><span class="tr">Kod: WALKINCUSTOMERS</span><span class="en">Code: WALKINCUSTOMERS</span></div>
+                        <div class="list-item"><span class="tr">Kayıt: Shipper altında</span><span class="en">Record: Under shipper</span></div>
+                        <div class="list-item"><span class="tr">Ödeme: Peşin</span><span class="en">Payment: Cash</span></div>
+                        <div class="list-item"><span class="tr">AWB: İstasyondan atanır</span><span class="en">AWB: Assigned from station</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;"><span class="tr">🏢 KREDİLİ MÜŞTERİ</span><span class="en">🏢 CREDIT CUSTOMER</span></h4>
+                        <div class="list-item"><span class="tr">Örnek: DHL, Yurtiçi Kargo</span><span class="en">Example: DHL, Yurtiçi Kargo</span></div>
+                        <div class="list-item"><span class="tr">Depozito bazlı (örn: 100K TL)</span><span class="en">Deposit based (e.g., 100K TL)</span></div>
+                        <div class="list-item"><span class="tr">Kayıt: Muhasebe (CMT008)</span><span class="en">Record: Accounting (CMT008)</span></div>
+                        <div class="list-item"><span class="tr">Her rez depozito düşer</span><span class="en">Each res deducts deposit</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #9333ea;">
+                        <h4 style="color:#9333ea;"><span class="tr">📋 KAYITLI MÜŞTERİ</span><span class="en">📋 REGISTERED CUSTOMER</span></h4>
+                        <div class="list-item"><span class="tr">Form: Yetki formu gerekli</span><span class="en">Form: Authorization form needed</span></div>
+                        <div class="list-item"><span class="tr">Damga + şirket temsilcisi</span><span class="en">Stamp + company representative</span></div>
+                        <div class="list-item"><span class="tr">Kayıt: CMT008 (personel)</span><span class="en">Record: CMT008 (staff)</span></div>
+                        <div class="list-item"><span class="tr">Tüm istasyonlar kullanabilir</span><span class="en">All stations can use</span></div>
+                    </div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#0d9488; margin:24px 0 12px;"><span class="tr">AWB STOK YÖNETİMİ</span><span class="en">AWB STOCK MANAGEMENT</span></h4>
+                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                    <thead>
+                        <tr style="background:#f0fdfa;">
+                            <th style="padding:12px; text-align:left; border-bottom:2px solid #14b8a6;"><span class="tr">İstasyon</span><span class="en">Station</span></th>
+                            <th style="padding:12px; text-align:left; border-bottom:2px solid #14b8a6;"><span class="tr">Kod</span><span class="en">Code</span></th>
+                            <th style="padding:12px; text-align:left; border-bottom:2px solid #14b8a6;"><span class="tr">Para Birimi</span><span class="en">Currency</span></th>
+                            <th style="padding:12px; text-align:left; border-bottom:2px solid #14b8a6;"><span class="tr">Örnek Rota</span><span class="en">Example Route</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><span class="tr">İstanbul</span><span class="en">Istanbul</span></td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><strong>THYIST</strong></td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">TL</td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">IST→ADA, IST→ESB</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><span class="tr">Adana</span><span class="en">Adana</span></td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><strong>THYCOV</strong></td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">TL</td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;">ADA→IST→[Destinasyon]</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px;"><span class="tr">Ankara</span><span class="en">Ankara</span></td>
+                            <td style="padding:10px;"><strong>THYESB</strong></td>
+                            <td style="padding:10px;">TL</td>
+                            <td style="padding:10px;">ESB→IST→[Destinasyon]</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="evidence" style="margin-top:16px;">
+                    <strong><span class="tr">Önemli:</span><span class="en">Important:</span></strong> <span class="tr">"Master data ekipleri istasyon başına belirli AWB stok havuzu atar. Yurtiçi rezervasyon ekipleri bu stokları kodlarına göre kullanır. Müşterilerin kendi AWB stoku yoktur."</span>
+                    <span class="en">"Master data teams assign AWB stock pool per station. Domestic reservation teams use these stocks according to their codes. Customers don't have their own AWB stock."</span>
+                </div>
+            </div>
+            <div id="s4-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Yurtiçinde AWB yönetimi uluslararasından farklı: Müşterilerin kendi stoku yok, istasyona atanmış havuzdan kullanılır. Walk-in müşteriler (%60) WALKINCUSTOMERS koduna kaydedilir. Kredili müşteriler (DHL, Yurtiçi Kargo gibi) depozito sistemiyle çalışır.</span>
+                    <span class="en">Domestic AWB management differs from international: Customers don't have their own stock, used from station-assigned pool. Walk-in customers (60%) recorded under WALKINCUSTOMERS code. Credit customers (like DHL, Yurtiçi Kargo) work with deposit system.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: PAIN POINTS -->
+    <section class="card section-5">
+        <div class="card-header">
+            <div class="card-icon">5</div>
+            <div class="card-title">
+                <h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2>
+                <p><span class="tr">Sorunlar, riskler</span><span class="en">Issues, risks</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s5-chart" class="view-pane active">
+                <div class="pain-list">
+                    <div class="pain-item high">
+                        <span class="pain-code">P1</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">🔴 Çok Fazla Tıklama, Yavaş Sistem</span><span class="en">🔴 Too Many Clicks, Slow System</span></h5>
+                            <p><span class="tr">"Uygulama içindeki işlem adımları çok fazla tıklama gerektiriyor. Hız kritik bir konu; özellikle son dakika kargo talepleri yurtiçi operasyonlarda çok yoğun." Klavye kısayolları yok.</span>
+                            <span class="en">"The process steps within the application require too many clicks. Speed is a critical issue; especially last-minute cargo requests are very intense in Domestic operations." No keyboard shortcuts.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item high">
+                        <span class="pain-code">P2</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">🔴 Manuel Form Yasal Zorunluluğu</span><span class="en">🔴 Manual Form Legal Requirement</span></h5>
+                            <p><span class="tr">"Yasal gereksinimler nedeniyle yurtiçi rezervasyon formu manuel olarak alınmalı ve sistem içinde saklanmalı." Dijital ortama geçiş gerekli ama yasal engel var.</span>
+                            <span class="en">"Due to legal requirements, the domestic reservation create form must be manually obtained and stored within the system." Transition to digital needed but legal barrier exists.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P3</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">SCI Alanı Gereksiz (Yurtiçi İçin)</span><span class="en">SCI Field Unnecessary (For Domestic)</span></h5>
+                            <p><span class="tr">"SCI alanı yurtiçinde kullanılmıyor; aslında uluslararası güvenlik nedeniyle doldurulur, zorunlu alan olduğu için default değer seçerek geçiyorlar." Gereksiz zorunlu alan.</span>
+                            <span class="en">"SCI field is not used domestically; it's actually filled due to international security reasons, they proceed by selecting a default value because it's mandatory." Unnecessary required field.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P4</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">TKgo Yurtiçi Entegrasyonu Eksik</span><span class="en">TKgo Domestic Integration Missing</span></h5>
+                            <p><span class="tr">"Şu anda TKgo içinde yurtiçi rezervasyonları etkinleştirmek için talep yapılmış durumda." Müşterilerin self-servis yapabilmesi henüz mümkün değil.</span>
+                            <span class="en">"Currently, a request has been made to enable domestic reservations within TKgo." Customer self-service not yet possible.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item low">
+                        <span class="pain-code">P5</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">Depoda Kargo Bulma Zorluğu</span><span class="en">Cargo Finding Difficulty in Warehouse</span></h5>
+                            <p><span class="tr">"Bu bilgilerin yurtiçinde toplanmasının nedeni, depo kalabalık olduğunda kargoyu bulmayı kolaylaştırmak." Fiziksel boyut bilgisi önemli.</span>
+                            <span class="en">"The reason for collecting this information domestically is to make it easier to find cargo in the warehouse when it is crowded." Physical dimension info important.</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="s5-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">En kritik pain point: Sistem hızı ve çok fazla tıklama. Son dakika kargo yoğunluğunda bu büyük problem. İkinci önemli sorun: Manuel form yasal zorunluluğu - dijitalleşme önünde engel.</span>
+                    <span class="en">Most critical pain point: System speed and too many clicks. This is a big problem during last-minute cargo intensity. Second important issue: Manual form legal requirement - barrier to digitalization.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2026-01-06:</strong> "Pain Point 4: Speed is insufficient for last-minute cargo requests (especially Domestic)."<br>
+                    "Users report that the system requires too many clicks, lacks keyboard shortcuts for fast processing."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: EMPATHY MAP -->
+    <section class="card section-6">
+        <div class="card-header">
+            <div class="card-icon">6</div>
+            <div class="card-title">
+                <h2><span class="tr">Zihinsel Model & Davranış</span><span class="en">Mental Model & Behavior</span></h2>
+                <p><span class="tr">Empathy Map</span><span class="en">Empathy Map</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s6-chart" class="view-pane active">
+                <div class="empathy-grid">
+                    <!-- SAYS - Top Left -->
+                    <div class="empathy-quad says">
+                        <h4><span class="icon">💬</span> <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                        <div class="empathy-item"><span class="tr">"Kargoyu tartıya koyun, boyutları söyleyin"</span><span class="en">"Put the cargo on scale, tell me dimensions"</span></div>
+                        <div class="empathy-item"><span class="tr">"Sıranız gelince çağıracağım"</span><span class="en">"I'll call you when it's your turn"</span></div>
+                        <div class="empathy-item"><span class="tr">"Sistem yine yavaşladı..."</span><span class="en">"System slowed down again..."</span></div>
+                        <div class="empathy-item"><span class="tr">"Uçak 14:00'te, yetişir mi?"</span><span class="en">"Flight is at 14:00, will it make it?"</span></div>
+                    </div>
+                    
+                    <!-- Center Persona Avatar -->
+                    <div class="empathy-avatar">
+                        <div class="empathy-avatar-circle">🏪</div>
+                        <div style="margin-top:10px; font-size:12px; font-weight:700; color:#16a34a; text-align:center;"><span class="tr">Yurtiçi</span><span class="en">Domestic</span></div>
+                        <div style="font-size:10px; color:#9ca3af; text-align:center;"><span class="tr">Rez & Kabul</span><span class="en">Res & Accept</span></div>
+                        <div style="margin-top:8px; padding:4px 10px; background:rgba(22,163,74,0.1); border-radius:12px; font-size:9px; color:#16a34a; font-weight:600;">THYDOM</div>
+                    </div>
+                    
+                    <!-- THINKS - Top Right -->
+                    <div class="empathy-quad thinks">
+                        <h4><span class="icon">💭</span> <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                        <div class="empathy-item"><span class="tr">"Bu kadar tıklama neden gerekli?"</span><span class="en">"Why are so many clicks necessary?"</span></div>
+                        <div class="empathy-item"><span class="tr">"Kuyruk çok uzadı, yetişemeyeceğim"</span><span class="en">"Queue is too long, I won't make it"</span></div>
+                        <div class="empathy-item"><span class="tr">"Klavye kısayolu olsa çok hızlanırdı"</span><span class="en">"Keyboard shortcut would speed things up"</span></div>
+                        <div class="empathy-item"><span class="tr">"WALKINCUSTOMERS mı yoksa kayıtlı mı?"</span><span class="en">"WALKINCUSTOMERS or registered?"</span></div>
+                    </div>
+                    
+                    <!-- DOES - Bottom Left -->
+                    <div class="empathy-quad does">
+                        <h4><span class="icon">⚡</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                        <div class="empathy-item"><span class="tr">Fiziksel olarak tartı/ölçüm alır</span><span class="en">Physically takes weight/measurement</span></div>
+                        <div class="empathy-item"><span class="tr">Manuel formu doldurur, damgalar</span><span class="en">Fills manual form, stamps</span></div>
+                        <div class="empathy-item"><span class="tr">OPR026'da hızlıca execute eder</span><span class="en">Quickly executes in OPR026</span></div>
+                        <div class="empathy-item"><span class="tr">Müşteriyle yüz yüze iletişim kurar</span><span class="en">Communicates face-to-face with customer</span></div>
+                    </div>
+                    
+                    <!-- FEELS - Bottom Right -->
+                    <div class="empathy-quad feels">
+                        <h4><span class="icon">❤️</span> <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                        <div class="empathy-item"><span class="tr">Son dakika baskısı ve stres</span><span class="en">Last-minute pressure and stress</span></div>
+                        <div class="empathy-item"><span class="tr">Yavaş sisteme karşı frustrasyon</span><span class="en">Frustration against slow system</span></div>
+                        <div class="empathy-item"><span class="tr">Kuyruk uzadığında tedirginlik</span><span class="en">Anxiety when queue grows</span></div>
+                        <div class="empathy-item"><span class="tr">Kargo yetiştiğinde rahatlama</span><span class="en">Relief when cargo makes flight</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s6-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Yurtiçi personeli fiziksel ve dijital dünya arasında köprü kurar: Müşteriyle yüz yüze, kargoyu fiziksel tartarken, aynı anda sistem girişi yapar. Ana duygu: hız baskısı ve sistem yavaşlığına karşı frustrasyon.</span>
+                    <span class="en">Domestic staff bridges physical and digital worlds: face-to-face with customer, physically weighing cargo, while simultaneously entering into system. Main emotion: speed pressure and frustration against system slowness.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: COLLABORATION -->
+    <section class="card section-7">
+        <div class="card-header">
+            <div class="card-icon">7</div>
+            <div class="card-title">
+                <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                <p><span class="tr">Paydaşlar, koordinasyon</span><span class="en">Stakeholders, coordination</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s7-chart" class="view-pane active">
+                <div class="stakeholder-map">
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node provider"><span class="tr">🚶 Walk-in Müşteri (%60)</span><span class="en">🚶 Walk-in Customer (60%)</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">🏢 Kredili Müşteri (DHL, Yurtiçi)</span><span class="en">🏢 Credit Customer (DHL, Yurtiçi)</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node persona"><span class="tr">🎯 YURTİÇİ EKİBİ (Tek Ekip)</span><span class="en">🎯 DOMESTIC TEAM (Single Team)</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node partner"><span class="tr">📦 Depo (Fiziksel)</span><span class="en">📦 Warehouse (Physical)</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">✈️ Ramp Operasyon</span><span class="en">✈️ Ramp Operations</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">💰 Muhasebe (Kredi)</span><span class="en">💰 Accounting (Credit)</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node consumer"><span class="tr">🛬 Varış İstasyonu</span><span class="en">🛬 Destination Station</span></div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4>💡 <span class="tr">FARK: TEK EKİP = TÜM ROLLER</span><span class="en">DIFFERENCE: SINGLE TEAM = ALL ROLES</span></h4>
+                    <p><span class="tr">Uluslararasında rezervasyon, mal kabul, dokümantasyon ayrı ekiplerse; yurtiçinde TEK EKİP hepsini yapar. Bu yüzden ayrı "operasyon" veya "mal kabul" paydaşı yok - aynı kişiler.</span>
+                    <span class="en">While international has separate teams for reservation, cargo acceptance, documentation; domestic SINGLE TEAM does all. That's why no separate "operations" or "cargo acceptance" stakeholder - same people.</span></p>
+                </div>
+            </div>
+            <div id="s7-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Yurtiçi ekibi tek noktada tüm süreçleri yönetir. Müşteriyle doğrudan temas halinde, hem rezervasyon hem mal kabul hem dokümantasyonu aynı anda yapar. Muhasebe ile kredili müşteri takibi, depo ile fiziksel koordinasyon sağlar.</span>
+                    <span class="en">Domestic team manages all processes at single point. In direct contact with customer, handles reservation, cargo acceptance and documentation simultaneously. Coordinates with accounting for credit customers, warehouse for physical operations.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 8: PRODUCT OPPORTUNITIES -->
+    <section class="card section-8">
+        <div class="card-header">
+            <div class="card-icon">8</div>
+            <div class="card-title">
+                <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+                <p><span class="tr">Çözüm önerileri</span><span class="en">Solution proposals</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s8-chart" class="view-pane active">
+                <div class="timeline">
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="tr">P1 → Klavye Kısayolları & Hızlı Giriş</span><span class="en">P1 → Keyboard Shortcuts & Fast Entry</span></h5>
+                        <p><span class="tr">En kritik ihtiyaç: Tıklama sayısını minimize eden klavye kısayolları. Tab-Enter akışı, hotkey'ler, auto-complete.</span>
+                        <span class="en">Most critical need: Keyboard shortcuts minimizing click count. Tab-Enter flow, hotkeys, auto-complete.</span></p>
+                    </div>
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="tr">P3 → SCI Alanı Yurtiçi İçin Opsiyonel</span><span class="en">P3 → SCI Field Optional for Domestic</span></h5>
+                        <p><span class="tr">Yurtiçi rezervasyonlarda SCI alanı zorunlu olmamalı veya otomatik default değer atanmalı.</span>
+                        <span class="en">SCI field should not be mandatory for domestic reservations or automatic default value should be assigned.</span></p>
+                    </div>
+                    <div class="timeline-item short">
+                        <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                        <h5><span class="tr">P2 → Dijital Form & E-İmza</span><span class="en">P2 → Digital Form & E-Signature</span></h5>
+                        <p><span class="tr">Manuel form yerine dijital form + e-imza çözümü. Yasal departmanla koordineli çalışılmalı.</span>
+                        <span class="en">Digital form + e-signature solution instead of manual form. Should work in coordination with legal department.</span></p>
+                    </div>
+                    <div class="timeline-item short">
+                        <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                        <h5><span class="tr">P4 → TKgo Yurtiçi Entegrasyonu</span><span class="en">P4 → TKgo Domestic Integration</span></h5>
+                        <p><span class="tr">Kredili müşterilerin TKgo üzerinden self-servis yurtiçi rezervasyon yapabilmesi.</span>
+                        <span class="en">Credit customers able to make self-service domestic reservations via TKgo.</span></p>
+                    </div>
+                    <div class="timeline-item long">
+                        <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
+                        <h5><span class="tr">P5 → Akıllı Depo Takip Entegrasyonu</span><span class="en">P5 → Smart Warehouse Tracking Integration</span></h5>
+                        <p><span class="tr">Kargo boyut bilgisine göre depo lokasyon önerisi ve arama kolaylığı.</span>
+                        <span class="en">Warehouse location suggestion and easy search based on cargo dimension info.</span></p>
+                    </div>
+                </div>
+            </div>
+            <div id="s8-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">MVP öncelikleri: Klavye kısayolları (en kritik) ve gereksiz zorunlu alanların kaldırılması. Kısa vadede dijital form çözümü ve TKgo entegrasyonu. Uzun vadede akıllı depo takibi.</span>
+                    <span class="en">MVP priorities: Keyboard shortcuts (most critical) and removing unnecessary required fields. Short-term: digital form solution and TKgo integration. Long-term: smart warehouse tracking.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 9: AI SUPPORT -->
+    <section class="card section-9">
+        <div class="card-header">
+            <div class="card-icon">9</div>
+            <div class="card-title">
+                <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                <p><span class="tr">AI potansiyeli</span><span class="en">AI potential</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s9-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                    <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                    <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                </p>
+                
+                <!-- Slider Container -->
+                <div style="display:flex; gap:24px; margin-bottom:32px;">
+                    <!-- Left: Scale Labels -->
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:100px; padding:8px 0;">
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 YASAK</span>
+                            <div style="font-size:8px; color:#9ca3af;">AI yapmamalı</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ ONAY GEREKLİ</span>
+                            <div style="font-size:8px; color:#9ca3af;">İnsan onayı şart</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ GÜVENLİ</span>
+                            <div style="font-size:8px; color:#9ca3af;">AI serbest</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Middle: Slider Track -->
+                    <div style="flex:1; position:relative;">
+                        <!-- Gradient Track - Tamamı yeşil (Seviye 6) -->
+                        <div style="height:240px; border-radius:12px; background: linear-gradient(to bottom, #dcfce7 0%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            
+                            <!-- TRUST LINE - Güven Sınırı (Seviye 6 - en üst) -->
+                            <div style="position:absolute; left:0; right:0; top:2%; height:3px; background:#16a34a; z-index:10;"></div>
+                            <div style="position:absolute; right:8px; top:0%; background:#16a34a; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                <span class="tr">✅ TAM OTONOM</span>
+                                <span class="en">✅ FULL AUTONOMOUS</span>
+                            </div>
+                            
+                            <!-- Level Markers -->
+                            <div style="position:absolute; left:12px; top:4%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">6 - 📦 WALKINCUSTOMERS AWB atama</span>
+                                <span class="en">6 - 📦 WALKINCUSTOMERS AWB assignment</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:21%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">5 - 💳 Kredili müşteri otomatik faturalama</span>
+                                <span class="en">5 - 💳 Credit customer auto-billing</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:40%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">4 - 💡 En yakın uçuş önerisi (son dakika)</span>
+                                <span class="en">4 - 💡 Nearest flight suggestion (last-minute)</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">3 - ⚙️ Müşteri bilgisi auto-complete</span>
+                                <span class="en">3 - ⚙️ Customer info auto-complete</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:70%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">2 - 📝 Günlük AWB sayısı, kuyruk özeti</span>
+                                <span class="en">2 - 📝 Daily AWB count, queue summary</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:85%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">1 - 📊 Uçuş saatleri, kapasite durumu</span>
+                                <span class="en">1 - 📊 Flight times, capacity status</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="two-col" style="margin-top:20px;">
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">📋 Müşteri bilgisi auto-complete</span><span class="en">📋 Customer info auto-complete</span></div>
+                        <div class="list-item"><span class="tr">✈️ Son dakika uçuş önerisi</span><span class="en">✈️ Last-minute flight suggestion</span></div>
+                        <div class="list-item"><span class="tr">📊 Kapasite/kuyruk durumu özeti</span><span class="en">📊 Capacity/queue status summary</span></div>
+                        <div class="list-item"><span class="tr">🔢 AWB stok otomatik atama</span><span class="en">🔢 AWB stock auto assignment</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #dc2626;">
+                        <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">🚫 Fiziksel tartım/ölçüm</span><span class="en">🚫 Physical weighing/measurement</span></div>
+                        <div class="list-item"><span class="tr">🚫 Müşteri kimlik doğrulama</span><span class="en">🚫 Customer identity verification</span></div>
+                        <div class="list-item"><span class="tr">🚫 Form damgalama</span><span class="en">🚫 Form stamping</span></div>
+                        <div class="list-item"><span class="tr">🚫 Kredi limiti kararı</span><span class="en">🚫 Credit limit decision</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s9-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Yurtiçi için AI en çok hız artırıcı görevlerde faydalı: auto-complete, uçuş önerisi, AWB otomatik atama. Ancak fiziksel süreçler (tartım, ölçüm, damga) AI'ın kapsamı dışında. Yurtiçinde otomasyon seviyesi daha yüksek olabilir çünkü süreç daha standart.</span>
+                    <span class="en">AI most useful in speed-enhancing tasks for domestic: auto-complete, flight suggestion, auto AWB assignment. However, physical processes (weighing, measuring, stamping) are outside AI scope. Automation level can be higher in domestic since process is more standard.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p><span class="tr">📅 Analiz: 8 Mayıs 2026 | 📄 2 Kaynak MoM (Yurtiçi Workshop) | 🎯 Yurtiçi Rezervasyon Ekibi</span>
+    <span class="en">📅 Analysis: May 8, 2026 | 📄 2 Source MoMs (Domestic Workshop) | 🎯 Domestic Reservation Team</span></p>
+    <p><span class="tr">⚠️ Yalnızca doküman kanıtlarına dayalıdır</span>
+    <span class="en">⚠️ Based on document evidence only</span></p>
+    <p style="margin-top:12px;">BKR - Booking & Reservation | THY Cargo | Sungur Product Team</p>
+</footer>
+    </div><!-- /main-content -->
+
+    <script>
+    function switchLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+        });
+    }
+    
+    function toggleView(btn, section, view) {
+        btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(section + '-chart').classList.remove('active');
+        document.getElementById(section + '-text').classList.remove('active');
+        document.getElementById(section + '-' + view).classList.add('active');
+    }
+
+    function toggleMegaMenu() {
+        document.querySelector('.mega-menu').classList.toggle('open');
+        document.querySelector('.mega-overlay').classList.toggle('open');
+    }
+</script>
+</body>
+</html>

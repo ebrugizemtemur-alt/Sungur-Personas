@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCM - Interline Agreements Specialist Persona</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f7; color: #1f2937; line-height: 1.6; }
+        body.lang-en .tr { display: none !important; }
+        body.lang-tr .en { display: none !important; }
+        
+        .side-nav {
+            position: fixed; top: 0; left: 0; width: 72px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 16px 0; z-index: 1000;
+        }
+        .side-nav-logo {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 11px; color: white;
+            margin-bottom: 24px; cursor: pointer;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+        .nav-items { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0 8px; }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 10px 4px; border-radius: 10px; text-decoration: none;
+            color: #64748b; transition: all 0.2s; font-size: 10px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .nav-item.active { background: rgba(124,58,237,0.2); color: #c4b5fd; }
+        .nav-num { width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+        .nav-label { font-size: 9px; text-align: center; }
+
+        .mega-menu {
+            position: fixed; top: 0; left: 72px; width: 320px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            z-index: 999; transform: translateX(-100%); transition: transform 0.3s ease;
+            overflow-y: auto; padding: 20px;
+        }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; transition: all 0.2s; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #a855f7; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+        
+        .hero {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+            padding: 48px 40px;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(37,99,235,0.15); color: #1d4ed8; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; z-index: 2; position: relative; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #2563eb; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #1d4ed8; }
+        .hero-subtitle { font-size: 16px; color: #1e40af; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #2563eb; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #2563eb; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-step.approve { background: #dcfce7; color: #16a34a; }
+        .flow-step.reject { background: #fecaca; color: #dc2626; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; align-items: stretch; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #3b82f6); display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #dbeafe; color: #1d4ed8; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #dcfce7; color: #047857; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        .summary-box { background: rgba(37,99,235,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip { position: absolute; bottom: calc(100% + 8px); left: 0; min-width: 280px; background: #1f2937; color: white; padding: 14px 16px; border-radius: 10px; font-size: 11px; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        .source-tooltip::after { content: ''; position: absolute; bottom: -6px; left: 24px; width: 12px; height: 12px; background: #1f2937; transform: rotate(45deg); }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-en">
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()">PCM</div>
+        <div class="nav-items">
+            <a href="Persona_PCM_Pricing_Specialist.html" class="nav-item">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Pricing</span>
+            </a>
+            <a href="Persona_PCM_RM_Analyst.html" class="nav-item">
+                <span class="nav-num">2</span>
+                <span class="nav-label">RM</span>
+            </a>
+            <a href="Persona_PCM_Interline_Specialist.html" class="nav-item active">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Interline</span>
+            </a>
+            <a href="Persona_PCM_Sales_Manager.html" class="nav-item">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Sales</span>
+            </a>
+            <a href="Persona_PCM_Station_User.html" class="nav-item">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Station</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 All Modules</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header active">
+                <div class="module-icon pcm">PCM</div>
+                <span class="module-name">Pricing Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link current"><span class="persona-num">3</span> Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon flm">FLM</div>
+                <span class="module-name">Flight Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon bkr">BKR</div>
+                <span class="module-name">Booking & Reservation</span>
+                <span class="module-count">7 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a>
+                <a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a>
+                <a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a>
+                <a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a>
+                <a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a>
+                <a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a>
+                <a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cam">CAM</div>
+                <span class="module-name">Capacity Management</span>
+                <span class="module-count">3 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon com">COM</div>
+                <span class="module-name">Compliance Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon asm">ASM</div>
+                <span class="module-name">AWB Stock Management</span>
+                <span class="module-count">2 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a>
+                <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon trm">TRM</div>
+                <span class="module-name">Truck Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a>
+            </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon scm">SCM</div>
+                <span class="module-name">Special Cargo Management</span>
+                <span class="module-count">1</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">PCM · INTERLINE AGREEMENTS · PERSONA #3</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1><span class="en">Interline Agreements</span><span class="tr">Interline Anlaşmaları</span> <span>Specialist</span></h1>
+            <p class="hero-subtitle">
+                <span class="en">Manages bilateral interline agreements with partner airlines, negotiates SPA (Special Prorate Agreement) rates, and handles rate uploads to multiple systems. Responsible for operating/marketing carrier coordination and ICH settlement processes.</span>
+                <span class="tr">Partner havayollarıyla ikili interline anlaşmalarını yönetir, SPA (Özel Prorate Anlaşması) oranlarını müzakere eder ve çoklu sistemlere oran yüklemelerini yapar. Operating/marketing carrier koordinasyonu ve ICH mutabakat süreçlerinden sorumludur.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="en">"Interline agreements define buy and sell rates between Operating Carrier and Marketing Carrier. All checks are manual and experience-based - no external system integration exists."</span>
+                <span class="tr">"Interline anlaşmaları Operating Carrier ve Marketing Carrier arasındaki alış ve satış oranlarını tanımlar. Tüm kontroller manuel ve deneyim bazlı - harici sistem entegrasyonu yok."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#2563eb;"></span>
+                    <span><strong>Unit:</strong> <span class="en">Alliances & International Relations</span><span class="tr">İttifaklar & Uluslararası İlişkiler</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong><span class="en">Volume</span><span class="tr">Hacim</span>:</strong> 4% <span class="en">of total cargo</span><span class="tr">toplam kargonun</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong><span class="en">Systems</span><span class="tr">Sistemler</span>:</strong> Subrates, COMIS (2 screens), ICH</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 4 MoM</span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#93c5fd;">📄 Source Documents</div>
+                        <div>Key User Interline Meeting (1 MoM)</div>
+                        <div>Key User Tariff Workshop 2, 6, 14 (3 MoM)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1: Persona Profile -->
+        <section class="card section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="en">Persona Profile</span><span class="tr">Persona Profili</span></h2>
+                    <p><span class="en">Who manages interline agreements?</span><span class="tr">Interline anlaşmalarını kim yönetir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="summary-box">
+                        <h4><span class="en">Profile Summary</span><span class="tr">Profil Özeti</span></h4>
+                        <p><span class="en">Partnership-focused specialist who negotiates bilateral cargo agreements with other airlines. Handles complex multi-carrier shipment pricing where TK may be marketing or operating carrier. Manages manual Excel-based rate preparation, email-based negotiations, and uploads to both COMIS accounting screens and view tariff screens. Critical link between commercial agreements and operational execution.</span>
+                        <span class="tr">Diğer havayollarıyla ikili kargo anlaşmaları müzakere eden ortaklık odaklı uzman. TK'nın marketing veya operating carrier olabildiği karmaşık çok taşıyıcılı sevkiyat fiyatlandırmasını yönetir.</span></p>
+                    </div>
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label">Role</div><div class="pf-value"><span class="en">Interline Specialist</span><span class="tr">Interline Uzmanı</span></div></div>
+                        <div class="pf"><div class="pf-label">Department</div><div class="pf-value"><span class="en">Alliances & Intl Relations</span><span class="tr">İttifaklar & Uluslar. İlişkiler</span></div></div>
+                        <div class="pf"><div class="pf-label">Level</div><div class="pf-value">Mid / Senior</div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Cargo Share</span><span class="tr">Kargo Payı</span></div><div class="pf-value">4%</div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Agreement Type</span><span class="tr">Anlaşma Tipi</span></div><div class="pf-value">SPA (Interline)</div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Settlement</span><span class="tr">Mutabakat</span></div><div class="pf-value">ICH (IATA Clearing House)</div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Communication</span><span class="tr">İletişim</span></div><div class="pf-value"><span class="en">Email-based</span><span class="tr">E-posta bazlı</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Primary Tool</span><span class="tr">Ana Araç</span></div><div class="pf-value">Excel + COMIS</div></div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-col demo">
+                            <h4><span class="en">Demographic</span><span class="tr">Demografik</span></h4>
+                            <div class="segment-item"><span class="en">Aviation/logistics background</span><span class="tr">Havacılık/lojistik arka planı</span></div>
+                            <div class="segment-item"><span class="en">Strong negotiation skills</span><span class="tr">Güçlü müzakere becerileri</span></div>
+                            <div class="segment-item"><span class="en">Multi-lingual capability</span><span class="tr">Çok dilli yetkinlik</span></div>
+                        </div>
+                        <div class="segment-col behav">
+                            <h4><span class="en">Behavioral</span><span class="tr">Davranışsal</span></h4>
+                            <div class="segment-item"><span class="en">Heavy email communication</span><span class="tr">Yoğun e-posta iletişimi</span></div>
+                            <div class="segment-item"><span class="en">Manual Excel tracking</span><span class="tr">Manuel Excel takibi</span></div>
+                            <div class="segment-item"><span class="en">Annual agreement cycles</span><span class="tr">Yıllık anlaşma döngüleri</span></div>
+                        </div>
+                        <div class="segment-col psycho">
+                            <h4><span class="en">Psychographic</span><span class="tr">Psikografik</span></h4>
+                            <div class="segment-item"><span class="en">Relationship-oriented</span><span class="tr">İlişki odaklı</span></div>
+                            <div class="segment-item"><span class="en">Detail-focused</span><span class="tr">Detay odaklı</span></div>
+                            <div class="segment-item"><span class="en">Process-compliant</span><span class="tr">Süreç uyumlu</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The Interline Specialist sits in the Alliances and International Relations Department, managing bilateral agreements with partner airlines. Unlike domestic pricing, interline involves two carriers: Marketing Carrier (owns the AWB) and Operating Carrier (physically moves cargo). They negotiate SPA (Special Prorate Agreement) rates manually via email, prepare rates in Excel using predefined templates, and upload to two different COMIS screens: CRA-052 for accounting and View Tariff for operational use. Settlement happens through ICH (IATA Clearing House).</span>
+                    <span class="tr">Interline Uzmanı, partner havayollarıyla ikili anlaşmaları yöneten İttifaklar ve Uluslararası İlişkiler Departmanında yer alır.</span></p>
+                    <div class="evidence">MoM-Interline: "AWB number given by marketing carrier and the operation is done by operating carrier" | "Interline flights account for 4%"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Goals & Motivation -->
+        <section class="card section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="en">Goals, Motivation & Fears</span><span class="tr">Hedefler, Motivasyon & Korkular</span></h2>
+                    <p><span class="en">What drives interline management?</span><span class="tr">Interline yönetimini ne yönlendirir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="en">🎯 Accurate interline rate uploads for correct ICH settlement</span><span class="tr">🎯 Doğru ICH mutabakatı için doğru interline oran yüklemeleri</span></div>
+                        <div class="goal-level secondary"><span class="en">📊 Maintain competitive SPA rates with partners</span><span class="tr">📊 Partnerlerle rekabetçi SPA oranlarını sürdür</span></div>
+                        <div class="goal-level tertiary"><span class="en">⚡ Reduce manual reconciliation workload</span><span class="tr">⚡ Manuel mutabakat iş yükünü azalt</span></div>
+                    </div>
+                    <div class="two-col">
+                        <div class="list-box motivators">
+                            <h4>✅ <span class="en">Motivators</span><span class="tr">Motivatörler</span></h4>
+                            <div class="list-item"><span class="en">Successful partner negotiations</span><span class="tr">Başarılı partner müzakereleri</span></div>
+                            <div class="list-item"><span class="en">Clean ICH settlements with no disputes</span><span class="tr">İhtilaf olmadan temiz ICH mutabakatları</span></div>
+                            <div class="list-item"><span class="en">Expanding network reach through interline</span><span class="tr">Interline ile ağ erişimini genişletme</span></div>
+                        </div>
+                        <div class="list-box demotivators">
+                            <h4>❌ <span class="en">Demotivators</span><span class="tr">Demotivatörler</span></h4>
+                            <div class="list-item"><span class="en">Full overwrite required for single lane change</span><span class="tr">Tek lane değişikliği için tam üzerine yazma gereksinimi</span></div>
+                            <div class="list-item"><span class="en">No partial updates supported</span><span class="tr">Kısmi güncellemeler desteklenmiyor</span></div>
+                            <div class="list-item"><span class="en">Manual Excel tracking of disputes</span><span class="tr">İhtilafların manuel Excel takibi</span></div>
+                            <div class="list-item"><span class="en">Email-based approval bottlenecks</span><span class="tr">E-posta bazlı onay darboğazları</span></div>
+                        </div>
+                    </div>
+                    <div class="list-box fears" style="margin-top: 16px;">
+                        <h4>😰 <span class="en">Primary Fears</span><span class="tr">Ana Korkular</span></h4>
+                        <div class="list-item"><span class="en">Missing/failed rate uploads blocking accounting</span><span class="tr">Eksik/başarısız oran yüklemelerinin muhasebeyi engellemesi</span></div>
+                        <div class="list-item"><span class="en">Date overlap errors causing wrong rates</span><span class="tr">Tarih çakışma hatalarının yanlış oranlara yol açması</span></div>
+                        <div class="list-item"><span class="en">Carrier code collisions (same code different airlines)</span><span class="tr">Taşıyıcı kodu çakışmaları (aynı kod farklı havayolları)</span></div>
+                        <div class="list-item"><span class="en">Legacy records blocking new uploads</span><span class="tr">Eski kayıtların yeni yüklemeleri engellemesi</span></div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The primary goal is ensuring accurate interline rate uploads that enable correct ICH settlement. Key motivators include successful partner negotiations and clean settlements. Major frustrations come from the inability to do partial updates - "To change even a single lane, entire agreement must be re-uploaded." Fears center on upload failures blocking accounting processes and legacy records causing conflicts.</span>
+                    <span class="tr">Birincil hedef, doğru ICH mutabakatını sağlayan doğru interline oran yüklemelerini güvence altına almaktır.</span></p>
+                    <div class="evidence">MoM-14: "Partial updates are not supported. To change even a single lane: Entire agreement must be re-uploaded."</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Workflow -->
+        <section class="card section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="en">Workflow & Intents</span><span class="tr">İş Akışı & Niyetler</span></h2>
+                    <p><span class="en">How are interline agreements managed?</span><span class="tr">Interline anlaşmaları nasıl yönetilir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">📋 <span class="en">Interline Agreement Flow</span><span class="tr">Interline Anlaşma Akışı</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step manual"><span class="en">Mutual Communication</span><span class="tr">Karşılıklı İletişim</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="en">Legal Procedures</span><span class="tr">Hukuki Prosedürler</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="en">Rate Negotiation (Excel)</span><span class="tr">Oran Müzakeresi (Excel)</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision"><span class="en">Email Confirmation</span><span class="tr">E-posta Onayı</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="en">Upload to Subrates</span><span class="tr">Subrates'e Yükle</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step approve"><span class="en">COMIS (2 screens)</span><span class="tr">COMIS (2 ekran)</span></div>
+                    </div>
+                    
+                    <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px; margin-top: 20px;">🔄 <span class="en">Upload Points (Both Required)</span><span class="tr">Yükleme Noktaları (Her İkisi Gerekli)</span></h4>
+                    <div class="two-col">
+                        <div class="list-box">
+                            <h4 style="color: #0284c7;">CRA-052 (<span class="en">Accounting</span><span class="tr">Muhasebe</span>)</h4>
+                            <div class="list-item"><span class="en">For ICH billing/settlement</span><span class="tr">ICH faturalama/mutabakat için</span></div>
+                            <div class="list-item"><span class="en">Revenue recognition</span><span class="tr">Gelir tanıma</span></div>
+                            <div class="list-item"><span class="en">Agreed fee appears here</span><span class="tr">Anlaşılan ücret burada görünür</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #0284c7;">View Tariff (<span class="en">Operations</span><span class="tr">Operasyonlar</span>)</h4>
+                            <div class="list-item"><span class="en">For booking/reservation</span><span class="tr">Rezervasyon için</span></div>
+                            <div class="list-item"><span class="en">Price lookup during booking</span><span class="tr">Rezervasyon sırasında fiyat arama</span></div>
+                            <div class="list-item"><span class="en">ACRM will feed from here (future)</span><span class="tr">ACRM buradan beslenecek (gelecek)</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-box" style="margin-top: 20px;">
+                        <h4><span class="en">Key Constraint: Full Overwrite</span><span class="tr">Ana Kısıt: Tam Üzerine Yazma</span></h4>
+                        <p><span class="en">"Each upload overwrites all existing rates for the same agreement. Partial updates are not supported. Old rates remain active unless explicitly expired."</span>
+                        <span class="tr">"Her yükleme aynı anlaşmanın tüm mevcut oranlarının üzerine yazar. Kısmi güncellemeler desteklenmez. Açıkça sona erdirilmediği sürece eski oranlar aktif kalır."</span></p>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The workflow is highly manual: agreement starts with mutual communication, legal procedures, then rate negotiation via Excel templates. Rates are confirmed via email (no system-driven validation), uploaded to Subrates, then to COMIS in TWO places: CRA-052 for accounting/ICH settlement and View Tariff for operational use. Critical constraint: "Each upload overwrites all existing rates - partial updates not supported." This means changing one lane requires full re-upload of entire agreement.</span>
+                    <span class="tr">İş akışı büyük ölçüde manueldir: anlaşma karşılıklı iletişimle başlar, hukuki prosedürler, ardından Excel şablonları ile oran müzakeresi.</span></p>
+                    <div class="evidence">MoM-14: "Agreement dates and rate validity dates may cause upload failures" | "Very long end dates (far-future expiry) are often used - creates downstream complexity"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Data & Integration -->
+        <section class="card section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="en">Data & Integration</span><span class="tr">Veri & Entegrasyon</span></h2>
+                    <p><span class="en">What systems and data are involved?</span><span class="tr">Hangi sistemler ve veriler dahil?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="three-col">
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;"><span class="en">📥 Inputs</span><span class="tr">📥 Girdiler</span></h4>
+                            <div class="list-item"><strong><span class="en">Partner rates</span><span class="tr">Partner oranları</span>:</strong> <span class="en">Via email/negotiation</span><span class="tr">E-posta/müzakere ile</span></div>
+                            <div class="list-item"><strong><span class="en">Market research</span><span class="tr">Pazar araştırması</span>:</strong> <span class="en">Manual (no external system)</span><span class="tr">Manuel (harici sistem yok)</span></div>
+                            <div class="list-item"><strong><span class="en">Templates</span><span class="tr">Şablonlar</span>:</strong> <span class="en">Excel predefined</span><span class="tr">Excel önceden tanımlı</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;"><span class="en">📤 Outputs</span><span class="tr">📤 Çıktılar</span></h4>
+                            <div class="list-item"><strong>COMIS CRA-052:</strong> <span class="en">Accounting rates</span><span class="tr">Muhasebe oranları</span></div>
+                            <div class="list-item"><strong>COMIS View Tariff:</strong> <span class="en">Operational rates</span><span class="tr">Operasyonel oranlar</span></div>
+                            <div class="list-item"><strong>ICH:</strong> <span class="en">Settlement data</span><span class="tr">Mutabakat verisi</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;"><span class="en">🔗 Key Concepts</span><span class="tr">🔗 Ana Kavramlar</span></h4>
+                            <div class="list-item"><strong>Marketing Carrier:</strong> <span class="en">Owns AWB prefix</span><span class="tr">AWB prefix'i sahip</span></div>
+                            <div class="list-item"><strong>Operating Carrier:</strong> <span class="en">Physically moves cargo</span><span class="tr">Kargoyu fiziksel taşır</span></div>
+                            <div class="list-item"><strong>SPA:</strong> <span class="en">Interline rate = SPA fee</span><span class="tr">Interline oranı = SPA ücreti</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-box" style="margin-top: 20px;">
+                        <h4><span class="en">Integration Gap Highlighted</span><span class="tr">Entegrasyon Açığı Vurgulandı</span></h4>
+                        <p><span class="en">"Partner flight schedules or tariffs are not pulled from any external system. No integration exists for partner network validation or schedule verification. All checks are manual and experience-based."</span>
+                        <span class="tr">"Partner uçuş tariffeleri veya oranları herhangi bir harici sistemden çekilmiyor. Partner ağ doğrulaması veya tarife doğrulaması için entegrasyon yok. Tüm kontroller manuel ve deneyim bazlı."</span></p>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The integration landscape is notably sparse. There is NO external system pulling partner rates or schedules - everything is manual. Key entities include Marketing Carrier (owns AWB, e.g., 729 for AV) and Operating Carrier (physically moves cargo). SPA fees are the interline equivalent of contract rates. Data flows to two COMIS screens plus ICH for settlement. ACRM integration is planned ("ACRM will be fed from COMIS view tariff, but it's not ready yet").</span>
+                    <span class="tr">Entegrasyon ortamı belirgin şekilde seyrek. Partner oranlarını veya tarifelerini çeken harici sistem YOK - her şey manuel.</span></p>
+                    <div class="evidence">MoM-Interline: "All checks are manual and experience-based" | "ACRM has an airline grouping system for interline fees - coefficient will determine interline fee, but it's not ready yet"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Pain Points -->
+        <section class="card section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="en">Pain Points & Risks</span><span class="tr">Sıkıntılar & Riskler</span></h2>
+                    <p><span class="en">What challenges exist?</span><span class="tr">Hangi zorluklar var?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5><span class="en">No Partial Update Support</span><span class="tr">Kısmi Güncelleme Desteği Yok</span></h5>
+                                <p><span class="en">"Each upload overwrites all existing rates. To change even a single lane, entire agreement must be re-uploaded."</span>
+                                <span class="tr">"Her yükleme tüm mevcut oranların üzerine yazar. Tek bir lane değiştirmek için bile tüm anlaşmanın yeniden yüklenmesi gerekir."</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Interline Cost Visibility Gap</span><span class="tr">Interline Maliyet Görünürlüğü Açığı</span></h5>
+                                <p><span class="en">"To understand the interline cost, separate reports are kept in Excel via emails - sent to accounting. For those not found, stations are contacted via email."</span>
+                                <span class="tr">"Interline maliyetini anlamak için e-postalarla Excel'de ayrı raporlar tutulur - muhasebeye gönderilir."</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5><span class="en">No Centralized Platform</span><span class="tr">Merkezi Platform Yok</span></h5>
+                                <p><span class="en">"Lack of centralized digital platform for managing all interline agreements, rates, and communications leads to reliance on manual processes and email approvals."</span>
+                                <span class="tr">"Tüm interline anlaşmalarını, oranlarını ve iletişimi yönetecek merkezi dijital platform eksikliği manuel süreçlere ve e-posta onaylarına bağımlılığa yol açar."</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Date Overlap & Legacy Records</span><span class="tr">Tarih Çakışması & Eski Kayıtlar</span></h5>
+                                <p><span class="en">"Overlap errors, date conflicts, carrier code collisions, legacy rate records blocking new uploads"</span>
+                                <span class="tr">"Çakışma hataları, tarih çatışmaları, taşıyıcı kodu çakışmaları, eski oran kayıtlarının yeni yüklemeleri engellemesi"</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P5</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Report Corrections Manual</span><span class="tr">Rapor Düzeltmeleri Manuel</span></h5>
+                                <p><span class="en">"If a spot isn't entered, TACT fee is applied - very high. Reports are being manually corrected."</span>
+                                <span class="tr">"Spot girilmezse TACT ücreti uygulanır - çok yüksek. Raporlar manuel olarak düzeltiliyor."</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The most critical pain point is the inability to do partial updates - changing one rate lane requires re-uploading the entire agreement. Interline cost visibility is poor, requiring manual Excel tracking and email chains. There's no centralized platform for agreement management, and legacy records frequently cause upload failures. When spots aren't entered correctly, the fallback TACT fee (very high) gets applied, requiring manual report corrections.</span>
+                    <span class="tr">En kritik sıkıntı kısmi güncelleme yapılamamasıdır - bir oran lane'ini değiştirmek tüm anlaşmanın yeniden yüklenmesini gerektirir.</span></p>
+                    <div class="evidence">MoM-14: "Known Issues: Overlap errors, date conflicts, carrier code collisions, legacy rate records blocking new uploads"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Mental Model -->
+        <section class="card section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="en">Mental Model & Behavior</span><span class="tr">Zihinsel Model & Davranış</span></h2>
+                    <p><span class="en">How do they think?</span><span class="tr">Nasıl düşünürler?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="empathy-grid">
+                        <div class="empathy-quad says">
+                            <h4><span class="icon">💬</span> SAYS</h4>
+                            <div class="empathy-item"><span class="en">"I need to upload to both COMIS screens"</span><span class="tr">"Her iki COMIS ekranına da yüklemem gerek"</span></div>
+                            <div class="empathy-item"><span class="en">"Let me check my Excel tracker"</span><span class="tr">"Excel takip dosyamı kontrol edeyim"</span></div>
+                            <div class="empathy-item"><span class="en">"Did the partner confirm via email?"</span><span class="tr">"Partner e-posta ile onayladı mı?"</span></div>
+                        </div>
+                        <div class="empathy-avatar">
+                            <div class="empathy-avatar-circle">✈️</div>
+                            <p style="font-size: 11px; color: #6b7280; margin-top: 12px; text-align: center;">Interline<br>Specialist</p>
+                        </div>
+                        <div class="empathy-quad thinks">
+                            <h4><span class="icon">💭</span> THINKS</h4>
+                            <div class="empathy-item"><span class="en">"Why do I have to re-upload everything?"</span><span class="tr">"Neden her şeyi yeniden yüklemem gerekiyor?"</span></div>
+                            <div class="empathy-item"><span class="en">"Is the carrier code going to conflict?"</span><span class="tr">"Taşıyıcı kodu çakışacak mı?"</span></div>
+                            <div class="empathy-item"><span class="en">"I hope accounting doesn't complain"</span><span class="tr">"Umarım muhasebe şikayet etmez"</span></div>
+                        </div>
+                        <div class="empathy-quad does">
+                            <h4><span class="icon">🔧</span> DOES</h4>
+                            <div class="empathy-item"><span class="en">Maintains personal Excel trackers for disputes</span><span class="tr">İhtilaflar için kişisel Excel takipçileri tutar</span></div>
+                            <div class="empathy-item"><span class="en">Sends emails to stations for missing data</span><span class="tr">Eksik veri için istasyonlara e-posta gönderir</span></div>
+                            <div class="empathy-item"><span class="en">Manually corrects reports when TACT applied</span><span class="tr">TACT uygulandığında raporları manuel düzeltir</span></div>
+                        </div>
+                        <div class="empathy-quad feels">
+                            <h4><span class="icon">❤️</span> FEELS</h4>
+                            <div class="empathy-item"><span class="en">Frustrated by lack of automation</span><span class="tr">Otomasyon eksikliğinden sıkılmış</span></div>
+                            <div class="empathy-item"><span class="en">Overwhelmed during agreement renewal periods</span><span class="tr">Anlaşma yenileme dönemlerinde bunalmış</span></div>
+                            <div class="empathy-item"><span class="en">Responsible for cross-airline relationships</span><span class="tr">Havayolları arası ilişkilerden sorumlu</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The Interline Specialist thinks in terms of bilateral partnerships, carrier roles (marketing vs operating), and ICH settlement cycles. They are relationship-focused but frustrated by manual processes. Their mental model includes tracking multiple agreements via personal Excel files, managing email chains for approvals, and navigating the dual-upload requirement to COMIS. Peak stress occurs during annual agreement renewals.</span>
+                    <span class="tr">Interline Uzmanı ikili ortaklıklar, taşıyıcı rolleri (marketing vs operating) ve ICH mutabakat döngüleri açısından düşünür.</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: Collaboration -->
+        <section class="card section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="en">Collaboration & Support</span><span class="tr">İşbirliği & Destek</span></h2>
+                    <p><span class="en">Who do they work with?</span><span class="tr">Kimlerle çalışırlar?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="stakeholder-map">
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node provider"><span class="en">Partner Airlines</span><span class="tr">Partner Havayolları</span><br><small>Rate negotiation</small></div>
+                            <div class="stakeholder-node provider"><span class="en">Legal Team</span><span class="tr">Hukuk Ekibi</span><br><small>Agreement text</small></div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node persona">✈️ INTERLINE SPECIALIST</div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node consumer"><span class="en">Accounting</span><span class="tr">Muhasebe</span><br><small>ICH settlement</small></div>
+                            <div class="stakeholder-node consumer"><span class="en">Stations</span><span class="tr">İstasyonlar</span><br><small>Operational use</small></div>
+                            <div class="stakeholder-node consumer"><span class="en">Reservations</span><span class="tr">Rezervasyonlar</span><br><small>Booking lookup</small></div>
+                        </div>
+                    </div>
+                    
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="list-box">
+                            <h4 style="color: #059669;"><span class="en">Agreement Types</span><span class="tr">Anlaşma Tipleri</span></h4>
+                            <div class="list-item"><strong>Cargo Interline:</strong> <span class="en">Specific to cargo transport</span><span class="tr">Kargo taşımaya özgü</span></div>
+                            <div class="list-item"><strong>Passenger Interline:</strong> <span class="en">May need separate cargo expansion</span><span class="tr">Ayrı kargo genişlemesi gerekebilir</span></div>
+                            <div class="list-item"><span class="en">"Even if passenger interline exists, separate agreement required for cargo"</span><span class="tr">"Yolcu interline olsa bile kargo için ayrı anlaşma gerekli"</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #059669;"><span class="en">Critical Dependencies</span><span class="tr">Kritik Bağımlılıklar</span></h4>
+                            <div class="list-item">⛔ <span class="en">Accounting depends on rate upload accuracy</span><span class="tr">Muhasebe oran yükleme doğruluğuna bağlı</span></div>
+                            <div class="list-item">⏳ <span class="en">Email response times from partners</span><span class="tr">Partnerlerden e-posta yanıt süreleri</span></div>
+                            <div class="list-item">🕳️ <span class="en">No system for partner schedule validation</span><span class="tr">Partner tarife doğrulaması için sistem yok</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The Interline Specialist works across organizational boundaries: negotiating with partner airlines, coordinating with Legal for agreement text, and ensuring Accounting receives accurate data for ICH settlement. Key note: "Even if there is a passenger interline agreement, a separate agreement is required for cargo." Downstream dependencies are high - "Interline rate uploads are critical for accounting. Missing or failed uploads block financial processes."</span>
+                    <span class="tr">Interline Uzmanı organizasyonel sınırlar boyunca çalışır: partner havayollarıyla müzakere, anlaşma metni için Hukuk ile koordinasyon ve Muhasebe'nin ICH mutabakatı için doğru veriyi almasını sağlama.</span></p>
+                    <div class="evidence">MoM-Interline: "Interline rate uploads are critical for accounting. Downstream billing and invoicing rely on correctly uploaded interline rates."</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: Product Opportunities -->
+        <section class="card section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="en">Product Opportunities</span><span class="tr">Ürün Fırsatları</span></h2>
+                    <p><span class="en">How can we improve interline management?</span><span class="tr">Interline yönetimini nasıl iyileştirebiliriz?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="timeline">
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="en">Incremental Rate Updates</span><span class="tr">Artımlı Oran Güncellemeleri</span></h5>
+                            <p>→ P1 | <span class="en">Support partial updates without full agreement re-upload</span><span class="tr">Tam anlaşma yeniden yüklemesi olmadan kısmi güncellemeleri destekle</span></p>
+                        </div>
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="en">Interline Cost Visibility</span><span class="tr">Interline Maliyet Görünürlüğü</span></h5>
+                            <p>→ P2 | <span class="en">Show interline cost breakdown in reports, not just totals</span><span class="tr">Raporlarda sadece toplamlar değil interline maliyet dağılımını göster</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT-TERM</span>
+                            <h5><span class="en">Centralized Agreement Portal</span><span class="tr">Merkezi Anlaşma Portalı</span></h5>
+                            <p>→ P3 | <span class="en">"Centralized, integrated, and digital management of all interline processes"</span><span class="tr">"Tüm interline süreçlerinin merkezi, entegre ve dijital yönetimi"</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT-TERM</span>
+                            <h5><span class="en">Date Conflict Prevention</span><span class="tr">Tarih Çakışması Önleme</span></h5>
+                            <p>→ P4 | <span class="en">Validate date ranges before upload to prevent overlap errors</span><span class="tr">Çakışma hatalarını önlemek için yüklemeden önce tarih aralıklarını doğrula</span></p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long">LONG-TERM</span>
+                            <h5><span class="en">Partner Schedule Integration</span><span class="tr">Partner Tarife Entegrasyonu</span></h5>
+                            <p>→ P3 | <span class="en">"Integration with IATA standards, automated capacity visibility"</span><span class="tr">"IATA standartlarıyla entegrasyon, otomatik kapasite görünürlüğü"</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">Priority opportunities: Enable incremental rate updates to avoid full re-uploads (MVP), improve interline cost visibility in reports, and build a centralized agreement management portal. Medium-term improvements include date conflict prevention and legacy record handling. Long-term vision includes integration with partner schedules and IATA standards for automated capacity visibility.</span>
+                    <span class="tr">Öncelikli fırsatlar: Tam yeniden yüklemelerden kaçınmak için artımlı oran güncellemelerini etkinleştir (MVP), raporlarda interline maliyet görünürlüğünü iyileştir ve merkezi anlaşma yönetimi portalı oluştur.</span></p>
+                    <div class="evidence">MoM-Interline: "Need for centralized digital platform for managing all interline agreements, rates, and related communications" | MoM-14: "Analyze overwrite vs incremental update requirement"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: AI Support -->
+        <section class="card section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="en">AI Support Potential</span><span class="tr">AI Destek Potansiyeli</span></h2>
+                    <p><span class="en">Where can AI assist?</span><span class="tr">AI nerede yardımcı olabilir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div style="position: relative; height: 320px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%); border-radius: 12px; padding: 16px;">
+                        <div style="position: absolute; left: 0; right: 0; top: 33%; height: 3px; background: #0891b2; z-index: 10;"></div>
+                        <div style="position: absolute; right: 16px; top: 31%; font-size: 10px; color: #0891b2; font-weight: 600;">TRUST LINE</div>
+                        
+                        <div style="position: absolute; left: 16px; top: 4%; color: #dc2626; font-size: 11px;">
+                            <strong>🚫 Level 6 - FORBIDDEN</strong><br>
+                            <span class="en">Auto-approve interline rate agreements</span><span class="tr">Interline oran anlaşmalarını otomatik onayla</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 21%; color: #b45309; font-size: 11px;">
+                            <strong>⚠️ Level 5 - APPROVAL REQUIRED</strong><br>
+                            <span class="en">Suggest rate adjustments based on market data</span><span class="tr">Pazar verisine göre oran ayarlamaları öner</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 40%; color: #15803d; font-size: 11px;">
+                            <strong>💡 Level 4 - SUGGESTION</strong><br>
+                            <span class="en">Flag potential date/carrier code conflicts</span><span class="tr">Potansiyel tarih/taşıyıcı kodu çakışmalarını işaretle</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 55%; color: #15803d; font-size: 11px;">
+                            <strong>⚙️ Level 3 - PREPARATION</strong><br>
+                            <span class="en">Pre-fill Excel templates from past agreements</span><span class="tr">Geçmiş anlaşmalardan Excel şablonlarını önceden doldur</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 70%; color: #15803d; font-size: 11px;">
+                            <strong>📝 Level 2 - SUMMARIZATION</strong><br>
+                            <span class="en">Summarize agreement differences vs previous year</span><span class="tr">Önceki yıla göre anlaşma farklılıklarını özetle</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 85%; color: #15803d; font-size: 11px;">
+                            <strong>📊 Level 1 - INFORMATION</strong><br>
+                            <span class="en">Show partner agreement history and status</span><span class="tr">Partner anlaşma geçmişini ve durumunu göster</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-suitable">
+                        <div class="ai-box suitable">
+                            <h5>✅ AI SUITABLE</h5>
+                            <ul>
+                                <li><span class="en">Detect date/carrier code conflicts before upload</span><span class="tr">Yüklemeden önce tarih/taşıyıcı kodu çakışmalarını tespit et</span></li>
+                                <li><span class="en">Extract rates from partner emails/PDFs</span><span class="tr">Partner e-postalarından/PDF'lerinden oranları çıkar</span></li>
+                                <li><span class="en">Compare current vs proposed rates</span><span class="tr">Mevcut ile önerilen oranları karşılaştır</span></li>
+                                <li><span class="en">Identify missing/expired agreements</span><span class="tr">Eksik/süresi dolmuş anlaşmaları belirle</span></li>
+                            </ul>
+                        </div>
+                        <div class="ai-box not-suitable">
+                            <h5>❌ AI NOT SUITABLE</h5>
+                            <ul>
+                                <li><span class="en">Finalizing negotiated rates with partners</span><span class="tr">Partnerlerle müzakere edilen oranları kesinleştirme</span></li>
+                                <li><span class="en">Signing agreements or making commitments</span><span class="tr">Anlaşmaları imzalama veya taahhüt verme</span></li>
+                                <li><span class="en">Resolving ICH disputes with airlines</span><span class="tr">Havayollarıyla ICH ihtilaflarını çözme</span></li>
+                                <li><span class="en">Overriding legal/commercial terms</span><span class="tr">Hukuki/ticari koşulları geçersiz kılma</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">AI can help with detecting date/carrier code conflicts before upload, extracting rate data from partner communications (emails, PDFs), and comparing agreements year-over-year. Pre-filling templates from historical data reduces manual work. However, AI should never auto-approve rates or make commercial commitments - these require human judgment and partnership relationship management.</span>
+                    <span class="tr">AI yüklemeden önce tarih/taşıyıcı kodu çakışmalarını tespit etme, partner iletişimlerinden oran verisini çıkarma ve anlaşmaları yıldan yıla karşılaştırma konularında yardımcı olabilir.</span></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><strong>Sources:</strong></p>
+        <p style="font-size: 10px; color: #6b7280; margin-top: 4px;">MoM-Interline (6th Workshop - Interline Agreements): Marketing/Operating carrier definitions, AWB prefix ownership, ICH settlement, 4% cargo share, Manual checks, ACRM interline grouping (not ready) | MoM-14 (Workshop-14): Partial update limitation, Full overwrite requirement, Date/carrier code conflicts, Legacy record issues, Agreement validity dates | MoM-2: SPA fee structure | MoM-6: Rate card uploads</p>
+        <p style="margin-top: 8px;"><strong>Generated:</strong> 13 May 2026</p>
+        <p style="margin-top: 8px; color: #d97706;">⚠️ <span class="en">This persona is based on MoM analysis. User validation recommended.</span><span class="tr">Bu persona MoM analizine dayanmaktadır. Kullanıcı doğrulaması önerilir.</span></p>
+    </footer>
+    </div>
+
+    <script>
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+        
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+            });
+        }
+        
+        function toggleView(btn, view) {
+            const card = btn.closest('.card');
+            card.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            card.querySelectorAll('.view-pane').forEach(p => {
+                p.classList.toggle('active', p.dataset.view === view);
+            });
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelector('.mega-menu').classList.remove('open');
+                document.querySelector('.mega-overlay').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Data Specialist | PRM Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 11px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: white;
+            box-shadow: 0 4px 12px rgba(124,58,237,0.4);
+        }
+        .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
+        .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+
+        /* Mega Menu */
+        .mega-menu {
+            position: fixed;
+            left: 72px;
+            top: 0;
+            bottom: 0;
+            width: 320px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 4px 0 30px rgba(0,0,0,0.3);
+            z-index: 999;
+            transform: translateX(-400px);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close {
+            width: 32px; height: 32px;
+            background: rgba(255,255,255,0.1);
+            border: none; border-radius: 8px;
+            color: #94a3b8; font-size: 18px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 10px;
+            margin-bottom: 8px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .module-header:hover { background: rgba(255,255,255,0.05); }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 10px; color: white;
+        }
+        .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.prm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 8px;
+            text-decoration: none; color: #94a3b8;
+            font-size: 12px; transition: all 0.2s;
+            border-left: 2px solid transparent;
+            margin-left: 16px;
+        }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #a855f7; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.3); z-index: 998;
+            opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+        
+        .hero {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 50%, #d8b4fe 100%);
+            padding: 48px 40px;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(124,58,237,0.15); color: #6d28d9; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; z-index: 2; position: relative; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #7c3aed; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #6d28d9; }
+        .hero-subtitle { font-size: 16px; color: #581c87; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #7c3aed; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .source-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 24px;
+            width: 12px;
+            height: 12px;
+            background: #1f2937;
+            transform: rotate(45deg);
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+        
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #7c3aed; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 100px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .jtbd-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 16px; }
+        .jtbd-table th, .jtbd-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .jtbd-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        
+        .crud-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .crud-table th, .crud-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .crud-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .crud-badge { display: inline-block; width: 20px; height: 20px; border-radius: 4px; text-align: center; line-height: 20px; font-size: 10px; font-weight: 700; }
+        .crud-badge.yes { background: #d1fae5; color: #047857; }
+        .crud-badge.no { background: #f3f4f6; color: #9ca3af; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.does h4 span.icon { background: rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-quad.feels h4 span.icon { background: rgba(225,29,72,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #d1fae5; color: #047857; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #e0e7ff; color: #4338ca; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        
+        .summary-box { background: rgba(124,58,237,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #7c3aed; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .hero { padding: 32px 20px; }
+            .hero h1 { font-size: 28px; }
+            .board { padding: 16px; }
+            .segment-card, .two-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <nav class="side-nav">
+        <div class="side-nav-logo" title="Tüm Modüller" onclick="toggleMegaMenu()">PRM</div>
+        <div class="nav-items">
+            <a href="Persona_PRM_Master_Data_Specialist.html" class="nav-item active" title="Master Data Specialist">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Master Data</span>
+            </a>
+            <a href="Persona_PRM_GSA_Account_Manager.html" class="nav-item" title="GSA Account Manager">
+                <span class="nav-num">2</span>
+                <span class="nav-label">GSA Mgr</span>
+            </a>
+            <a href="Persona_PRM_Credit_Customer_Specialist.html" class="nav-item" title="Credit Customer Specialist">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Credit</span>
+            </a>
+            <a href="Persona_PRM_Agent_Compliance_Officer.html" class="nav-item" title="Agent Compliance Officer">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Compliance</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 Tüm Modüller</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon pcm">PCM</div>
+                <span class="module-name">Pricing Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon flm">FLM</div>
+                <span class="module-name">Flight Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon bkr">BKR</div>
+                <span class="module-name">Booking & Reservation</span>
+                <span class="module-count">7 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a>
+                <a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a>
+                <a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a>
+                <a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a>
+                <a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a>
+                <a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a>
+                <a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cam">CAM</div>
+                <span class="module-name">Capacity Management</span>
+                <span class="module-count">3 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon com">COM</div>
+                <span class="module-name">Compliance Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon asm">ASM</div>
+                <span class="module-name">AWB Stock Management</span>
+                <span class="module-count">2 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a>
+                <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon trm">TRM</div>
+                <span class="module-name">Truck Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a>
+            </div>
+        </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon scm">SCM</div>
+                <span class="module-name">Special Cargo Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a>
+            </div>
+        </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Supervisor</a>
+            </div>
+        </div>
+
+        <div class="module-section">
+            <div class="module-header active">
+                <div class="module-icon prm">PRM</div>
+                <span class="module-name">Partner Management</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PRM_Master_Data_Specialist.html" class="persona-link current"><span class="persona-num">1</span> Master Data Specialist</a>
+                <a href="Persona_PRM_GSA_Account_Manager.html" class="persona-link"><span class="persona-num">2</span> GSA Account Manager</a>
+                <a href="Persona_PRM_Credit_Customer_Specialist.html" class="persona-link"><span class="persona-num">3</span> Credit Customer Specialist</a>
+                <a href="Persona_PRM_Agent_Compliance_Officer.html" class="persona-link"><span class="persona-num">4</span> Agent Compliance Officer</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">PRM · MASTER DATA · PERSONA #1</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1>
+                <span class="tr">Master Data <span>Specialist</span></span>
+                <span class="en">Master Data <span>Specialist</span></span>
+            </h1>
+            <p class="hero-subtitle">
+                <span class="tr">COMIS sisteminde müşteri, acente, GSA ve interline tanımlamalarını yöneten, TK Go entegrasyonunu sağlayan ve AWB stok tahsisini koordine eden veri yönetimi uzmanı. CMT-008, STK-017 ve ADM-7 ekranları üzerinden çalışır.</span>
+                <span class="en">Data management specialist who manages customer, agent, GSA and interline definitions in COMIS system, ensures TK Go integration and coordinates AWB stock allocation. Works via CMT-008, STK-017 and ADM-7 screens.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="tr">"COMIS'te Agent Code ve Customer Code kavramları birbirinin aynısı gibi görünüyor ama farklı tablolarda tutuluyor. Booking yapmak için ikisinin de eşleşmesi gerekiyor, yoksa sistem hata veriyor."</span>
+                <span class="en">"Agent Code and Customer Code concepts in COMIS appear to be the same but are stored in different tables. Both must match for booking to work, otherwise system throws an error."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#dc2626;"></span>
+                    <span><strong><span class="tr">Kullanıcı:</span><span class="en">User:</span></strong> Cargo Sales Accounting / Master Data Team</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong><span class="tr">Kritiklik:</span><span class="en">Criticality:</span></strong> <span style="color:#f59e0b;">★★★★★</span> <span class="tr">Çok Yüksek</span><span class="en">Very High</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong><span class="tr">Ana Sistemler:</span><span class="en">Main Systems:</span></strong> COMIS (CMT-008, STK-017, ADM-7)</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong><span class="tr">Kaynak:</span><span class="en">Source:</span></strong> 8 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#d8b4fe; font-size:12px;">📄 Source MoM Documents</div>
+                        <div style="display:flex; flex-direction:column; gap:4px;">
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-04</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-17 (GSA/ACS)</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2026-01-09</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2026-01-16</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2026-02-03</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2026-02-11 (CRM)</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2026-02-12</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-2025-12-30</span><span style="color:#93c5fd;">Solution Team</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1: PERSONA PROFILE -->
+        <section class="card section-1" id="section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                    <p><span class="tr">Demografik, Davranışsal, Psikografik</span><span class="en">Demographic, Behavioral, Psychographic</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s1-chart" class="view-pane active">
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label"><span class="tr">Departman</span><span class="en">Department</span></div><div class="pf-value">Kargo Satış Muhasebe Md.</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div><div class="pf-value">Master Data / Veri Standardizasyon</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Seviye</span><span class="en">Level</span></div><div class="pf-value"><span class="tr">Kıdemli Uzman / Sorumlu</span><span class="en">Senior Specialist / Responsible</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Kullanım Sıklığı</span><span class="en">Usage Frequency</span></div><div class="pf-value"><span class="tr">Günlük, sürekli</span><span class="en">Daily, continuous</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Ana Sistemler</span><span class="en">Main Systems</span></div><div class="pf-value">COMIS, SAP, TK Go</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">COMIS Ekranları</span><span class="en">COMIS Screens</span></div><div class="pf-value">CMT-008, STK-006, STK-007, STK-017, ADM-7</div></div>
+                    </div>
+                    
+                    <div class="segment-card">
+                        <div class="segment-col demo">
+                            <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Lokasyon:</span><span class="en">Location:</span></strong> IST Merkez</div>
+                            <div class="segment-item"><strong><span class="tr">Deneyim:</span><span class="en">Experience:</span></strong> 5+ yıl COMIS</div>
+                            <div class="segment-item"><strong><span class="tr">Teknik:</span><span class="en">Technical:</span></strong> <span class="tr">Yüksek</span><span class="en">High</span></div>
+                            <div class="segment-item"><strong><span class="tr">Eğitim:</span><span class="en">Education:</span></strong> <span class="tr">İşletme/Lojistik</span><span class="en">Business/Logistics</span></div>
+                        </div>
+                        <div class="segment-col behav">
+                            <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Çalışma:</span><span class="en">Work:</span></strong> <span class="tr">Talep bazlı</span><span class="en">Request-based</span></div>
+                            <div class="segment-item"><strong><span class="tr">Kanal:</span><span class="en">Channel:</span></strong> Email, Turuncu Hat</div>
+                            <div class="segment-item"><strong><span class="tr">İşlem:</span><span class="en">Process:</span></strong> <span class="tr">Manuel, tek tek</span><span class="en">Manual, one by one</span></div>
+                            <div class="segment-item"><strong><span class="tr">Kontrol:</span><span class="en">Control:</span></strong> <span class="tr">Detaylı doğrulama</span><span class="en">Detailed verification</span></div>
+                        </div>
+                        <div class="segment-col psycho">
+                            <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Öncelik:</span><span class="en">Priority:</span></strong> <span class="tr">Veri doğruluğu</span><span class="en">Data accuracy</span></div>
+                            <div class="segment-item"><strong><span class="tr">Yaklaşım:</span><span class="en">Approach:</span></strong> <span class="tr">Prosedür odaklı</span><span class="en">Procedure-oriented</span></div>
+                            <div class="segment-item"><strong><span class="tr">Risk:</span><span class="en">Risk:</span></strong> <span class="tr">Riskten kaçınan</span><span class="en">Risk-averse</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s1-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">COMIS sisteminde 52.000+ müşteri kaydı ve 25.000+ acente tanımı yöneten master data uzmanı. Agent/Customer tanımlama, AWB stok tahsisi, TK Go kullanıcı entegrasyonu ve IATA kod doğrulaması ana sorumlulukları arasındadır.</span>
+                        <span class="en">Master data specialist managing 52,000+ customer records and 25,000+ agent definitions in COMIS system. Agent/Customer definition, AWB stock allocation, TK Go user integration and IATA code validation are among main responsibilities.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2026-01-09:</strong> "Customer code list: 52,146 records. Agent code list: 25,429 records. Lists should be functionally identical for agents but difference indicates data quality or definition issues."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: GOALS & MOTIVATION -->
+        <section class="card section-2" id="section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="tr">Hedef, Motivasyon & Korku</span><span class="en">Goals, Motivation & Fears</span></h2>
+                    <p><span class="tr">Hedef piramidi, motivatörler, korkular</span><span class="en">Goal pyramid, motivators, fears</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s2-chart" class="view-pane active">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="tr">🎯 PRİMER: Doğru ve eksiksiz partner/müşteri tanımlaması</span><span class="en">🎯 PRIMARY: Accurate and complete partner/customer definition</span></div>
+                        <div class="goal-level secondary"><span class="tr">🥈 SEKONDER: AWB stok tahsisi ve TK Go entegrasyonu</span><span class="en">🥈 SECONDARY: AWB stock allocation and TK Go integration</span></div>
+                        <div class="goal-level tertiary"><span class="tr">🥉 TERSİYER: Veri kalitesi ve standardizasyon</span><span class="en">🥉 TERTIARY: Data quality and standardization</span></div>
+                    </div>
+                    
+                    <div class="two-col">
+                        <div class="list-box motivators">
+                            <h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                            <div class="list-item">✓ <span class="tr">Hatasız tanımlama süreci</span><span class="en">Error-free definition process</span></div>
+                            <div class="list-item">✓ <span class="tr">IATA doğrulamasının başarılı olması</span><span class="en">Successful IATA validation</span></div>
+                            <div class="list-item">✓ <span class="tr">Booking işleminin sorunsuz çalışması</span><span class="en">Smooth booking operation</span></div>
+                            <div class="list-item">✓ <span class="tr">Satış ekibinden pozitif geri bildirim</span><span class="en">Positive feedback from sales team</span></div>
+                        </div>
+                        <div class="list-box demotivators">
+                            <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                            <div class="list-item">✗ <span class="tr">Toplu tanımlama yapılamaması (Excel upload yok)</span><span class="en">No bulk definition capability (no Excel upload)</span></div>
+                            <div class="list-item">✗ <span class="tr">Delete fonksiyonu olmaması</span><span class="en">No delete function available</span></div>
+                            <div class="list-item">✗ <span class="tr">Agent/Customer kod karışıklığı</span><span class="en">Agent/Customer code confusion</span></div>
+                            <div class="list-item">✗ <span class="tr">Çoklu istasyon için ayrı ayrı kayıt</span><span class="en">Separate records for multiple stations</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="list-box fears" style="margin-top:16px;">
+                        <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Yanlış IATA kodu ile booking yapılması ve ödeme alınamaması</span><span class="en"><strong>High:</strong> Booking with wrong IATA code and payment not received</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Silinemeyen hatalı kayıtların birikip veri kirliliği oluşturması</span><span class="en"><strong>High:</strong> Undeletable erroneous records accumulating and creating data pollution</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Orta:</strong> TK Go kullanıcı mapping hataları</span><span class="en"><strong>Medium:</strong> TK Go user mapping errors</span></div>
+                    </div>
+                </div>
+                <div id="s2-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Ana hedef doğru partner/müşteri tanımlaması yapmak. Manuel tek tek işlem zorunluluğu ve silme fonksiyonu eksikliği en büyük demotivatörler. En büyük korku yanlış IATA koduyla işlem yapılması ve gelir kaybı.</span>
+                        <span class="en">Main goal is accurate partner/customer definition. Mandatory manual one-by-one processing and lack of delete function are biggest demotivators. Greatest fear is processing with wrong IATA code and revenue loss.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2026-02-12:</strong> "There is no delete button in CMT-008 screen. Erroneous customer definitions cannot be deleted. The current workaround is to put the erroneous record on the blacklist with its identifying fields cleared."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: WORKFLOW & JTBD -->
+        <section class="card section-3" id="section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="tr">İş Akışı & JTBD</span><span class="en">Workflow & JTBD</span></h2>
+                    <p><span class="tr">Ana süreç, Jobs to be Done</span><span class="en">Main process, Jobs to be Done</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s3-chart" class="view-pane active">
+                    <h4 style="font-size:12px; font-weight:600; margin-bottom:12px;"><span class="tr">📋 Yeni Acente Tanımlama Akışı</span><span class="en">📋 New Agent Definition Flow</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step manual"><span class="tr">Satış'tan Talep</span><span class="en">Request from Sales</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">IATA Portal Doğrulama</span><span class="en">IATA Portal Validation</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">CMT-008 Tanımlama</span><span class="en">CMT-008 Definition</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">STK-006/007 Stok Tanımı</span><span class="en">STK-006/007 Stock Def</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">STK-017 Mapping</span><span class="en">STK-017 Mapping</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">TK Go Entegrasyonu</span><span class="en">TK Go Integration</span></div>
+                    </div>
+                    
+                    <table class="jtbd-table">
+                        <thead>
+                            <tr>
+                                <th><span class="tr">İş (Job)</span><span class="en">Job</span></th>
+                                <th><span class="tr">Tetikleyici</span><span class="en">Trigger</span></th>
+                                <th><span class="tr">Sistem</span><span class="en">System</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tr">IATA Acente Tanımlama</span><span class="en">IATA Agent Definition</span></td>
+                                <td><span class="tr">Satış ekibi talebi</span><span class="en">Sales team request</span></td>
+                                <td>CMT-008, STK-017</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Non-IATA Acente (990-8)</span><span class="en">Non-IATA Agent (990-8)</span></td>
+                                <td><span class="tr">GSA kontrolündeki acente</span><span class="en">Agent under GSA control</span></td>
+                                <td>CMT-008</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Çoklu Şube Tanımlama</span><span class="en">Multi-Branch Definition</span></td>
+                                <td><span class="tr">Acentenin yeni şube açması</span><span class="en">Agent opening new branch</span></td>
+                                <td>CMT-008 (IST, IZM, ADB...)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">TK Go Kullanıcı Mapping</span><span class="en">TK Go User Mapping</span></td>
+                                <td><span class="tr">Acente dijital erişim talebi</span><span class="en">Agent digital access request</span></td>
+                                <td>ADM-7, LDAP</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Interline Tanımlama</span><span class="en">Interline Definition</span></td>
+                                <td><span class="tr">Yeni havayolu ortaklığı</span><span class="en">New airline partnership</span></td>
+                                <td>CMT-033</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Acente Deaktivasyon</span><span class="en">Agent Deactivation</span></td>
+                                <td><span class="tr">IATA Default/Terminate</span><span class="en">IATA Default/Terminate</span></td>
+                                <td>STK-017, STK-007, CMT-008</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="s3-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Tanımlama süreci satış ekibinin talebiyle başlar. IATA portal'dan kod doğrulaması yapılır, ardından CMT-008'de müşteri tanımı oluşturulur. AWB stok tahsisi STK ekranlarından yapılır ve TK Go erişimi ADM-7 ile sağlanır.</span>
+                        <span class="en">Definition process starts with sales team request. Code validation is done from IATA portal, then customer definition is created in CMT-008. AWB stock allocation is done from STK screens and TK Go access is provided via ADM-7.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: DATA & INTEGRATION -->
+        <section class="card section-4" id="section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                    <p><span class="tr">Sistemler, veri akışı, erişim</span><span class="en">Systems, data flow, access</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s4-chart" class="view-pane active">
+                    <table class="crud-table">
+                        <thead>
+                            <tr>
+                                <th><span class="tr">Veri Nesnesi</span><span class="en">Data Object</span></th>
+                                <th>C</th><th>R</th><th>U</th><th>D</th>
+                                <th><span class="tr">Sistem</span><span class="en">System</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Agent/Customer Definition</td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">✗</span></td>
+                                <td>COMIS CMT-008</td>
+                            </tr>
+                            <tr>
+                                <td>AWB Stock Holder</td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td>COMIS STK-006, STK-007</td>
+                            </tr>
+                            <tr>
+                                <td>Stock Mapping</td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td>COMIS STK-017</td>
+                            </tr>
+                            <tr>
+                                <td>TK Go User Mapping</td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">✗</span></td>
+                                <td>COMIS ADM-7, LDAP</td>
+                            </tr>
+                            <tr>
+                                <td>IATA Code Validation</td>
+                                <td><span class="crud-badge no">✗</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">✗</span></td>
+                                <td><span class="crud-badge no">✗</span></td>
+                                <td>IATA Portal</td>
+                            </tr>
+                            <tr>
+                                <td>SAP Account</td>
+                                <td><span class="crud-badge no">✗</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">✗</span></td>
+                                <td><span class="crud-badge no">✗</span></td>
+                                <td>SAP (başka ekip)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="s4-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">COMIS'te müşteri tanımı oluşturulabilir ama silinemez (critical gap). AWB stok ve mapping tam CRUD yetkisi var. IATA portal sadece doğrulama için kullanılır. SAP hesap açma başka ekibin sorumluluğunda.</span>
+                        <span class="en">Customer definition can be created in COMIS but cannot be deleted (critical gap). Full CRUD authority for AWB stock and mapping. IATA portal used only for validation. SAP account opening is another team's responsibility.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: PAIN POINTS -->
+        <section class="card section-5" id="section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2>
+                    <p><span class="tr">Zorluklar, riskler, eksikler</span><span class="en">Challenges, risks, gaps</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s5-chart" class="view-pane active">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Delete Fonksiyonu Yok</span><span class="en">No Delete Function</span></h5>
+                                <p><span class="tr">CMT-008'de hatalı kayıt silinemez, blacklist workaround kullanılır. Veri kirliliği oluşur.</span>
+                                <span class="en">Erroneous records cannot be deleted in CMT-008, blacklist workaround is used. Data pollution occurs.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Toplu Tanımlama Yapılamıyor</span><span class="en">No Bulk Definition</span></h5>
+                                <p><span class="tr">Excel upload yok. Çoklu şube için 40+ ayrı manuel kayıt gerekli.</span>
+                                <span class="en">No Excel upload. 40+ separate manual entries required for multi-branch.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Agent/Customer Kod Karışıklığı</span><span class="en">Agent/Customer Code Confusion</span></h5>
+                                <p><span class="tr">Booking için iki alanın da eşleşmesi zorunlu. Farklı tablolarda tutuluyor ama aynı olmalı.</span>
+                                <span class="en">Both fields must match for booking. Stored in different tables but must be identical.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Her İstasyon İçin Ayrı Kayıt</span><span class="en">Separate Record Per Station</span></h5>
+                                <p><span class="tr">Controlling Location yapısı nedeniyle tek müşteri için çoklu kayıt zorunlu.</span>
+                                <span class="en">Due to Controlling Location structure, multiple records mandatory for single customer.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P5</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">IATA Kodu Güncelleme Yapılamıyor</span><span class="en">IATA Code Cannot Be Updated</span></h5>
+                                <p><span class="tr">Kaydedildikten sonra IATA kodu değiştirilemez. Tüm kayıt inaktif edilip yeniden açılmalı.</span>
+                                <span class="en">IATA code cannot be changed after saving. Entire record must be inactivated and recreated.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P6</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">GSA Customer Type Çalışmıyor</span><span class="en">GSA Customer Type Not Working</span></h5>
+                                <p><span class="tr">CMT-008'de GSA seçilince sistem donar. Workaround olarak Agent tipi + "GSA" prefix kullanılır.</span>
+                                <span class="en">System freezes when GSA selected in CMT-008. Workaround is Agent type + "GSA" prefix.</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s5-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">En kritik sorunlar: silme fonksiyonu eksikliği, toplu işlem yapamama ve agent/customer kod karmaşası. Bunlar veri kalitesini ve operasyonel verimliliği ciddi şekilde etkiliyor.</span>
+                        <span class="en">Most critical issues: lack of delete function, inability to do bulk operations and agent/customer code complexity. These seriously affect data quality and operational efficiency.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2026-01-16:</strong> "When a customer such as Çelebi or Montex operates across multiple Turkish airports, a separate Customer code must be created for each station... In peak periods, 40+ individual definitions may need to be created for a single customer."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: MENTAL MODEL -->
+        <section class="card section-6" id="section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="tr">Zihinsel Model & Davranış</span><span class="en">Mental Model & Behavior</span></h2>
+                    <p><span class="tr">Empathy Map, düşünce kalıpları</span><span class="en">Empathy Map, thought patterns</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s6-chart" class="view-pane active">
+                    <div class="empathy-grid">
+                        <div class="empathy-quad says">
+                            <h4><span class="icon">💬</span> <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                            <div class="empathy-item"><span class="tr">"Agent Code ve Customer Code aynı olmalı, yoksa booking yapamazsınız"</span><span class="en">"Agent Code and Customer Code must be same, otherwise you cannot book"</span></div>
+                            <div class="empathy-item"><span class="tr">"Delete yok, blacklist'e alıp alanları temizliyoruz"</span><span class="en">"No delete, we blacklist and clear the fields"</span></div>
+                            <div class="empathy-item"><span class="tr">"Her şube için ayrı kayıt açmam gerekiyor"</span><span class="en">"I need to create separate records for each branch"</span></div>
+                        </div>
+                        <div class="empathy-quad thinks">
+                            <h4><span class="icon">💭</span> <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                            <div class="empathy-item"><span class="tr">"Bu sistem 10 yıllık legacy, değiştirmek çok zor"</span><span class="en">"This is 10-year legacy system, very hard to change"</span></div>
+                            <div class="empathy-item"><span class="tr">"Neden iki ayrı kod varsa ikisi de aynı olmak zorundaysa?"</span><span class="en">"Why two separate codes if both must be the same?"</span></div>
+                            <div class="empathy-item"><span class="tr">"Toplu upload olsa ne kadar zaman kazanırdım"</span><span class="en">"How much time I would save with bulk upload"</span></div>
+                        </div>
+                        <div class="empathy-quad does">
+                            <h4><span class="icon">🎯</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                            <div class="empathy-item"><span class="tr">IATA Portal'dan manuel kod doğrulaması</span><span class="en">Manual code validation from IATA Portal</span></div>
+                            <div class="empathy-item"><span class="tr">Her istasyon için ayrı CMT-008 kaydı</span><span class="en">Separate CMT-008 record for each station</span></div>
+                            <div class="empathy-item"><span class="tr">Hatalı kayıtları blacklist'e alma</span><span class="en">Blacklisting erroneous records</span></div>
+                        </div>
+                        <div class="empathy-quad feels">
+                            <h4><span class="icon">❤️</span> <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                            <div class="empathy-item"><span class="tr">Tekrarlayan manuel işlerden yorgun</span><span class="en">Tired from repetitive manual tasks</span></div>
+                            <div class="empathy-item"><span class="tr">Veri kalitesi konusunda endişeli</span><span class="en">Worried about data quality</span></div>
+                            <div class="empathy-item"><span class="tr">Sistem kısıtlamalarından hayal kırıklığı</span><span class="en">Frustrated by system limitations</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s6-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Master Data uzmanı prosedür odaklı ve detaycı çalışır. COMIS'in 10 yıllık legacy yapısının kısıtlamalarıyla mücadele eder. Manuel tekrarlayan işlerden yorgun ama veri doğruluğunu koruma konusunda kararlı.</span>
+                        <span class="en">Master Data specialist works procedure-oriented and detail-focused. Struggles with 10-year legacy COMIS structure limitations. Tired from manual repetitive tasks but determined to maintain data accuracy.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: COLLABORATION -->
+        <section class="card section-7" id="section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                    <p><span class="tr">Paydaşlar, bağımlılıklar</span><span class="en">Stakeholders, dependencies</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s7-chart" class="view-pane active">
+                    <div class="stakeholder-map">
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node provider"><span class="tr">Satış Ekibi</span><span class="en">Sales Team</span></div>
+                            <div class="stakeholder-node provider"><span class="tr">GSA Yönetimi</span><span class="en">GSA Management</span></div>
+                            <div class="stakeholder-node provider"><span class="tr">Bölge Ofisleri</span><span class="en">Regional Offices</span></div>
+                        </div>
+                        <span class="stakeholder-arrow">↓</span>
+                        <div class="stakeholder-node persona"><span class="tr">Master Data Specialist</span><span class="en">Master Data Specialist</span></div>
+                        <span class="stakeholder-arrow">↓</span>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node consumer"><span class="tr">Rezervasyon Ekibi</span><span class="en">Reservation Team</span></div>
+                            <div class="stakeholder-node consumer"><span class="tr">Muhasebe Ekibi</span><span class="en">Accounting Team</span></div>
+                            <div class="stakeholder-node consumer"><span class="tr">TK Go Kullanıcıları</span><span class="en">TK Go Users</span></div>
+                        </div>
+                        <span class="stakeholder-arrow">↕</span>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node partner">IATA Portal</div>
+                            <div class="stakeholder-node partner">SAP Team</div>
+                            <div class="stakeholder-node partner">CRM Team</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s7-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Satış, GSA Yönetimi ve Bölge Ofislerinden talep alır. Tanımladığı veriler Rezervasyon, Muhasebe ve TK Go kullanıcıları tarafından tüketilir. IATA Portal, SAP ve CRM ekipleriyle koordineli çalışır.</span>
+                        <span class="en">Receives requests from Sales, GSA Management and Regional Offices. Defined data is consumed by Reservation, Accounting and TK Go users. Works in coordination with IATA Portal, SAP and CRM teams.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: OPPORTUNITIES -->
+        <section class="card section-8" id="section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+                    <p><span class="tr">MVP, kısa vade, uzun vade</span><span class="en">MVP, short term, long term</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s8-chart" class="view-pane active">
+                    <div class="timeline">
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="tr">P1 → Silme Workflow'u</span><span class="en">P1 → Delete Workflow</span></h5>
+                            <p><span class="tr">Onay mekanizmalı (manager approval + audit log) kayıt silme özelliği</span><span class="en">Record deletion with approval mechanism (manager approval + audit log)</span></p>
+                        </div>
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="tr">P3 → Tek Kod Yapısı</span><span class="en">P3 → Single Code Structure</span></h5>
+                            <p><span class="tr">Agent Code = Customer Code karmaşasını ortadan kaldıran unified yapı</span><span class="en">Unified structure eliminating Agent Code = Customer Code complexity</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                            <h5><span class="tr">P2 → Excel Bulk Upload</span><span class="en">P2 → Excel Bulk Upload</span></h5>
+                            <p><span class="tr">Çoklu şube tanımlaması için toplu import özelliği</span><span class="en">Bulk import feature for multi-branch definition</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                            <h5><span class="tr">P4 → Multi-Station Tek Kayıt</span><span class="en">P4 → Multi-Station Single Record</span></h5>
+                            <p><span class="tr">Tek müşteri kaydına çoklu istasyon bağlama</span><span class="en">Linking multiple stations to single customer record</span></p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
+                            <h5><span class="tr">IATA API Entegrasyonu</span><span class="en">IATA API Integration</span></h5>
+                            <p><span class="tr">Real-time IATA kod doğrulama ve otomatik status güncelleme</span><span class="en">Real-time IATA code validation and automatic status update</span></p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
+                            <h5><span class="tr">Customer 360 View</span><span class="en">Customer 360 View</span></h5>
+                            <p><span class="tr">Tek ekranda müşterinin tüm rolleri (Agent + Shipper + Consignee)</span><span class="en">All customer roles in single screen (Agent + Shipper + Consignee)</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="s8-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">MVP'de silme workflow'u ve tek kod yapısı kritik. Kısa vadede bulk upload ve multi-station tek kayıt. Uzun vadede IATA API entegrasyonu ve Customer 360 view ile tam dijital dönüşüm.</span>
+                        <span class="en">Delete workflow and single code structure critical in MVP. Bulk upload and multi-station single record in short term. Full digital transformation with IATA API integration and Customer 360 view in long term.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: AI SUPPORT -->
+        <section class="card section-9" id="section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="tr">AI Destek Potansiyeli</span><span class="en">AI Support Potential</span></h2>
+                    <p><span class="tr">Otomasyon, öneri, karar destek</span><span class="en">Automation, suggestion, decision support</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s9-chart" class="view-pane active">
+                    <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                    <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                        <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                        <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                    </p>
+                    
+                    <!-- Slider Container -->
+                    <div style="display:flex; gap:24px; margin-bottom:32px;">
+                        <!-- Left: Scale Labels -->
+                        <div style="display:flex; flex-direction:column; justify-content:space-between; width:110px; padding:8px 0;">
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 YASAK</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI yapmamalı</span><span class="en">AI must not do</span></div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ ONAY GEREKLİ</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">İnsan onayı şart</span><span class="en">Human approval required</span></div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ GÜVENLİ</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI serbest</span><span class="en">AI autonomous</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Middle: Slider Track -->
+                        <div style="flex:1; position:relative;">
+                            <!-- Gradient Track -->
+                            <div style="height:280px; border-radius:12px; background: linear-gradient(to bottom, #fef2f2 0%, #fef3c7 40%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                                
+                                <!-- TRUST LINE - Güven Sınırı (Seviye 4) -->
+                                <div style="position:absolute; left:0; right:0; top:55%; height:3px; background:#f59e0b; z-index:10;"></div>
+                                <div style="position:absolute; right:8px; top:53%; background:#f59e0b; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                    <span class="tr">⚠️ ONAY SINIRI</span>
+                                    <span class="en">⚠️ APPROVAL LINE</span>
+                                </div>
+                                
+                                <!-- Level Markers -->
+                                <div style="position:absolute; left:12px; top:5%; font-size:10px; color:#b91c1c; font-weight:600;">
+                                    <span class="tr">6 - 🚫 Blacklist kararı verme</span>
+                                    <span class="en">6 - 🚫 Making blacklist decision</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:18%; font-size:10px; color:#b91c1c; font-weight:600;">
+                                    <span class="tr">5 - 🚫 Müşteri kredibilitesi kararı</span>
+                                    <span class="en">5 - 🚫 Customer creditworthiness decision</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:35%; font-size:10px; color:#b45309; font-weight:600;">
+                                    <span class="tr">4 - ⚠️ P1 → Silme talebinde risk analizi</span>
+                                    <span class="en">4 - ⚠️ P1 → Risk analysis in deletion request</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:60%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">3 - ✅ Çoklu şube tanımlama önerisi</span>
+                                    <span class="en">3 - ✅ Multi-branch definition suggestion</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:75%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">2 - ✅ Duplicate kayıt tespiti ve uyarı</span>
+                                    <span class="en">2 - ✅ Duplicate record detection and warning</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:90%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">1 - ✅ IATA otomatik kod doğrulama</span>
+                                    <span class="en">1 - ✅ IATA automatic code validation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="two-col" style="margin-top:20px;">
+                        <div class="list-box" style="border-left:3px solid #16a34a;">
+                            <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">📋 IATA portal'dan otomatik kod doğrulama</span><span class="en">📋 Automatic code validation from IATA portal</span></div>
+                            <div class="list-item"><span class="tr">🔍 Duplicate kayıt tespiti ve uyarı</span><span class="en">🔍 Duplicate record detection and warning</span></div>
+                            <div class="list-item"><span class="tr">⚙️ Eksik alan/veri kontrolü</span><span class="en">⚙️ Missing field/data validation</span></div>
+                            <div class="list-item"><span class="tr">🏢 Çoklu şube tanımlama önerisi</span><span class="en">🏢 Multi-branch definition suggestion</span></div>
+                        </div>
+                        <div class="list-box" style="border-left:3px solid #dc2626;">
+                            <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">🚫 Yeni müşteri kredibilitesi kararı</span><span class="en">🚫 New customer creditworthiness decision</span></div>
+                            <div class="list-item"><span class="tr">🚫 GSA sözleşme koşulları belirleme</span><span class="en">🚫 GSA contract terms determination</span></div>
+                            <div class="list-item"><span class="tr">🚫 Blacklist kararı verme</span><span class="en">🚫 Making blacklist decision</span></div>
+                            <div class="list-item"><span class="tr">🚫 IATA membership durumu değiştirme</span><span class="en">🚫 Changing IATA membership status</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s9-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Master Data Specialist için AI, veri doğrulama ve duplicate tespiti gibi rutin kontrollerde değer katabilir (Seviye 1-3). Risk analizi (Seviye 4) insan onayı gerektirir. Kredibilite kararları ve blacklist (Seviye 5-6) tamamen iş kuralı olarak kalmalıdır.</span>
+                        <span class="en">For Master Data Specialist, AI can add value in routine validations like data verification and duplicate detection (Level 1-3). Risk analysis (Level 4) requires human approval. Creditworthiness decisions and blacklisting (Level 5-6) must remain as business rules.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><span class="tr">PRM - Partner Management | Master Data Specialist Persona | Kaynak: 8 MoM (Key User & Solution Team)</span>
+        <span class="en">PRM - Partner Management | Master Data Specialist Persona | Source: 8 MoM (Key User & Solution Team)</span></p>
+        <p><span class="tr">Yöntem: Özetleme Promptu × BKR Persona Şablonu | Sadece doküman kanıtlarına dayalıdır</span>
+        <span class="en">Method: Summary Prompt × BKR Persona Template | Based solely on document evidence</span></p>
+    </footer>
+    </div>
+
+    <script>
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+            });
+        }
+        
+        function toggleView(btn, section, view) {
+            const parent = btn.closest('.toggle-wrap');
+            parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById(section + '-chart').classList.remove('active');
+            document.getElementById(section + '-text').classList.remove('active');
+            document.getElementById(section + '-' + view).classList.add('active');
+        }
+        
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

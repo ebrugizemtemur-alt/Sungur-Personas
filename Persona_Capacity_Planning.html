@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kapasite Planlama Ekibi | Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        /* ===== SIDE NAVIGATION ===== */
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .nav-item .nav-num {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .nav-item .nav-label {
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .nav-item.pending {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 12px 10px;
+        }
+        .nav-item[data-theme="indigo"].active { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .nav-item[data-theme="red"].active { background: linear-gradient(135deg, #dc2626, #f97316); }
+        .nav-item[data-theme="green"].active { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .nav-item[data-theme="blue"].active { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .nav-item[data-theme="orange"].active { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .nav-item[data-theme="purple"].active { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .nav-item[data-theme="teal"].active { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+
+        
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #0ea5e9; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content {
+            margin-left: 72px;
+        }
+
+        
+        /* Hero - Blue theme for Capacity */
+        .hero {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #bfdbfe 100%);
+            padding: 48px 40px;
+            position: relative;
+            border-bottom: 4px solid #2563eb;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(37,99,235,0.15); color: #2563eb; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #2563eb; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; color: #1f2937; }
+        .hero h1 span { color: #2563eb; }
+        .hero-subtitle { font-size: 16px; color: #6b7280; max-width: 600px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #2563eb; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; background: rgba(255,255,255,0.5); padding: 16px; border-radius: 0 8px 8px 0; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .meta-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6b7280; background: white; padding: 8px 12px; border-radius: 8px; }
+        .meta-dot { width: 8px; height: 8px; border-radius: 50%; }
+        /* Source Tooltip */
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .source-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 24px;
+            width: 12px;
+            height: 12px;
+            background: #1f2937;
+            transform: rotate(45deg);
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+
+        
+        /* Board */
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        /* Card */
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title { flex: 1; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        /* Toggle */
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #2563eb; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Section Colors */
+        .section-1 .card-icon { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .section-1 { border-left: 4px solid #2563eb; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        /* Components */
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(37,99,235,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(37,99,235,0.1); }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo { background: #eff6ff; border: 1px solid #93c5fd; }
+        .segment-col.demo h4 { color: #2563eb; border-color: #2563eb; }
+        .segment-col.behav { background: #fffbeb; border: 1px solid #fde68a; }
+        .segment-col.behav h4 { color: #b45309; border-color: #b45309; }
+        .segment-col.psycho { background: #faf5ff; border: 1px solid #d8b4fe; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 8px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 90px; font-weight: 500; }
+        
+        .occupancy-bar { margin: 20px 0; }
+        .occupancy-bar h4 { font-size: 11px; color: #6b7280; margin-bottom: 8px; }
+        .bar-track { height: 40px; background: #e5e7eb; border-radius: 8px; display: flex; overflow: hidden; }
+        .bar-segment { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: white; }
+        .bar-segment.smart { background: #16a34a; }
+        .bar-segment.premium { background: #f59e0b; }
+        .bar-segment.urgent { background: #dc2626; }
+        .bar-labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; color: #6b7280; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #2563eb, #3b82f6); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px; background: #eff6ff; border-radius: 12px; margin-bottom: 12px; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; border: 2px solid #fcd34d; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; border: 2px solid #93c5fd; }
+        .flow-step.decision { background: #fce7f3; color: #be185d; border: 2px solid #f9a8d4; }
+        .flow-step.reject { background: #dc2626; color: white; border: 2px solid #b91c1c; }
+        .flow-step.approve { background: #16a34a; color: white; border: 2px solid #15803d; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.08); border-left: 4px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.08); border-left: 4px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.08); border-left: 4px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+                .empathy-grid { 
+            display: grid; 
+            grid-template-columns: 1fr auto 1fr; 
+            grid-template-rows: auto auto; 
+            gap: 16px; 
+            align-items: stretch; 
+        }
+        .empathy-avatar {
+            grid-row: span 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-width: 130px;
+        }
+        .empathy-avatar-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 4px solid white;
+            background: linear-gradient(135deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%);
+        }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.does h4 span.icon { background: rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-quad.feels h4 span.icon { background: rgba(225,29,72,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
+        .stakeholder-node.partner { background: #dcfce7; color: #166534; border: 2px solid #86efac; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; font-weight: 700; padding: 14px 24px; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+        .stakeholder-arrow { font-size: 20px; color: #9ca3af; }
+        
+        .timeline { display: flex; flex-direction: column; gap: 12px; }
+        .timeline-item { padding: 16px; border-radius: 12px; border-left: 4px solid; }
+        .timeline-item.mvp { background: #dcfce7; border-color: #16a34a; }
+        .timeline-item.short { background: #e0e7ff; border-color: #4f46e5; }
+        .timeline-item.long { background: #f1f5f9; border-color: #64748b; }
+        .timeline-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .timeline-badge.mvp { background: #16a34a; color: white; }
+        .timeline-badge.short { background: #4f46e5; color: white; }
+        .timeline-badge.long { background: #64748b; color: white; }
+        .timeline-item h5 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 12px; color: #6b7280; }
+        
+        .ai-pyramid { display: flex; flex-direction: column; gap: 6px; align-items: center; margin: 20px 0; }
+        .ai-level { padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; color: white; }
+        
+        .evidence { margin-top: 16px; padding: 16px; background: #eff6ff; border-left: 4px solid #2563eb; border-radius: 0 8px 8px 0; font-size: 12px; color: #1e40af; }
+        .evidence strong { display: block; margin-bottom: 8px; color: #1e3a8a; }
+        
+        .summary-box { background: #f9fafb; padding: 16px; border-radius: 10px; font-size: 13px; line-height: 1.7; margin-bottom: 12px; border: 1px solid #e5e7eb; }
+        .summary-box h4 { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px; }
+        
+        .highlight-box { background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid #2563eb; padding: 16px; border-radius: 10px; margin: 16px 0; }
+        .highlight-box h4 { color: #2563eb; font-size: 12px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .highlight-box p { font-size: 12px; color: #1e40af; }
+        
+        .status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+        .status-box { padding: 16px; border-radius: 10px; text-align: center; border: 2px solid; }
+        .status-box h5 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .status-box p { font-size: 10px; }
+        .status-box.reject { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+        .status-box.replan { background: #fefce8; border-color: #fef08a; color: #ca8a04; }
+        .status-box.backup { background: #f0fdf4; border-color: #bbf7d0; color: #16a34a; }
+        .status-box.confirm { background: #eff6ff; border-color: #bfdbfe; color: #2563eb; }
+        
+        .footer { margin-top: 32px; padding: 24px; text-align: center; background: linear-gradient(135deg, #1e293b, #334155); color: rgba(255,255,255,0.8); border-radius: 16px; font-size: 13px; }
+        .footer p { margin-bottom: 8px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #0ea5e9; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 60px; }
+            .nav-item { width: 44px; height: 44px; }
+            .nav-item .nav-num { font-size: 14px; }
+            .nav-item .nav-label { font-size: 7px; }
+            .segment-card, .two-col, .three-col, .empathy-grid, .status-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 24px; }
+            .flow-h { justify-content: center; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <!-- SIDE NAVIGATION -->
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()" title="Tüm Modüller">BKR</div>
+        <div class="nav-items">
+            <a href="Persona_IST_General_Reservation.html" class="nav-item" data-theme="indigo">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Genel Rez</span>
+            </a>
+            <a href="Persona_IST_Special_Cargo.html" class="nav-item" data-theme="red">
+                <span class="nav-num">2</span>
+                <span class="nav-label">Özel Kargo</span>
+            </a>
+            <a href="Persona_Domestic_Reservation.html" class="nav-item" data-theme="green">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Yurtiçi</span>
+            </a>
+            <a href="Persona_Capacity_Planning.html" class="nav-item active" data-theme="blue">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Kapasite</span>
+            </a>
+            <a href="Persona_Operations_CargoAcceptance.html" class="nav-item" data-theme="orange">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Operasyon</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="Persona_GSA_International_Station.html" class="nav-item" data-theme="purple">
+                <span class="nav-num">6</span>
+                <span class="nav-label">GSA</span>
+            </a>
+            <a href="Persona_Solution_Technical_Team.html" class="nav-item" data-theme="teal">
+                <span class="nav-num">7</span>
+                <span class="nav-label">Teknik</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header"><span class="mega-menu-title">📦 Tüm Modüller</span><button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a><a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a><a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a><a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a><a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a><a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a><a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a><a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a><a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a></div></div>
+        <div class="module-section"><div class="module-header active"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div><div class="persona-list"><a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a><a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a><a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a><a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a><a href="Persona_Capacity_Planning.html" class="persona-link current"><span class="persona-num">5</span> Capacity Planning</a><a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a><a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div><div class="persona-list"><a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a><a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a><a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a><a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a><a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a><a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a><a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div><div class="persona-list"><a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a><a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a></div></div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-header">
+            <span class="badge">BKR · KAPASİTE · PERSONA #4</span>
+            <div class="lang-toggle">
+                <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                <button class="lang-btn" onclick="switchLang('en')">EN</button>
+            </div>
+        </div>
+        <h1>
+            <span class="tr">Kapasite <span>Planlama</span> Ekibi</span>
+            <span class="en">Capacity <span>Planning</span> Team</span>
+        </h1>
+        <p class="hero-subtitle">
+            <span class="tr">Uçuş kapasitelerini yöneten, rezervasyonları re-plan/reject eden, doluluk oranlarına göre fiyatlama kararlarını etkileyen kritik ekip. FLT028 (Monitor Flight) ekranı ile çalışır. Rezervasyon ekiplerinden AYRIKTIR.</span>
+            <span class="en">Critical team managing flight capacities, re-planning/rejecting reservations, influencing pricing decisions based on occupancy rates. Works with FLT028 (Monitor Flight) screen. SEPARATE from reservation teams.</span>
+        </p>
+        <div class="hero-quote">
+            <span class="tr">"Kapasite ekipleri rezervasyonu uygun görmezse REJECT eder. 'To Be Actioned' durumu kapasite ile ilgilidir. Prevent Re-plan işaretli rezervasyonlarda değişiklik yapmak istediklerinde pop-up çıkar - acil olmayan durumlarda bu işareti kaldırıp re-plan yapabilirler."</span>
+            <span class="en">"Capacity teams REJECT reservation if deemed unsuitable. 'To Be Actioned' status is related to capacity. When they want to make changes to Prevent Re-plan reservations, a pop-up appears - in non-urgent cases they can uncheck and re-plan."</span>
+        </div>
+        <div class="hero-meta">
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#2563eb;"></span>
+                <span><strong>User:</strong> <span class="tr">Kapasite Uzmanı</span><span class="en">Capacity Specialist</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#f59e0b;"></span>
+                <span><strong>Criticality:</strong> <span style="color:#f59e0b;">★★★★★</span> <span class="tr">Çok Yüksek</span><span class="en">Very High</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#16a34a;"></span>
+                <span><strong>Main Screen:</strong> FLT028 (Monitor Flight)</span>
+            </div>
+            <div class="hero-meta-item source-card">
+                <span class="dot" style="background:#ec4899;"></span>
+                <span><strong>Source:</strong> 5+ MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                <div class="source-tooltip">
+                    <div style="font-weight:700; margin-bottom:10px; color:#a5f3fc; font-size:12px;">📄 Source MoM Documents</div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-11</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-12</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-2026-01-09</span><span style="color:#93c5fd;">Solution Team</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BOARD -->
+<div class="board">
+
+    <!-- SECTION 1: PERSONA PROFILE -->
+    <section class="card section-1">
+        <div class="card-header">
+            <div class="card-icon">1</div>
+            <div class="card-title">
+                <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                <p><span class="tr">Kim, ne yapar, temel özellikler</span><span class="en">Who, what they do, key attributes</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s1-chart" class="view-pane active">
+                <div class="profile-grid">
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Rol</span><span class="en">Role</span></div>
+                        <div class="pf-value"><span class="tr">Kapasite Planlama Uzmanı</span><span class="en">Capacity Planning Specialist</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div>
+                        <div class="pf-value"><span class="tr">3CS Capacity Export AYM</span><span class="en">3CS Capacity Export AYM</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Ana Ekran</span><span class="en">Main Screen</span></div>
+                        <div class="pf-value">FLT028 - Monitor Flight</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Diğer Ekranlar</span><span class="en">Other Screens</span></div>
+                        <div class="pf-value">OPR344, FLT002</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Ana Yetki</span><span class="en">Main Authority</span></div>
+                        <div class="pf-value"><span class="tr">Reject / Re-plan</span><span class="en">Reject / Re-plan</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Karar Kriteri</span><span class="en">Decision Criteria</span></div>
+                        <div class="pf-value"><span class="tr">Uçuş Doluluk Oranı</span><span class="en">Flight Occupancy Rate</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Entegrasyon</span><span class="en">Integration</span></div>
+                        <div class="pf-value">3CS, COMIS, FFR</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Rezervasyon ile</span><span class="en">With Reservation</span></div>
+                        <div class="pf-value" style="color:#dc2626;"><span class="tr">AYRIK EKİP</span><span class="en">SEPARATE TEAM</span></div>
+                    </div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#2563eb; margin:24px 0 12px;"><span class="tr">DOLULUK BAZLI FİYATLAMA MODELİ</span><span class="en">OCCUPANCY-BASED PRICING MODEL</span></h4>
+                <div class="occupancy-bar">
+                    <div class="bar-track">
+                        <div class="bar-segment smart" style="width:60%;">SMART (0-60%)</div>
+                        <div class="bar-segment premium" style="width:20%;">PREMIUM (60-80%)</div>
+                        <div class="bar-segment urgent" style="width:20%;">URGENT (80-99%)</div>
+                    </div>
+                    <div class="bar-labels">
+                        <span>0%</span>
+                        <span>60%</span>
+                        <span>80%</span>
+                        <span>100%</span>
+                    </div>
+                </div>
+                
+                <div class="segment-card">
+                    <div class="segment-col demo">
+                        <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Lokasyon:</span><span class="en">Location:</span></strong> <span class="tr">IST Merkez</span><span class="en">IST Central</span></div>
+                        <div class="segment-item"><strong><span class="tr">Dil:</span><span class="en">Language:</span></strong> <span class="tr">TR + EN (raporlama)</span><span class="en">TR + EN (reporting)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Çalışma:</span><span class="en">Work:</span></strong> <span class="tr">Analitik / Planlama</span><span class="en">Analytical / Planning</span></div>
+                        <div class="segment-item"><strong><span class="tr">Teknik:</span><span class="en">Technical:</span></strong> <span class="tr">3CS + COMIS Expert</span><span class="en">3CS + COMIS Expert</span></div>
+                    </div>
+                    <div class="segment-col behav">
+                        <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Karar:</span><span class="en">Decision:</span></strong> <span class="tr">Veri odaklı</span><span class="en">Data driven</span></div>
+                        <div class="segment-item"><strong><span class="tr">Monitoring:</span><span class="en">Monitoring:</span></strong> <span class="tr">Sürekli (real-time)</span><span class="en">Continuous (real-time)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Müdahale:</span><span class="en">Intervention:</span></strong> <span class="tr">Proaktif planlama</span><span class="en">Proactive planning</span></div>
+                        <div class="segment-item"><strong><span class="tr">Timing:</span><span class="en">Timing:</span></strong> <span class="tr">Uçuştan 12-13 saat önce</span><span class="en">12-13 hours before flight</span></div>
+                    </div>
+                    <div class="segment-col psycho">
+                        <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Motivasyon:</span><span class="en">Motivation:</span></strong> <span class="tr">Maksimum utilization</span><span class="en">Maximum utilization</span></div>
+                        <div class="segment-item"><strong><span class="tr">Değer:</span><span class="en">Value:</span></strong> <span class="tr">Verimlilik > Müşteri</span><span class="en">Efficiency > Customer</span></div>
+                        <div class="segment-item"><strong><span class="tr">Stres:</span><span class="en">Stress:</span></strong> <span class="tr">Son dakika değişiklikler</span><span class="en">Last-minute changes</span></div>
+                        <div class="segment-item"><strong><span class="tr">Hedef:</span><span class="en">Goal:</span></strong> <span class="tr">%100 load factor</span><span class="en">100% load factor</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s1-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Kapasite ekibi rezervasyon ekiplerinden AYRIKTIR. FLT028 (Monitor Flight) ekranı üzerinden uçuş kapasitelerini izler, doluluk oranına göre fiyatlama bandını belirler (Smart/Premium/Urgent), ve gerektiğinde rezervasyonları reject veya re-plan eder. 3CS sistemi ile entegre çalışır.</span>
+                    <span class="en">Capacity team is SEPARATE from reservation teams. Monitors flight capacities via FLT028 (Monitor Flight) screen, determines pricing band based on occupancy (Smart/Premium/Urgent), and rejects or re-plans reservations when needed. Works integrated with 3CS system.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2026-01-02:</strong> "For example, plane occupancy up to 60% is smart, 60%-80% premium, 80%-99% urgent."<br>
+                    <strong>MoM-2025-12-09:</strong> "Reject: Capacity team - Reservation deemed unsuitable."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: GOALS & MOTIVATION -->
+    <section class="card section-2">
+        <div class="card-header">
+            <div class="card-icon">2</div>
+            <div class="card-title">
+                <h2><span class="tr">Hedefler & Motivasyon</span><span class="en">Goals & Motivation</span></h2>
+                <p><span class="tr">Ne istiyor, neden, korkuları</span><span class="en">What they want, why, fears</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s2-chart" class="view-pane active">
+                <div class="goal-pyramid">
+                    <div class="goal-level primary"><span class="tr">🎯 Uçuşları maksimum verimlilikle doldurmak</span><span class="en">🎯 Fill flights with maximum efficiency</span></div>
+                    <div class="goal-level secondary"><span class="tr">📊 Doluluk/fiyat dengesini optimize etmek | Boş kapasite minimize</span><span class="en">📊 Optimize occupancy/price balance | Minimize empty capacity</span></div>
+                    <div class="goal-level tertiary"><span class="tr">📋 Set palet görünürlüğü | ULD planlama | Allotment yönetimi</span><span class="en">📋 Set pallet visibility | ULD planning | Allotment management</span></div>
+                </div>
+                
+                <div class="three-col">
+                    <div class="list-box motivators">
+                        <h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                        <div class="list-item"><span class="tr">%100'e yakın doluluk oranı</span><span class="en">Near 100% occupancy rate</span></div>
+                        <div class="list-item"><span class="tr">Yüksek yield (urgent fiyat)</span><span class="en">High yield (urgent price)</span></div>
+                        <div class="list-item"><span class="tr">Başarılı re-plan sonrası müşteri memnuniyeti</span><span class="en">Customer satisfaction after successful re-plan</span></div>
+                        <div class="list-item"><span class="tr">Tüm verinin tek ekranda görünmesi</span><span class="en">All data visible on single screen</span></div>
+                        <div class="list-item"><span class="tr">Allotment aşımının spot ile çözülmesi</span><span class="en">Allotment excess solved with spot</span></div>
+                    </div>
+                    <div class="list-box demotivators">
+                        <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                        <div class="list-item"><span class="tr">Set pallet'lerin COMIS'te görünmemesi</span><span class="en">Set pallets not visible in COMIS</span></div>
+                        <div class="list-item"><span class="tr">ULD rezervasyonlarının sistem dışı olması</span><span class="en">ULD reservations being out of system</span></div>
+                        <div class="list-item"><span class="tr">Manuel OPR344 girişi zorunluluğu</span><span class="en">Mandatory manual OPR344 entry</span></div>
+                        <div class="list-item"><span class="tr">Prevent Re-plan işaretli rezervasyonlar</span><span class="en">Prevent Re-plan marked reservations</span></div>
+                        <div class="list-item"><span class="tr">Son dakika uçak değişiklikleri</span><span class="en">Last-minute aircraft changes</span></div>
+                    </div>
+                    <div class="list-box fears">
+                        <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item"><span class="tr">Boş uçan uçak (düşük utilization)</span><span class="en">Empty flying aircraft (low utilization)</span></div>
+                        <div class="list-item"><span class="tr">Overbooking sonrası reject artışı</span><span class="en">Increased rejects after overbooking</span></div>
+                        <div class="list-item"><span class="tr">Görünmeyen set palet'in kapasiteyi aşması</span><span class="en">Invisible set pallet exceeding capacity</span></div>
+                        <div class="list-item"><span class="tr">Allotment aşımı şikayetleri</span><span class="en">Allotment excess complaints</span></div>
+                        <div class="list-item"><span class="tr">FFR mesajlarının kaçırılması</span><span class="en">Missing FFR messages</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s2-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Ana hedef: Uçuşları maksimum verimlilikle doldurmak (%100 load factor). En büyük frustrasyon: Set pallet ve ULD'lerin COMIS'te görünmemesi - manuel takip zorunluluğu. Korku: Görünmeyen yükler nedeniyle kapasite planlamasının bozulması.</span>
+                    <span class="en">Main goal: Fill flights with maximum efficiency (100% load factor). Biggest frustration: Set pallets and ULDs not visible in COMIS - mandatory manual tracking. Fear: Capacity planning disruption due to invisible loads.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-11:</strong> "The capacity team cannot see set pallets in COMIS because there is no AWB or UBR number."<br>
+                    "The capacity teams mostly cause problems with these set pallet requests because they cannot see these requests in COMIS."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: WORKFLOW -->
+    <section class="card section-3">
+        <div class="card-header">
+            <div class="card-icon">3</div>
+            <div class="card-title">
+                <h2><span class="tr">İş Akışı & Niyetler</span><span class="en">Workflow & Intents</span></h2>
+                <p><span class="tr">Kapasite yönetim süreci</span><span class="en">Capacity management process</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s3-chart" class="view-pane active">
+                <h4 style="font-size:11px; color:#0284c7; margin-bottom:12px;"><span class="tr">KAPASİTE KARAR AKIŞI</span><span class="en">CAPACITY DECISION FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step auto"><span class="tr">Rez Oluşturuldu</span><span class="en">Res Created</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">Capacity Control</span><span class="en">Capacity Control</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">Doluluk Kontrolü</span><span class="en">Occupancy Check</span></div>
+                </div>
+                <div class="flow-h">
+                    <span class="flow-arrow">↓</span>
+                    <div class="flow-step approve"><span class="tr">✅ Confirm</span><span class="en">✅ Confirm</span></div>
+                    <span style="margin:0 20px;">|</span>
+                    <div class="flow-step manual"><span class="tr">📋 To Be Actioned</span><span class="en">📋 To Be Actioned</span></div>
+                    <span style="margin:0 20px;">|</span>
+                    <div class="flow-step reject"><span class="tr">❌ Reject</span><span class="en">❌ Reject</span></div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#0284c7; margin:24px 0 12px;"><span class="tr">REZERVASYON DURUMLARI (Kapasite Perspektifi)</span><span class="en">RESERVATION STATUSES (Capacity Perspective)</span></h4>
+                <div class="status-grid">
+                    <div class="status-box reject">
+                        <h5>REJECT</h5>
+                        <p><span class="tr">Kapasite ekibi tarafından uygun görülmedi</span><span class="en">Deemed unsuitable by capacity team</span></p>
+                    </div>
+                    <div class="status-box replan">
+                        <h5>RE-PLAN</h5>
+                        <p><span class="tr">Başka uçuşa yönlendirildi</span><span class="en">Redirected to another flight</span></p>
+                    </div>
+                    <div class="status-box backup">
+                        <h5>BACKUP</h5>
+                        <p><span class="tr">Allotment aşımı veya kapasite nedeni</span><span class="en">Allotment excess or capacity reason</span></p>
+                    </div>
+                    <div class="status-box confirm">
+                        <h5>CONFIRM</h5>
+                        <p><span class="tr">Kapasite onayı verildi</span><span class="en">Capacity approved</span></p>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4>⚠️ <span class="tr">PREVENT RE-PLAN MEKANİZMASI</span><span class="en">PREVENT RE-PLAN MECHANISM</span></h4>
+                    <p><span class="tr">"Prevent Re-plan işaretlendiğinde; planlandığı gün uçmak zorundadır. Kapasite ekipleri bu rezervasyonlarda değişiklik yapmak istediğinde pop-up çıkar. Çok acil olmayan durumlarda nadiren rezervasyon detayına gidip bu işareti kaldırıp re-plan yapabilirler."</span>
+                    <span class="en">"When Prevent Re-plan is checked; it must fly on the scheduled day. When capacity teams want to make changes to these reservations, a pop-up appears. In non-urgent cases, they can rarely go to reservation details, uncheck it, and re-plan."</span></p>
+                </div>
+                
+                <h4 style="font-size:11px; color:#0284c7; margin:24px 0 12px;"><span class="tr">SET PALET ÖZEL AKIŞI</span><span class="en">SET PALLET SPECIAL FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="tr">Set Palet Talebi</span><span class="en">Set Pallet Request</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background:#fecaca; color:#991b1b; border:2px solid #f87171;"><span class="tr">❌ COMIS'te Görünmez</span><span class="en">❌ Not Visible in COMIS</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">Manuel Değerlendirme</span><span class="en">Manual Evaluation</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">OPR344 Giriş (12-13 saat önce)</span><span class="en">OPR344 Entry (12-13 hrs before)</span></div>
+                </div>
+            </div>
+            <div id="s3-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Kapasite ekibi rezervasyonları confirm, reject, re-plan veya backup'a alabilir. "To Be Actioned" durumu kapasite kararı bekliyor demektir. Set palet talepleri COMIS'te görünmediği için manuel değerlendirme ve OPR344 girişi gerekiyor - bu uçuştan 12-13 saat önce yapılıyor.</span>
+                    <span class="en">Capacity team can confirm, reject, re-plan or backup reservations. "To Be Actioned" status means waiting for capacity decision. Set pallet requests require manual evaluation and OPR344 entry since not visible in COMIS - done 12-13 hours before flight.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-11:</strong> "Capacity Team's System Entries: For these set pallet requests that are not visible in the system, capacity teams make entries into OPR344 approximately 12–13 hours before the flight."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: DATA & INTEGRATION -->
+    <section class="card section-4">
+        <div class="card-header">
+            <div class="card-icon">4</div>
+            <div class="card-title">
+                <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                <p><span class="tr">Ekranlar, sistemler, allotment</span><span class="en">Screens, systems, allotment</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s4-chart" class="view-pane active">
+                <h4 style="font-size:11px; color:#0d9488; margin-bottom:12px;"><span class="tr">KAPASİTE EKİBİ EKRANLARI</span><span class="en">CAPACITY TEAM SCREENS</span></h4>
+                <div class="three-col">
+                    <div class="list-box" style="border-left:3px solid #2563eb;">
+                        <h4 style="color:#2563eb;">FLT028</h4>
+                        <div class="list-item"><span class="tr">🖥️ Monitor Flight</span><span class="en">🖥️ Monitor Flight</span></div>
+                        <div class="list-item"><span class="tr">📊 Doluluk oranı görünümü</span><span class="en">📊 Occupancy rate view</span></div>
+                        <div class="list-item"><span class="tr">🔄 Rez re-plan/reject</span><span class="en">🔄 Res re-plan/reject</span></div>
+                        <div class="list-item"><span class="tr">Ana kapasite yönetim ekranı</span><span class="en">Main capacity management screen</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #f59e0b;">
+                        <h4 style="color:#f59e0b;">OPR344</h4>
+                        <div class="list-item"><span class="tr">📦 Set palet yönetimi</span><span class="en">📦 Set pallet management</span></div>
+                        <div class="list-item"><span class="tr">🔢 UBR numarası takibi</span><span class="en">🔢 UBR number tracking</span></div>
+                        <div class="list-item"><span class="tr">✋ Manuel giriş gerekli</span><span class="en">✋ Manual entry required</span></div>
+                        <div class="list-item"><span class="tr">Uçuştan 12-13 saat önce</span><span class="en">12-13 hours before flight</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;">FLT002</h4>
+                        <div class="list-item"><span class="tr">🚛 Truck planlaması</span><span class="en">🚛 Truck planning</span></div>
+                        <div class="list-item"><span class="tr">📅 Ad-hoc rotalar</span><span class="en">📅 Ad-hoc routes</span></div>
+                        <div class="list-item"><span class="tr">İstasyon şefi tarafından</span><span class="en">By station chief</span></div>
+                        <div class="list-item"><span class="tr">Alternatif ulaşım planı</span><span class="en">Alternative transport plan</span></div>
+                    </div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#0d9488; margin:24px 0 12px;"><span class="tr">ALLOTMENT YÖNETİMİ</span><span class="en">ALLOTMENT MANAGEMENT</span></h4>
+                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                    <thead>
+                        <tr style="background:#f0fdfa;">
+                            <th style="padding:12px; text-align:left; border-bottom:2px solid #14b8a6;"><span class="tr">Durum</span><span class="en">Situation</span></th>
+                            <th style="padding:12px; text-align:left; border-bottom:2px solid #14b8a6;"><span class="tr">Aksiyon</span><span class="en">Action</span></th>
+                            <th style="padding:12px; text-align:left; border-bottom:2px solid #14b8a6;"><span class="tr">Sonuç</span><span class="en">Result</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><span class="tr">Allotment içinde</span><span class="en">Within allotment</span></td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><span class="tr">Otomatik onay</span><span class="en">Auto approve</span></td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><span style="color:#16a34a;">✅ Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><span class="tr">Allotment aşımı (örn: 8T→9T)</span><span class="en">Allotment excess (e.g., 8T→9T)</span></td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><span class="tr">Spot ekleme talebi</span><span class="en">Spot addition request</span></td>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><span style="color:#f59e0b;">📋 Backup (allotment excess)</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px;"><span class="tr">Uçakta yer var</span><span class="en">Space available on plane</span></td>
+                            <td style="padding:10px;"><span class="tr">Free sale devam</span><span class="en">Free sale continues</span></td>
+                            <td style="padding:10px;"><span style="color:#2563eb;">🛩️ <span class="tr">Uçağı doldur hedefi</span><span class="en">Fill the plane goal</span></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="evidence" style="margin-top:16px;">
+                    <strong><span class="tr">Örnek:</span><span class="en">Example:</span></strong> <span class="tr">"Müşterinin 8 ton allotment'ı var ama 9 ton rezervasyon yapmak istiyor. Agent, müşteri temsilcisi ile görüşüp spot (artış) ekleyebilir. 9 ton için toplam spot girilir: 8 ton allotment + 1 ton aşım, ama sisteme sadece 1 ton spot girilir."</span>
+                    <span class="en">"Customer has 8-ton allotment but wants 9-ton reservation. Agent can discuss with customer rep to add spot (increase). Total spot entered for 9 tons: 8 ton allotment + 1 ton excess, but only 1 ton spot entered into system."</span>
+                </div>
+            </div>
+            <div id="s4-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Kapasite ekibi FLT028 ile uçuş izleme, OPR344 ile set palet yönetimi, FLT002 ile truck planlaması yapar. Allotment aşımlarında rezervasyon otomatik backup'a düşer ve "allotment excess" reason code görünür. Spot ekleme ile çözülebilir.</span>
+                    <span class="en">Capacity team does flight monitoring with FLT028, set pallet management with OPR344, truck planning with FLT002. On allotment excess, reservation automatically goes to backup with "allotment excess" reason code. Can be solved with spot addition.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: PAIN POINTS -->
+    <section class="card section-5">
+        <div class="card-header">
+            <div class="card-icon">5</div>
+            <div class="card-title">
+                <h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2>
+                <p><span class="tr">Sorunlar, riskler</span><span class="en">Issues, risks</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s5-chart" class="view-pane active">
+                <div class="pain-list">
+                    <div class="pain-item high">
+                        <span class="pain-code">P1</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">🔴 Set Palet'ler COMIS'te Görünmüyor</span><span class="en">🔴 Set Pallets Not Visible in COMIS</span></h5>
+                            <p><span class="tr">"Kapasite ekibi set paletleri COMIS'te göremiyor çünkü AWB veya UBR numarası yok. Bu yüzden kapasite ekipleri bu set palet talepleriyle en çok problem yaşıyor - sistemde görmedikleri için manuel değerlendirme yapıp müsaitliğe göre onay veriyorlar."</span>
+                            <span class="en">"The capacity team cannot see set pallets in COMIS because there is no AWB or UBR number. That's why capacity teams mostly cause problems with these set pallet requests - they manually evaluate and approve based on availability since they can't see them in system."</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item high">
+                        <span class="pain-code">P2</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">🔴 ULD Rezervasyonları Sistem Dışı</span><span class="en">🔴 ULD Reservations Out of System</span></h5>
+                            <p><span class="tr">"Şu anda ULD rezervasyonları sistem üzerinden yapılamıyor. ULD dahil rezervasyonlar kabul edilmiyor. CAP018'den ULD talebi girişi muhasebe sorunlarına yol açıyor."</span>
+                            <span class="en">"Currently, ULD reservations cannot be made through the system. Reservations including ULD are not accepted. Entering ULD requests via CAP018 causes accounting problems."</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P3</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">Manuel OPR344 Giriş Zorunluluğu</span><span class="en">Mandatory Manual OPR344 Entry</span></h5>
+                            <p><span class="tr">"Sistemde görünmeyen set palet talepleri için kapasite ekipleri uçuştan yaklaşık 12-13 saat önce OPR344'e giriş yapar. Bu süreç manuel ve zaman alıcı."</span>
+                            <span class="en">"For set pallet requests not visible in system, capacity teams make entries into OPR344 approximately 12-13 hours before flight. This process is manual and time-consuming."</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P4</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">FFR Mesajları Rezervasyonu Bypass Ediyor</span><span class="en">FFR Messages Bypass Reservation</span></h5>
+                            <p><span class="tr">"Rezervasyon ekipleri FFR mesaj tiplerinde çok dahil olmuyor; aslında doğrudan kapasite ekiplerine yönlendiriliyor." Bu koordinasyon karmaşıklığı yaratıyor.</span>
+                            <span class="en">"Reservation teams are generally not very involved in FFR message types; it is actually forwarded directly to capacity teams." This creates coordination complexity.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item low">
+                        <span class="pain-code">P5</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">Backup Nedeni Önceden Bilinemiyor</span><span class="en">Backup Reason Cannot Be Known Beforehand</span></h5>
+                            <p><span class="tr">"Backup'a düşme nedeni çeşitli sistemik/kapasite nedenlerinden olabilir; önceden bilinemez." Müşteriye açıklama yapmak zorlaşıyor.</span>
+                            <span class="en">"Reason for falling to backup can be various systemic/capacity reasons; cannot be known beforehand." Makes it difficult to explain to customers.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P6</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">AWB İçindeki Palet Görünürlüğü Yok</span><span class="en">No Pallet Visibility Within AWB</span></h5>
+                            <p><span class="tr">"AWB içinde set palet gözükmüyor, yani biz de bilemiyoruz." Kapasite planlaması için kritik bilgi eksik kalıyor, manuel takip gerekiyor.</span>
+                            <span class="en">"Set pallet is not visible within AWB, so we don't know either." Critical information missing for capacity planning, requires manual tracking.</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="s5-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">En kritik pain point: Set palet ve ULD'lerin COMIS'te görünmemesi. Kapasite ekibi "kör" kalıyor ve manuel takip/giriş yapmak zorunda. Bu hem verimsiz hem de hata riski taşıyor. FFR mesajlarının koordinasyonu da ayrı bir zorluk.</span>
+                    <span class="en">Most critical pain point: Set pallets and ULDs not visible in COMIS. Capacity team is "blind" and must do manual tracking/entry. This is both inefficient and carries error risk. FFR message coordination is also a separate challenge.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-11:</strong> "ULD reservations are not made through the system; reservations including ULD are not accepted."<br>
+                    "Currently, requests for ULDs are not entered here because receiving ULD requests from CAP018 causes accounting problems."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: EMPATHY MAP -->
+    <section class="card section-6">
+        <div class="card-header">
+            <div class="card-icon">6</div>
+            <div class="card-title">
+                <h2><span class="tr">Zihinsel Model & Davranış</span><span class="en">Mental Model & Behavior</span></h2>
+                <p><span class="tr">Empathy Map</span><span class="en">Empathy Map</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s6-chart" class="view-pane active">
+                <div class="empathy-grid">
+                    <div class="empathy-quad says">
+                        <h4><span class="icon">💬</span> <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                        <div class="empathy-item"><span class="tr">"Bu uçuş %78'de, premium fiyata geçmeli"</span><span class="en">"This flight is at 78%, should switch to premium price"</span></div>
+                        <div class="empathy-item"><span class="tr">"Set palet nerede, COMIS'te göremiyorum"</span><span class="en">"Where's the set pallet, I can't see it in COMIS"</span></div>
+                        <div class="empathy-item"><span class="tr">"Bu rezervasyonu reject etmek zorundayım"</span><span class="en">"I have to reject this reservation"</span></div>
+                        <div class="empathy-item"><span class="tr">"Prevent Re-plan var, kaldırabilir miyim?"</span><span class="en">"There's Prevent Re-plan, can I remove it?"</span></div>
+                        <div class="empathy-item"><span class="tr">"Allotment aşımı, spot eklemeleri lazım"</span><span class="en">"Allotment excess, they need to add spot"</span></div>
+                    </div>
+                    
+                    <!-- Center Persona Avatar -->
+                    <div class="empathy-avatar">
+                        <div class="empathy-avatar-circle">📊</div>
+                        <div style="margin-top:10px; font-size:12px; font-weight:700; color:#d97706; text-align:center;"><span class="tr">Kapasite</span><span class="en">Capacity</span></div>
+                        <div style="font-size:10px; color:#9ca3af; text-align:center;"><span class="tr">Planlama</span><span class="en">Planning</span></div>
+                        <div style="margin-top:8px; padding:4px 10px; background:rgba(0,0,0,0.05); border-radius:12px; font-size:9px; color:#d97706; font-weight:600;">THYCAP</div>
+                    </div>
+                    
+                    <!-- THINKS - Top Right -->
+                    <div class="empathy-quad thinks">
+                        <h4><span class="icon">💭</span> <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                        <div class="empathy-item"><span class="tr">"Bu uçuşa kaç ton daha sığar?"</span><span class="en">"How many more tons can fit on this flight?"</span></div>
+                        <div class="empathy-item"><span class="tr">"Set palet dahil edersem kapasite aşılır mı?"</span><span class="en">"Will capacity exceed if I include set pallet?"</span></div>
+                        <div class="empathy-item"><span class="tr">"Bu reject müşteri kaybına yol açar mı?"</span><span class="en">"Will this reject cause customer loss?"</span></div>
+                        <div class="empathy-item"><span class="tr">"Neden ULD sistem içinde yönetilemiyor?"</span><span class="en">"Why can't ULD be managed within system?"</span></div>
+                        <div class="empathy-item"><span class="tr">"12 saat sonra uçuş, OPR344'e girmem lazım"</span><span class="en">"Flight in 12 hours, need to enter OPR344"</span></div>
+                    </div>
+                    <div class="empathy-quad does">
+                        <h4><span class="icon">⚡</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                        <div class="empathy-item"><span class="tr">FLT028'de doluluk oranlarını izler</span><span class="en">Monitors occupancy rates in FLT028</span></div>
+                        <div class="empathy-item"><span class="tr">OPR344'e set palet girişi yapar</span><span class="en">Enters set pallets in OPR344</span></div>
+                        <div class="empathy-item"><span class="tr">Uygun görülmeyen rezervasyonları reject eder</span><span class="en">Rejects unsuitable reservations</span></div>
+                        <div class="empathy-item"><span class="tr">Allotment aşımlarını spot ile çözer</span><span class="en">Resolves allotment excess with spot</span></div>
+                        <div class="empathy-item"><span class="tr">3CS ile sürekli koordinasyon sağlar</span><span class="en">Maintains continuous coordination with 3CS</span></div>
+                    </div>
+                    <div class="empathy-quad feels">
+                        <h4><span class="icon">❤️</span> <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                        <div class="empathy-item"><span class="tr">Görünmeyen yüklere karşı tedirginlik</span><span class="en">Anxiety about invisible loads</span></div>
+                        <div class="empathy-item"><span class="tr">%100 dolulukta tatmin</span><span class="en">Satisfaction at 100% occupancy</span></div>
+                        <div class="empathy-item"><span class="tr">Manuel giriş zorunluluğuna frustrasyon</span><span class="en">Frustration at mandatory manual entry</span></div>
+                        <div class="empathy-item"><span class="tr">Reject kararında sorumluluk baskısı</span><span class="en">Responsibility pressure on reject decisions</span></div>
+                        <div class="empathy-item"><span class="tr">Son dakika değişikliklerde stres</span><span class="en">Stress during last-minute changes</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s6-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Kapasite uzmanı sayılarla düşünür: doluluk oranları, tonaj, slot. Ana duygu: görünmeyen yüklere (set palet, ULD) karşı tedirginlik ve manuel süreçlere frustrasyon. Başarı %100 dolulukla ölçülür.</span>
+                    <span class="en">Capacity specialist thinks in numbers: occupancy rates, tonnage, slots. Main emotion: anxiety about invisible loads (set pallet, ULD) and frustration with manual processes. Success measured by 100% occupancy.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: COLLABORATION -->
+    <section class="card section-7">
+        <div class="card-header">
+            <div class="card-icon">7</div>
+            <div class="card-title">
+                <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                <p><span class="tr">Paydaşlar, koordinasyon</span><span class="en">Stakeholders, coordination</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s7-chart" class="view-pane active">
+                <div class="stakeholder-map">
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node provider"><span class="tr">📋 Rezervasyon Ekipleri (Talep)</span><span class="en">📋 Reservation Teams (Demand)</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">📧 FFR Mesajları</span><span class="en">📧 FFR Messages</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">💰 Sales (Fiyat Onay)</span><span class="en">💰 Sales (Price Approval)</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node persona"><span class="tr">🎯 KAPASİTE EKİBİ</span><span class="en">🎯 CAPACITY TEAM</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓ ↔️</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node partner"><span class="tr">🖥️ 3CS Sistem</span><span class="en">🖥️ 3CS System</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">👤 Cargo Customer Care</span><span class="en">👤 Cargo Customer Care</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">✈️ İstasyon Şefleri (Truck)</span><span class="en">✈️ Station Chiefs (Truck)</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node consumer"><span class="tr">📦 Operasyon (Yükleme)</span><span class="en">📦 Operations (Loading)</span></div>
+                        <div class="stakeholder-node consumer"><span class="tr">✈️ Uçuş Ekipleri</span><span class="en">✈️ Flight Crews</span></div>
+                    </div>
+                </div>
+                
+                <div class="highlight-box">
+                    <h4>🔄 <span class="tr">BEKLEYİŞ AKIŞLARI</span><span class="en">WAITING WORKFLOWS</span></h4>
+                    <p><span class="tr">"Rezervasyon sürecinde eşzamanlı veya bekleyen iş akışları var: Kapasite (uçuş doluluk bilgisi), Sales (fiyat onayı), Operasyon ve belge kabulü (antrepo alanına varış sonrası)."</span>
+                    <span class="en">"Simultaneous or waiting workflows exist in the reservation process: Capacity (flight occupancy info), Sales (price approval), Operation and document acceptance (after arrival at bonded area)."</span></p>
+                </div>
+            </div>
+            <div id="s7-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Kapasite ekibi rezervasyon ve operasyon arasında kritik köprü. 3CS sistemi üzerinden Cargo Customer Care ile koordinasyon, FFR mesajlarını alır, sales ile fiyat onayı yapar. İstasyon şefleri ile truck planlaması koordinasyonu sağlar.</span>
+                    <span class="en">Capacity team is critical bridge between reservation and operations. Coordinates with Cargo Customer Care via 3CS system, receives FFR messages, does price approval with sales. Coordinates truck planning with station chiefs.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-11:</strong> "Capacity is managed through information flow between cargo customer care and 3CS capacity export AYM teams."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 8: PRODUCT OPPORTUNITIES -->
+    <section class="card section-8">
+        <div class="card-header">
+            <div class="card-icon">8</div>
+            <div class="card-title">
+                <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+                <p><span class="tr">Çözüm önerileri</span><span class="en">Solution proposals</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s8-chart" class="view-pane active">
+                <div class="timeline">
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="tr">P1 → Set Palet COMIS Entegrasyonu</span><span class="en">P1 → Set Pallet COMIS Integration</span></h5>
+                        <p><span class="tr">Set palet taleplerinin COMIS'te görünür olması. AWB/UBR olmadan da kapasite ekranlarında takip edilebilmeli.</span>
+                        <span class="en">Set pallet requests visible in COMIS. Should be trackable in capacity screens even without AWB/UBR.</span></p>
+                    </div>
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="tr">P2 → ULD Rezervasyon Sistemi</span><span class="en">P2 → ULD Reservation System</span></h5>
+                        <p><span class="tr">ULD taleplerinin muhasebe problemi yaratmadan sistem içinde yönetilmesi. CAP018 dışında ayrı modül olabilir.</span>
+                        <span class="en">Managing ULD requests within system without creating accounting problems. Could be separate module outside CAP018.</span></p>
+                    </div>
+                    <div class="timeline-item short">
+                        <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                        <h5><span class="tr">P3 → OPR344 Otomatik Doldurma</span><span class="en">P3 → OPR344 Auto-Fill</span></h5>
+                        <p><span class="tr">Set palet talepleri onaylandığında OPR344'e otomatik giriş. Manuel 12-13 saat öncesi girişi ortadan kaldırma.</span>
+                        <span class="en">Auto entry to OPR344 when set pallet requests approved. Eliminate manual entry 12-13 hours before.</span></p>
+                    </div>
+                    <div class="timeline-item short">
+                        <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                        <h5><span class="tr">P5 → Backup Neden Kodu Önceden Belirleme</span><span class="en">P5 → Backup Reason Code Pre-Determination</span></h5>
+                        <p><span class="tr">Backup'a düşme nedeninin önceden tahmin edilip gösterilmesi. Müşteri/agent bilgilendirmesi kolaylaşır.</span>
+                        <span class="en">Predicting and showing backup reason beforehand. Makes customer/agent notification easier.</span></p>
+                    </div>
+                    <div class="timeline-item long">
+                        <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
+                        <h5><span class="tr">AI Doluluk Tahmin & Otomatik Fiyatlama</span><span class="en">AI Occupancy Prediction & Auto Pricing</span></h5>
+                        <p><span class="tr">Geçmiş verilere göre doluluk tahmini ve otomatik Smart/Premium/Urgent geçişi.</span>
+                        <span class="en">Occupancy prediction based on historical data and automatic Smart/Premium/Urgent transition.</span></p>
+                    </div>
+                </div>
+            </div>
+            <div id="s8-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">MVP öncelikleri: Set palet görünürlüğü (en kritik) ve ULD sistem entegrasyonu. Bu iki özellik kapasite ekibinin "körlüğünü" giderir. Kısa vadede OPR344 otomasyonu büyük zaman tasarrufu sağlar.</span>
+                    <span class="en">MVP priorities: Set pallet visibility (most critical) and ULD system integration. These two features eliminate capacity team's "blindness". Short-term OPR344 automation provides significant time savings.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 9: AI SUPPORT -->
+    <section class="card section-9">
+        <div class="card-header">
+            <div class="card-icon">9</div>
+            <div class="card-title">
+                <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                <p><span class="tr">AI potansiyeli</span><span class="en">AI potential</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s9-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                    <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                    <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                </p>
+                
+                <!-- Slider Container -->
+                <div style="display:flex; gap:24px; margin-bottom:32px;">
+                    <!-- Left: Scale Labels -->
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:100px; padding:8px 0;">
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 YASAK</span>
+                            <div style="font-size:8px; color:#9ca3af;">AI yapmamalı</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ ONAY GEREKLİ</span>
+                            <div style="font-size:8px; color:#9ca3af;">İnsan onayı şart</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ GÜVENLİ</span>
+                            <div style="font-size:8px; color:#9ca3af;">AI serbest</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Middle: Slider Track -->
+                    <div style="flex:1; position:relative;">
+                        <!-- Gradient Track -->
+                        <div style="height:240px; border-radius:12px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            
+                            <!-- Level Markers -->
+                            <div style="position:absolute; left:12px; top:4%; font-size:10px; color:#dc2626; font-weight:600;">
+                                <span class="tr">6 - 🚫 Reject kararı, Prevent Re-plan kaldırma</span>
+                                <span class="en">6 - 🚫 Reject decision, Prevent Re-plan removal</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:21%; font-size:10px; color:#b45309; font-weight:600;">
+                                <span class="tr">5 - ⚠️ Otomatik fiyat bandı geçişi</span>
+                                <span class="en">5 - ⚠️ Auto price band transition</span>
+                            </div>
+                            
+                            <!-- TRUST LINE - Güven Sınırı -->
+                            <div style="position:absolute; left:0; right:0; top:33%; height:3px; background:#0891b2; z-index:10;"></div>
+                            <div style="position:absolute; right:8px; top:31%; background:#0891b2; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                <span class="tr">⬆️ SINIR: AI burada durmalı</span>
+                                <span class="en">⬆️ LIMIT: AI stops here</span>
+                            </div>
+                            
+                            <div style="position:absolute; left:12px; top:40%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">4 - 💡 Re-plan uçuş önerisi, alternatif rotalar</span>
+                                <span class="en">4 - 💡 Re-plan flight suggestion, alt routes</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">3 - ⚙️ Doluluk tahmini (geçmiş veriye göre)</span>
+                                <span class="en">3 - ⚙️ Occupancy forecast (based on history)</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:70%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">2 - 📝 Günlük kapasite raporu, risk uçuşlar</span>
+                                <span class="en">2 - 📝 Daily capacity report, risk flights</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:85%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">1 - 📊 Doluluk oranları, allotment durumu</span>
+                                <span class="en">1 - 📊 Occupancy rates, allotment status</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="two-col" style="margin-top:20px;">
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">📊 Doluluk tahmini ve trend analizi</span><span class="en">📊 Occupancy forecast and trend analysis</span></div>
+                        <div class="list-item"><span class="tr">✈️ Alternatif uçuş/rota önerisi</span><span class="en">✈️ Alternative flight/route suggestion</span></div>
+                        <div class="list-item"><span class="tr">💰 Fiyat bandı geçiş önerisi</span><span class="en">💰 Price band transition suggestion</span></div>
+                        <div class="list-item"><span class="tr">⏰ Risk uçuş erken uyarısı</span><span class="en">⏰ Risk flight early warning</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #dc2626;">
+                        <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">🚫 Rezervasyon reject kararı</span><span class="en">🚫 Reservation reject decision</span></div>
+                        <div class="list-item"><span class="tr">🚫 Prevent Re-plan bayrağı kaldırma</span><span class="en">🚫 Removing Prevent Re-plan flag</span></div>
+                        <div class="list-item"><span class="tr">🚫 Müşteri allotment değişikliği</span><span class="en">🚫 Customer allotment change</span></div>
+                        <div class="list-item"><span class="tr">🚫 Spot ekleme onayı</span><span class="en">🚫 Spot addition approval</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s9-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">AI kapasite planlamada güçlü: Doluluk tahmini, trend analizi, alternatif rota önerisi. Ancak reject, re-plan, allotment değişikliği gibi iş kararları insan kontrolünde kalmalı - müşteri ilişkisi ve iş riski yüksek.</span>
+                    <span class="en">AI strong in capacity planning: Occupancy forecast, trend analysis, alternative route suggestion. However, business decisions like reject, re-plan, allotment changes must remain under human control - high customer relationship and business risk.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p><span class="tr">📅 Analiz: 8 Mayıs 2026 | 📄 5+ Kaynak MoM | 🎯 Kapasite Planlama Ekibi</span>
+    <span class="en">📅 Analysis: May 8, 2026 | 📄 5+ Source MoMs | 🎯 Capacity Planning Team</span></p>
+    <p><span class="tr">⚠️ Yalnızca doküman kanıtlarına dayalıdır</span>
+    <span class="en">⚠️ Based on document evidence only</span></p>
+    <p style="margin-top:12px;">BKR - Booking & Reservation | THY Cargo | Sungur Product Team</p>
+</footer>
+    </div><!-- /main-content -->
+
+    <script>
+    function switchLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+        });
+    }
+    
+    function toggleView(btn, section, view) {
+        btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(section + '-chart').classList.remove('active');
+        document.getElementById(section + '-text').classList.remove('active');
+        document.getElementById(section + '-' + view).classList.add('active');
+    }
+
+    function toggleMegaMenu() {
+        document.querySelector('.mega-menu').classList.toggle('open');
+        document.querySelector('.mega-overlay').classList.toggle('open');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCM - Sales Manager Persona</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f7; color: #1f2937; line-height: 1.6; }
+        body.lang-en .tr { display: none !important; }
+        body.lang-tr .en { display: none !important; }
+        
+        .side-nav {
+            position: fixed; top: 0; left: 0; width: 72px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 16px 0; z-index: 1000;
+        }
+        .side-nav-logo {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 11px; color: white;
+            margin-bottom: 24px; cursor: pointer;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+        .nav-items { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0 8px; }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 10px 4px; border-radius: 10px; text-decoration: none;
+            color: #64748b; transition: all 0.2s; font-size: 10px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .nav-item.active { background: rgba(124,58,237,0.2); color: #c4b5fd; }
+        .nav-num { width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+        .nav-label { font-size: 9px; text-align: center; }
+
+        .mega-menu {
+            position: fixed; top: 0; left: 72px; width: 320px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            z-index: 999; transform: translateX(-100%); transition: transform 0.3s ease;
+            overflow-y: auto; padding: 20px;
+        }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; transition: all 0.2s; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #a855f7; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+        
+        .hero {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+            padding: 48px 40px;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(217,119,6,0.15); color: #b45309; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; z-index: 2; position: relative; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #d97706; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #b45309; }
+        .hero-subtitle { font-size: 16px; color: #92400e; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #d97706; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip { position: absolute; bottom: calc(100% + 8px); left: 0; min-width: 280px; background: #1f2937; color: white; padding: 14px 16px; border-radius: 10px; font-size: 11px; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        .source-tooltip::after { content: ''; position: absolute; bottom: -6px; left: 24px; width: 12px; height: 12px; background: #1f2937; transform: rotate(45deg); }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+        
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #d97706; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-step.approve { background: #dcfce7; color: #16a34a; }
+        .flow-step.reject { background: #fecaca; color: #dc2626; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; align-items: stretch; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #d97706, #f59e0b); display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #dbeafe; color: #1d4ed8; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #d97706, #f59e0b); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #dcfce7; color: #047857; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        .summary-box { background: rgba(217,119,6,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #d97706; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-en">
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()">PCM</div>
+        <div class="nav-items">
+            <a href="Persona_PCM_Pricing_Specialist.html" class="nav-item">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Pricing</span>
+            </a>
+            <a href="Persona_PCM_RM_Analyst.html" class="nav-item">
+                <span class="nav-num">2</span>
+                <span class="nav-label">RM</span>
+            </a>
+            <a href="Persona_PCM_Interline_Specialist.html" class="nav-item">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Interline</span>
+            </a>
+            <a href="Persona_PCM_Sales_Manager.html" class="nav-item active">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Sales</span>
+            </a>
+            <a href="Persona_PCM_Station_User.html" class="nav-item">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Station</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 All Modules</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header active">
+                <div class="module-icon pcm">PCM</div>
+                <span class="module-name">Pricing Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link current"><span class="persona-num">4</span> Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon flm">FLM</div>
+                <span class="module-name">Flight Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon bkr">BKR</div>
+                <span class="module-name">Booking & Reservation</span>
+                <span class="module-count">7 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a>
+                <a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a>
+                <a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a>
+                <a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a>
+                <a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a>
+                <a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a>
+                <a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cam">CAM</div>
+                <span class="module-name">Capacity Management</span>
+                <span class="module-count">3 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon com">COM</div>
+                <span class="module-name">Compliance Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon asm">ASM</div>
+                <span class="module-name">AWB Stock Management</span>
+                <span class="module-count">2 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a>
+                <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon trm">TRM</div>
+                <span class="module-name">Truck Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a>
+            </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon scm">SCM</div>
+                <span class="module-name">Special Cargo Management</span>
+                <span class="module-count">1</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">PCM · SALES · PERSONA #4</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1><span class="en">Sales</span><span class="tr">Satış</span> <span>Manager</span></h1>
+            <p class="hero-subtitle">
+                <span class="en">Primary interface between customers/agents and pricing teams. Initiates spot and contract requests, applies discounts within authority limits, and ensures competitive pricing to win business. Key trigger for pricing processes.</span>
+                <span class="tr">Müşteriler/acenteler ile fiyatlandırma ekipleri arasındaki ana arayüz. Spot ve kontrat taleplerini başlatır, yetki limitleri dahilinde indirim uygular ve iş kazanmak için rekabetçi fiyatlandırmayı sağlar.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="en">"Requests always come from the sales teams. The trigger is mostly the sales teams. Sales teams have authority according to the KTSY report."</span>
+                <span class="tr">"Talepler her zaman satış ekiplerinden gelir. Tetikleyici çoğunlukla satış ekipleridir. Satış ekiplerinin KTSY raporuna göre yetkileri vardır."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#d97706;"></span>
+                    <span><strong>Unit:</strong> <span class="en">Sales / Commercial</span><span class="tr">Satış / Ticari</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#dc2626;"></span>
+                    <span><strong><span class="en">Role</span><span class="tr">Rol</span>:</strong> <span class="en">Request Initiator</span><span class="tr">Talep Başlatıcı</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong><span class="en">Systems</span><span class="tr">Sistemler</span>:</strong> ACRM, TK GO</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 6 MoM</span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#fcd34d;">📄 Source Documents</div>
+                        <div>Key User Workshop 1, 5, 8, 9, 12 (5 MoM)</div>
+                        <div>Solution Team Workshop 1 (1 MoM)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1: Persona Profile -->
+        <section class="card section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="en">Persona Profile</span><span class="tr">Persona Profili</span></h2>
+                    <p><span class="en">Who initiates pricing requests?</span><span class="tr">Fiyatlandırma taleplerini kim başlatır?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="summary-box">
+                    <h4><span class="en">Profile Summary</span><span class="tr">Profil Özeti</span></h4>
+                    <p><span class="en">Sales Managers are the primary trigger for pricing processes. They receive customer/agent requests for special pricing, submit spot and contract requests through ACRM, apply discounts within their KTSY-defined authority, and negotiate with customers. They work under deadline pressure (e.g., promos must be requested before the 20th of each month) and need quick turnaround to win competitive deals.</span>
+                    <span class="tr">Satış Yöneticileri fiyatlandırma süreçlerinin birincil tetikleyicisidir. Özel fiyatlandırma için müşteri/acente taleplerini alır, ACRM üzerinden spot ve kontrat talepleri gönderir, KTSY tanımlı yetkileri dahilinde indirim uygular.</span></p>
+                </div>
+                <div class="profile-grid">
+                    <div class="pf"><div class="pf-label">Role</div><div class="pf-value">Sales Manager</div></div>
+                    <div class="pf"><div class="pf-label">Department</div><div class="pf-value"><span class="en">Commercial / Sales</span><span class="tr">Ticari / Satış</span></div></div>
+                    <div class="pf"><div class="pf-label"><span class="en">Authority</span><span class="tr">Yetki</span></div><div class="pf-value">KTSY-based</div></div>
+                    <div class="pf"><div class="pf-label"><span class="en">Request Types</span><span class="tr">Talep Tipleri</span></div><div class="pf-value">Spot, Contract</div></div>
+                    <div class="pf"><div class="pf-label"><span class="en">Approval Level</span><span class="tr">Onay Seviyesi</span></div><div class="pf-value">2-tier (SM1 → SM2)</div></div>
+                    <div class="pf"><div class="pf-label"><span class="en">Channel</span><span class="tr">Kanal</span></div><div class="pf-value">80% ACRM, 20% Email</div></div>
+                </div>
+                <div class="segment-card">
+                    <div class="segment-col demo">
+                        <h4><span class="en">Demographic</span><span class="tr">Demografik</span></h4>
+                        <div class="segment-item"><span class="en">Commercial background</span><span class="tr">Ticari arka plan</span></div>
+                        <div class="segment-item"><span class="en">Customer relationship focus</span><span class="tr">Müşteri ilişkisi odaklı</span></div>
+                        <div class="segment-item"><span class="en">Target-driven</span><span class="tr">Hedef odaklı</span></div>
+                    </div>
+                    <div class="segment-col behav">
+                        <h4><span class="en">Behavioral</span><span class="tr">Davranışsal</span></h4>
+                        <div class="segment-item"><span class="en">High urgency requests</span><span class="tr">Yüksek aciliyetli talepler</span></div>
+                        <div class="segment-item"><span class="en">Deadline-sensitive</span><span class="tr">Son tarihe duyarlı</span></div>
+                        <div class="segment-item"><span class="en">Negotiation-heavy</span><span class="tr">Müzakere yoğun</span></div>
+                    </div>
+                    <div class="segment-col psycho">
+                        <h4><span class="en">Psychographic</span><span class="tr">Psikografik</span></h4>
+                        <div class="segment-item"><span class="en">Revenue-focused</span><span class="tr">Gelir odaklı</span></div>
+                        <div class="segment-item"><span class="en">Competitive mindset</span><span class="tr">Rekabetçi zihniyet</span></div>
+                        <div class="segment-item"><span class="en">Customer advocate</span><span class="tr">Müşteri savunucusu</span></div>
+                    </div>
+                </div>
+                <div class="evidence">MoM-1: "Promo, contract, and spot → Sales teams request" | MoM-Solution-1: "Contract requests - 80% ACRM, 20% email. Goal: 100% ACRM"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Goals & Motivation -->
+        <section class="card section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="en">Goals, Motivation & Fears</span><span class="tr">Hedefler, Motivasyon & Korkular</span></h2>
+                    <p><span class="en">What drives sales pricing requests?</span><span class="tr">Satış fiyatlandırma taleplerini ne yönlendirir?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="goal-pyramid">
+                    <div class="goal-level primary"><span class="en">🎯 Win competitive deals with best possible pricing</span><span class="tr">🎯 Mümkün olan en iyi fiyatlandırma ile rekabetçi anlaşmalar kazan</span></div>
+                    <div class="goal-level secondary"><span class="en">📊 Get fast approval for customer requests</span><span class="tr">📊 Müşteri talepleri için hızlı onay al</span></div>
+                    <div class="goal-level tertiary"><span class="en">⚡ Maximize discount within authority limits</span><span class="tr">⚡ Yetki limitleri dahilinde indirimi maksimize et</span></div>
+                </div>
+                <div class="two-col">
+                    <div class="list-box motivators">
+                        <h4>✅ <span class="en">Motivators</span><span class="tr">Motivatörler</span></h4>
+                        <div class="list-item"><span class="en">Quick approval turnaround</span><span class="tr">Hızlı onay dönüşü</span></div>
+                        <div class="list-item"><span class="en">Competitive pricing to win deals</span><span class="tr">Anlaşma kazanmak için rekabetçi fiyat</span></div>
+                        <div class="list-item"><span class="en">Clear authority/discount limits</span><span class="tr">Net yetki/indirim limitleri</span></div>
+                        <div class="list-item"><span class="en">Customer satisfaction</span><span class="tr">Müşteri memnuniyeti</span></div>
+                    </div>
+                    <div class="list-box demotivators">
+                        <h4>❌ <span class="en">Demotivators</span><span class="tr">Demotivatörler</span></h4>
+                        <div class="list-item"><span class="en">Long approval waiting times</span><span class="tr">Uzun onay bekleme süreleri</span></div>
+                        <div class="list-item"><span class="en">MCR blocking competitive quotes</span><span class="tr">MCR'nin rekabetçi teklifleri engellemesi</span></div>
+                        <div class="list-item"><span class="en">Auto-reject without negotiation chance</span><span class="tr">Müzakere şansı olmadan otomatik ret</span></div>
+                        <div class="list-item"><span class="en">Missing promo deadlines</span><span class="tr">Promo son tarihlerini kaçırma</span></div>
+                    </div>
+                </div>
+                <div class="list-box fears" style="margin-top: 16px;">
+                    <h4>😰 <span class="en">Primary Fears</span><span class="tr">Ana Korkular</span></h4>
+                    <div class="list-item"><span class="en">Losing deals to competitors due to slow pricing</span><span class="tr">Yavaş fiyatlandırma nedeniyle rakiplere iş kaybetme</span></div>
+                    <div class="list-item"><span class="en">Customer complaints about pricing delays</span><span class="tr">Fiyatlandırma gecikmeleri hakkında müşteri şikayetleri</span></div>
+                    <div class="list-item"><span class="en">Exceeding discount authority accidentally</span><span class="tr">Yanlışlıkla indirim yetkisini aşma</span></div>
+                </div>
+                <div class="evidence">MoM-5: "Sales Manager applies discount, Sales Manager 2 approves" | "Fees below MCR - Sales cannot discount, RM teams can approve"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Workflow -->
+        <section class="card section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="en">Workflow & Intents</span><span class="tr">İş Akışı & Niyetler</span></h2>
+                    <p><span class="en">How do sales requests flow?</span><span class="tr">Satış talepleri nasıl akar?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">📋 <span class="en">Spot Request Flow</span><span class="tr">Spot Talep Akışı</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="en">Customer Request</span><span class="tr">Müşteri Talebi</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="en">Sales Creates Spot</span><span class="tr">Satış Spot Oluşturur</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="en">MCR Check</span><span class="tr">MCR Kontrolü</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="en">Auto-Approve/Reject</span><span class="tr">Oto-Onay/Red</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step approve"><span class="en">Customer Notified</span><span class="tr">Müşteri Bilgilendirilir</span></div>
+                </div>
+                
+                <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px; margin-top: 20px;">🔄 <span class="en">Discount Authority Chain</span><span class="tr">İndirim Yetki Zinciri</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual">Sales Mgr 1<br><small><span class="en">Applies discount</span><span class="tr">İndirim uygular</span></small></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision">Sales Mgr 2<br><small><span class="en">Approves</span><span class="tr">Onaylar</span></small></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="en">Below MCR?</span><span class="tr">MCR Altı?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step approve">RM Team<br><small><span class="en">Final approval</span><span class="tr">Son onay</span></small></div>
+                </div>
+                
+                <div class="summary-box" style="margin-top: 20px;">
+                    <h4><span class="en">Key Constraint: Deadlines</span><span class="tr">Ana Kısıt: Son Tarihler</span></h4>
+                    <p><span class="en">"Promos are opened monthly; the internal SLA time is until the 20th of the month. Sales teams enter requests before the deadline."</span>
+                    <span class="tr">"Promolar aylık açılır; dahili SLA süresi ayın 20'sine kadardır. Satış ekipleri talepleri son tarihten önce girer."</span></p>
+                </div>
+                <div class="evidence">MoM-8: "Sales teams enter requests before the deadline" | MoM-9: "After a spot is created, sales teams send it to the customer"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Data & Integration -->
+        <section class="card section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="en">Data & Integration</span><span class="tr">Veri & Entegrasyon</span></h2>
+                    <p><span class="en">What systems does sales interact with?</span><span class="tr">Satış hangi sistemlerle etkileşir?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="three-col">
+                    <div class="list-box">
+                        <h4 style="color: #0d9488;"><span class="en">📥 Inputs</span><span class="tr">📥 Girdiler</span></h4>
+                        <div class="list-item"><strong><span class="en">Customer requests</span><span class="tr">Müşteri talepleri</span>:</strong> Email, TK GO</div>
+                        <div class="list-item"><strong>KTSY:</strong> <span class="en">Authority limits</span><span class="tr">Yetki limitleri</span></div>
+                        <div class="list-item"><strong><span class="en">Market rates</span><span class="tr">Piyasa oranları</span>:</strong> <span class="en">Competitor pricing</span><span class="tr">Rakip fiyatları</span></div>
+                    </div>
+                    <div class="list-box">
+                        <h4 style="color: #0d9488;"><span class="en">📤 Outputs</span><span class="tr">📤 Çıktılar</span></h4>
+                        <div class="list-item"><strong>ACRM:</strong> Spot/Contract requests</div>
+                        <div class="list-item"><strong><span class="en">Quotes</span><span class="tr">Teklifler</span>:</strong> <span class="en">To customers</span><span class="tr">Müşterilere</span></div>
+                        <div class="list-item"><strong><span class="en">Negotiations</span><span class="tr">Müzakereler</span>:</strong> <span class="en">Price adjustments</span><span class="tr">Fiyat ayarlamaları</span></div>
+                    </div>
+                    <div class="list-box">
+                        <h4 style="color: #0d9488;"><span class="en">🔗 Key Systems</span><span class="tr">🔗 Ana Sistemler</span></h4>
+                        <div class="list-item"><strong>ACRM:</strong> <span class="en">Request entry & approval</span><span class="tr">Talep girişi & onay</span></div>
+                        <div class="list-item"><strong>TK GO:</strong> <span class="en">Customer portal</span><span class="tr">Müşteri portalı</span></div>
+                        <div class="list-item"><strong>Email:</strong> 20% <span class="en">of requests</span><span class="tr">taleplerin</span></div>
+                    </div>
+                </div>
+                <div class="evidence">MoM-1: "Customers (agents) can request contracts or spots. Requests through sales teams." | "Requests from TK GO go to sales team for approval"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Pain Points -->
+        <section class="card section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="en">Pain Points & Risks</span><span class="tr">Sıkıntılar & Riskler</span></h2>
+                    <p><span class="en">What challenges do sales face?</span><span class="tr">Satış hangi zorluklarla karşılaşır?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="pain-list">
+                    <div class="pain-item high">
+                        <span class="pain-code">P1</span>
+                        <div class="pain-text">
+                            <h5><span class="en">Auto-Reject Blocks Negotiation</span><span class="tr">Oto-Ret Müzakereyi Engeller</span></h5>
+                            <p><span class="en">"After auto-reject or manual reject, newly offered fees need re-approval cycle" - no room for quick counter-offers</span>
+                            <span class="tr">"Oto-ret veya manuel ret sonrası, yeni teklif edilen ücretler yeniden onay döngüsüne girer" - hızlı karşı teklifler için yer yok</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item high">
+                        <span class="pain-code">P2</span>
+                        <div class="pain-text">
+                            <h5><span class="en">MCR Limits Competitive Pricing</span><span class="tr">MCR Rekabetçi Fiyatlandırmayı Sınırlar</span></h5>
+                            <p><span class="en">"Fees below MCR - Sales cannot discount. Only RM teams can approve fees below MCR."</span>
+                            <span class="tr">"MCR altı ücretler - Satış indirim yapamaz. Sadece RM ekipleri MCR altı ücretleri onaylayabilir."</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P3</span>
+                        <div class="pain-text">
+                            <h5><span class="en">20% Still Via Email</span><span class="tr">%20 Hala E-posta İle</span></h5>
+                            <p><span class="en">"Contract requests - 80% ACRM, 20% email" - email requests cause tracking issues and delays</span>
+                            <span class="tr">"Kontrat talepleri - %80 ACRM, %20 e-posta" - e-posta talepleri takip sorunlarına ve gecikmelere neden olur</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P4</span>
+                        <div class="pain-text">
+                            <h5><span class="en">CCA Workaround Required</span><span class="tr">CCA Geçici Çözüm Gerekli</span></h5>
+                            <p><span class="en">"Agents create CCA because they cannot pass the price to the system" - manual workarounds for system limitations</span>
+                            <span class="tr">"Acenteler fiyatı sisteme geçiremedikleri için CCA oluşturur" - sistem kısıtlamaları için manuel geçici çözümler</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="evidence">MoM-5: "After auto-reject, newly offered fees - Sales Manager applies discount, Sales Manager 2 approves"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Mental Model -->
+        <section class="card section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="en">Mental Model & Behavior</span><span class="tr">Zihinsel Model & Davranış</span></h2>
+                    <p><span class="en">How do they think?</span><span class="tr">Nasıl düşünürler?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="empathy-grid">
+                    <div class="empathy-quad says">
+                        <h4><span class="icon">💬</span> SAYS</h4>
+                        <div class="empathy-item"><span class="en">"The customer needs this price by tomorrow"</span><span class="tr">"Müşteri bu fiyata yarına kadar ihtiyaç duyuyor"</span></div>
+                        <div class="empathy-item"><span class="en">"Can we go below MCR for this deal?"</span><span class="tr">"Bu anlaşma için MCR'nin altına inebilir miyiz?"</span></div>
+                        <div class="empathy-item"><span class="en">"I need faster approval turnaround"</span><span class="tr">"Daha hızlı onay dönüşüne ihtiyacım var"</span></div>
+                    </div>
+                    <div class="empathy-avatar">
+                        <div class="empathy-avatar-circle">💼</div>
+                        <p style="font-size: 11px; color: #6b7280; margin-top: 12px; text-align: center;">Sales<br>Manager</p>
+                    </div>
+                    <div class="empathy-quad thinks">
+                        <h4><span class="icon">💭</span> THINKS</h4>
+                        <div class="empathy-item"><span class="en">"Will this get auto-rejected again?"</span><span class="tr">"Bu yine otomatik reddedilecek mi?"</span></div>
+                        <div class="empathy-item"><span class="en">"Competitor is offering lower rates"</span><span class="tr">"Rakip daha düşük fiyat teklif ediyor"</span></div>
+                        <div class="empathy-item"><span class="en">"Is my discount authority enough?"</span><span class="tr">"İndirim yetkim yeterli mi?"</span></div>
+                    </div>
+                    <div class="empathy-quad does">
+                        <h4><span class="icon">🔧</span> DOES</h4>
+                        <div class="empathy-item"><span class="en">Submits spots/contracts via ACRM</span><span class="tr">ACRM üzerinden spot/kontrat gönderir</span></div>
+                        <div class="empathy-item"><span class="en">Negotiates with customers on pricing</span><span class="tr">Müşterilerle fiyatlandırma üzerine müzakere eder</span></div>
+                        <div class="empathy-item"><span class="en">Escalates to RM for below-MCR approvals</span><span class="tr">MCR altı onaylar için RM'e yükseltir</span></div>
+                    </div>
+                    <div class="empathy-quad feels">
+                        <h4><span class="icon">❤️</span> FEELS</h4>
+                        <div class="empathy-item"><span class="en">Pressured by customer deadlines</span><span class="tr">Müşteri son tarihleri ile baskı altında</span></div>
+                        <div class="empathy-item"><span class="en">Frustrated by auto-reject rules</span><span class="tr">Oto-ret kurallarından sıkılmış</span></div>
+                        <div class="empathy-item"><span class="en">Responsible for revenue targets</span><span class="tr">Gelir hedeflerinden sorumlu</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: Collaboration -->
+        <section class="card section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="en">Collaboration & Support</span><span class="tr">İşbirliği & Destek</span></h2>
+                    <p><span class="en">Who do they work with?</span><span class="tr">Kimlerle çalışırlar?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="stakeholder-map">
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node provider"><span class="en">Customers</span><span class="tr">Müşteriler</span><br><small>Price requests</small></div>
+                        <div class="stakeholder-node provider"><span class="en">Agents (GSA)</span><span class="tr">Acenteler (GSA)</span><br><small>Volume deals</small></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node persona">💼 SALES MANAGER</div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node consumer"><span class="en">Pricing Team</span><span class="tr">Fiyatlandırma Ekibi</span><br><small>Rate management</small></div>
+                        <div class="stakeholder-node consumer"><span class="en">RM Team</span><span class="tr">RM Ekibi</span><br><small>MCR approval</small></div>
+                        <div class="stakeholder-node consumer"><span class="en">Sales Chief</span><span class="tr">Satış Şefi</span><br><small>Final approval</small></div>
+                    </div>
+                </div>
+                <div class="evidence">MoM-1: "GSA / Agent Spot Flow → They go directly to the sales teams' chief for approval"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: Product Opportunities -->
+        <section class="card section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="en">Product Opportunities</span><span class="tr">Ürün Fırsatları</span></h2>
+                    <p><span class="en">How can we improve sales pricing workflow?</span><span class="tr">Satış fiyatlandırma iş akışını nasıl iyileştirebiliriz?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="en">Negotiation Flow After Reject</span><span class="tr">Ret Sonrası Müzakere Akışı</span></h5>
+                        <p>→ P1 | <span class="en">Allow counter-offer without full re-approval cycle</span><span class="tr">Tam yeniden onay döngüsü olmadan karşı teklife izin ver</span></p>
+                    </div>
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="en">100% ACRM Migration</span><span class="tr">%100 ACRM Geçişi</span></h5>
+                        <p>→ P3 | <span class="en">Eliminate email channel for contract requests</span><span class="tr">Kontrat talepleri için e-posta kanalını ortadan kaldır</span></p>
+                    </div>
+                    <div class="timeline-item short">
+                        <span class="timeline-badge short">SHORT-TERM</span>
+                        <h5><span class="en">Real-time MCR Visibility</span><span class="tr">Gerçek Zamanlı MCR Görünürlüğü</span></h5>
+                        <p>→ P2 | <span class="en">Show MCR threshold before submission to avoid auto-reject</span><span class="tr">Oto-retten kaçınmak için gönderimden önce MCR eşiğini göster</span></p>
+                    </div>
+                    <div class="timeline-item long">
+                        <span class="timeline-badge long">LONG-TERM</span>
+                        <h5><span class="en">AI-Assisted Pricing Suggestions</span><span class="tr">AI Destekli Fiyatlandırma Önerileri</span></h5>
+                        <p>→ P1 | <span class="en">Suggest optimal price based on market and approval likelihood</span><span class="tr">Pazar ve onay olasılığına göre optimal fiyat öner</span></p>
+                    </div>
+                </div>
+                <div class="evidence">MoM-Solution-1: "Goal: 100% ACRM" | MoM-5: "Need negotiation flow after rejection"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: AI Support -->
+        <section class="card section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="en">AI Support Potential</span><span class="tr">AI Destek Potansiyeli</span></h2>
+                    <p><span class="en">Where can AI assist?</span><span class="tr">AI nerede yardımcı olabilir?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="ai-suitable">
+                    <div class="ai-box suitable">
+                        <h5>✅ AI SUITABLE</h5>
+                        <ul>
+                            <li><span class="en">Predict approval likelihood before submission</span><span class="tr">Gönderimden önce onay olasılığını tahmin et</span></li>
+                            <li><span class="en">Suggest optimal pricing based on history</span><span class="tr">Geçmişe göre optimal fiyatlandırma öner</span></li>
+                            <li><span class="en">Auto-fill request forms from customer emails</span><span class="tr">Müşteri e-postalarından talep formlarını otomatik doldur</span></li>
+                            <li><span class="en">Alert approaching deadlines (20th of month)</span><span class="tr">Yaklaşan son tarihleri uyar (ayın 20'si)</span></li>
+                        </ul>
+                    </div>
+                    <div class="ai-box not-suitable">
+                        <h5>❌ AI NOT SUITABLE</h5>
+                        <ul>
+                            <li><span class="en">Final pricing decisions for customers</span><span class="tr">Müşteriler için son fiyatlandırma kararları</span></li>
+                            <li><span class="en">Approving discounts beyond authority</span><span class="tr">Yetki dışı indirimleri onaylama</span></li>
+                            <li><span class="en">Customer relationship negotiations</span><span class="tr">Müşteri ilişkisi müzakereleri</span></li>
+                            <li><span class="en">Strategic account management</span><span class="tr">Stratejik hesap yönetimi</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><strong>Sources:</strong></p>
+        <p style="font-size: 10px; color: #6b7280; margin-top: 4px;">MoM-1 (Workshop-1): Sales request flow, Promo/Contract/Spot triggers | MoM-5 (Workshop-5): Discount authority chain, MCR limits for sales | MoM-8 (Workshop-7): Deadline SLA (20th of month) | MoM-9 (Workshop-8): Spot workflow, customer notification | MoM-12: Request channels | MoM-Solution-1: 80/20 ACRM/email split, 100% ACRM goal</p>
+        <p style="margin-top: 8px;"><strong>Generated:</strong> 13 May 2026</p>
+        <p style="margin-top: 8px; color: #d97706;">⚠️ <span class="en">This persona is based on MoM analysis. User validation recommended.</span><span class="tr">Bu persona MoM analizine dayanmaktadır. Kullanıcı doğrulaması önerilir.</span></p>
+    </footer>
+    </div>
+
+    <script>
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+        
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+            });
+        }
+        
+        function toggleView(btn, view) {
+            const card = btn.closest('.card');
+            card.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            card.querySelectorAll('.view-pane').forEach(p => {
+                p.classList.toggle('active', p.dataset.view === view);
+            });
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelector('.mega-menu').classList.remove('open');
+                document.querySelector('.mega-overlay').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

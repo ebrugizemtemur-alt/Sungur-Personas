@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCM - Revenue Management Analyst Persona</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f7; color: #1f2937; line-height: 1.6; }
+        body.lang-en .tr { display: none !important; }
+        body.lang-tr .en { display: none !important; }
+        
+        .side-nav {
+            position: fixed; top: 0; left: 0; width: 72px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 16px 0; z-index: 1000;
+        }
+        .side-nav-logo {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 11px; color: white;
+            margin-bottom: 24px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+        .nav-items { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0 8px; }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 10px 4px; border-radius: 10px; text-decoration: none;
+            color: #64748b; transition: all 0.2s; font-size: 10px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .nav-item.active { background: rgba(124,58,237,0.2); color: #c4b5fd; }
+        .nav-num { width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+        .nav-label { font-size: 9px; text-align: center; }
+
+        .mega-menu {
+            position: fixed; top: 0; left: 72px; width: 320px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            z-index: 999; transform: translateX(-100%); transition: transform 0.3s ease;
+            overflow-y: auto; padding: 20px;
+        }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .module-header:hover { background: rgba(255,255,255,0.05); }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.trm { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; transition: all 0.2s; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #a855f7; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+        
+        .hero {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+            padding: 48px 40px;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(217,119,6,0.15); color: #b45309; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; z-index: 2; position: relative; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #d97706; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #b45309; }
+        .hero-subtitle { font-size: 16px; color: #92400e; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #d97706; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #d97706; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-step.approve { background: #dcfce7; color: #16a34a; }
+        .flow-step.reject { background: #fecaca; color: #dc2626; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; align-items: stretch; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #d97706, #f59e0b); display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #dbeafe; color: #1d4ed8; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #d97706, #f59e0b); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #dcfce7; color: #047857; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        .summary-box { background: rgba(217,119,6,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #d97706; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip { position: absolute; bottom: calc(100% + 8px); left: 0; min-width: 280px; background: #1f2937; color: white; padding: 14px 16px; border-radius: 10px; font-size: 11px; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        .source-tooltip::after { content: ''; position: absolute; bottom: -6px; left: 24px; width: 12px; height: 12px; background: #1f2937; transform: rotate(45deg); }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .hero { padding: 32px 20px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-en">
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()">PCM</div>
+        <div class="nav-items">
+            <a href="Persona_PCM_Pricing_Specialist.html" class="nav-item">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Pricing</span>
+            </a>
+            <a href="Persona_PCM_RM_Analyst.html" class="nav-item active">
+                <span class="nav-num">2</span>
+                <span class="nav-label">RM</span>
+            </a>
+            <a href="Persona_PCM_Interline_Specialist.html" class="nav-item">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Interline</span>
+            </a>
+            <a href="Persona_PCM_Sales_Manager.html" class="nav-item">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Sales</span>
+            </a>
+            <a href="Persona_PCM_Station_User.html" class="nav-item">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Station</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 All Modules</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header active">
+                <div class="module-icon pcm">PCM</div>
+                <span class="module-name">Pricing Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link current"><span class="persona-num">2</span> RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon flm">FLM</div>
+                <span class="module-name">Flight Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon bkr">BKR</div>
+                <span class="module-name">Booking & Reservation</span>
+                <span class="module-count">7 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a>
+                <a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a>
+                <a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a>
+                <a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a>
+                <a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a>
+                <a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a>
+                <a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cam">CAM</div>
+                <span class="module-name">Capacity Management</span>
+                <span class="module-count">3 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon com">COM</div>
+                <span class="module-name">Compliance Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon asm">ASM</div>
+                <span class="module-name">AWB Stock Management</span>
+                <span class="module-count">2 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a>
+                <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon trm">TRM</div>
+                <span class="module-name">Truck Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a>
+            </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon scm">SCM</div>
+                <span class="module-name">Special Cargo Management</span>
+                <span class="module-count">1</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">PCM · REVENUE MANAGEMENT ANALYST · PERSONA #2</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1><span class="en">Revenue Management</span><span class="tr">Gelir Yönetimi</span> <span>Analyst</span></h1>
+            <p class="hero-subtitle">
+                <span class="en">Defines MCR (Minimum Contributive Revenue), Hurdle rates, and dynamic pricing rules in ACRM. Optimizes revenue through capacity-based pricing, occupancy analysis, and auto-approval/rejection rule configuration.</span>
+                <span class="tr">ACRM'de MCR (Minimum Katkı Geliri), Hurdle oranları ve dinamik fiyatlandırma kurallarını tanımlar. Kapasite tabanlı fiyatlandırma, doluluk analizi ve otomatik onay/red kuralı yapılandırması ile geliri optimize eder.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="en">"MCR is the minimum acceptable profit value. Falling below this value is beyond authority. The price never falls below MCR."</span>
+                <span class="tr">"MCR minimum kabul edilebilir kâr değeridir. Bu değerin altına düşmek yetki dışıdır. Fiyat asla MCR'nin altına düşmez."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#d97706;"></span>
+                    <span><strong>Unit:</strong> Revenue Management</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#dc2626;"></span>
+                    <span><strong><span class="en">Criticality</span><span class="tr">Kritiklik</span>:</strong> <span style="color:#dc2626;">★★★★★</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong><span class="en">Main Systems</span><span class="tr">Ana Sistemler</span>:</strong> ACRM, COMIS</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 8 MoM</span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#fcd34d;">📄 Source Documents</div>
+                        <div>Key User Tariff Workshop 1, 4, 5, 8, 11 (5 MoM)</div>
+                        <div>Solution Team Workshop 1, 11, 13 (3 MoM)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1: Persona Profile -->
+        <section class="card section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="en">Persona Profile</span><span class="tr">Persona Profili</span></h2>
+                    <p><span class="en">Who is the RM Analyst?</span><span class="tr">RM Analisti Kimdir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="summary-box">
+                        <h4><span class="en">Profile Summary</span><span class="tr">Profil Özeti</span></h4>
+                        <p><span class="en">Strategic pricing controller who defines MCR/Hurdle parameters, manages auto-approval rules, and optimizes revenue through capacity-based dynamic pricing. Works with occupancy, forecast, no-show data to maximize yield while maintaining pricing discipline.</span>
+                        <span class="tr">MCR/Hurdle parametrelerini tanımlayan, otomatik onay kurallarını yöneten ve kapasite tabanlı dinamik fiyatlandırma ile geliri optimize eden stratejik fiyat kontrolörü.</span></p>
+                    </div>
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label">Role</div><div class="pf-value">RM Analyst</div></div>
+                        <div class="pf"><div class="pf-label">Department</div><div class="pf-value">Revenue Management</div></div>
+                        <div class="pf"><div class="pf-label">Level</div><div class="pf-value">Senior / Lead</div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Experience</span><span class="tr">Deneyim</span></div><div class="pf-value">7+ <span class="en">years</span><span class="tr">yıl</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Key Metrics</span><span class="tr">Ana Metrikler</span></div><div class="pf-value">MCR, Bid Price, Hurdle</div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Primary System</span><span class="tr">Ana Sistem</span></div><div class="pf-value">ACRM</div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Decision Authority</span><span class="tr">Karar Yetkisi</span></div><div class="pf-value"><span class="en">Below MCR Approvals</span><span class="tr">MCR Altı Onayları</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Auto-Approval Rate</span><span class="tr">Otomatik Onay Oranı</span></div><div class="pf-value">70-80%</div></div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-col demo">
+                            <h4><span class="en">Demographic</span><span class="tr">Demografik</span></h4>
+                            <div class="segment-item"><span class="en">Quantitative background (Math/Stats/Economics)</span><span class="tr">Kantitatif arka plan (Mat/İstat/Ekonomi)</span></div>
+                            <div class="segment-item"><span class="en">Advanced analytical skills</span><span class="tr">İleri analitik beceriler</span></div>
+                            <div class="segment-item"><span class="en">Airline industry expertise</span><span class="tr">Havayolu sektörü uzmanlığı</span></div>
+                        </div>
+                        <div class="segment-col behav">
+                            <h4><span class="en">Behavioral</span><span class="tr">Davranışsal</span></h4>
+                            <div class="segment-item"><span class="en">Data-driven decision making</span><span class="tr">Veri odaklı karar verme</span></div>
+                            <div class="segment-item"><span class="en">Weekly rule adjustments</span><span class="tr">Haftalık kural ayarlamaları</span></div>
+                            <div class="segment-item"><span class="en">Capacity monitoring daily</span><span class="tr">Günlük kapasite izleme</span></div>
+                        </div>
+                        <div class="segment-col psycho">
+                            <h4><span class="en">Psychographic</span><span class="tr">Psikografik</span></h4>
+                            <div class="segment-item"><span class="en">Revenue maximization focus</span><span class="tr">Gelir maksimizasyonu odağı</span></div>
+                            <div class="segment-item"><span class="en">Strategic thinking</span><span class="tr">Stratejik düşünme</span></div>
+                            <div class="segment-item"><span class="en">Risk-aware but calculated</span><span class="tr">Risk bilinçli ama hesaplı</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The RM Analyst sits at the strategic heart of pricing decisions. They define MCR (Minimum Contributive Revenue) and Hurdle rates that act as absolute price floors. They configure auto-approval and auto-rejection rules in ACRM based on capacity, occupancy, forecast, and no-show data. Unlike the Pricing Specialist who manages static tariffs, the RM Analyst controls dynamic pricing behavior. They have authority to approve prices below MCR in special cases, a power not available to Sales or Pricing teams.</span>
+                    <span class="tr">RM Analisti fiyatlandırma kararlarının stratejik merkezinde yer alır. Mutlak fiyat tabanı görevi gören MCR (Minimum Katkı Geliri) ve Hurdle oranlarını tanımlar.</span></p>
+                    <div class="evidence">MoM-1: "MCR = Bid price + Hurdle" | MoM-5: "RM teams can approve fees below MCR" | MoM-1: "70-80% automatic approval pool with no waiting"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Goals & Motivation -->
+        <section class="card section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="en">Goals, Motivation & Fears</span><span class="tr">Hedefler, Motivasyon & Korkular</span></h2>
+                    <p><span class="en">What drives revenue optimization?</span><span class="tr">Gelir optimizasyonunu ne yönlendirir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="en">🎯 Maximize revenue while maintaining price discipline</span><span class="tr">🎯 Fiyat disiplinini koruyarak geliri maksimize et</span></div>
+                        <div class="goal-level secondary"><span class="en">📊 Optimize auto-approval rates (target: 70-80%)</span><span class="tr">📊 Otomatik onay oranlarını optimize et (hedef: %70-80)</span></div>
+                        <div class="goal-level tertiary"><span class="en">⚡ Reduce manual spot evaluation workload</span><span class="tr">⚡ Manuel spot değerlendirme iş yükünü azalt</span></div>
+                    </div>
+                    <div class="two-col">
+                        <div class="list-box motivators">
+                            <h4>✅ <span class="en">Motivators</span><span class="tr">Motivatörler</span></h4>
+                            <div class="list-item"><span class="en">High auto-approval rate reducing manual work</span><span class="tr">Yüksek otomatik onay oranı manuel işi azaltır</span></div>
+                            <div class="list-item"><span class="en">Revenue targets met or exceeded</span><span class="tr">Gelir hedeflerinin karşılanması veya aşılması</span></div>
+                            <div class="list-item"><span class="en">Well-tuned rules that balance volume and yield</span><span class="tr">Hacim ve verimi dengeleyen iyi ayarlanmış kurallar</span></div>
+                            <div class="list-item"><span class="en">Clear capacity utilization visibility</span><span class="tr">Net kapasite kullanım görünürlüğü</span></div>
+                        </div>
+                        <div class="list-box demotivators">
+                            <h4>❌ <span class="en">Demotivators</span><span class="tr">Demotivatörler</span></h4>
+                            <div class="list-item"><span class="en">Pricing logic duplicated across COMIS and ACRM</span><span class="tr">Fiyatlandırma mantığının COMIS ve ACRM'de çoğaltılması</span></div>
+                            <div class="list-item"><span class="en">Priority rules not transferable between systems</span><span class="tr">Öncelik kurallarının sistemler arası aktarılamaması</span></div>
+                            <div class="list-item"><span class="en">Manual rule uploads via Excel</span><span class="tr">Excel ile manuel kural yüklemeleri</span></div>
+                            <div class="list-item"><span class="en">Below-MCR requests requiring manual review</span><span class="tr">MCR altı taleplerin manuel inceleme gerektirmesi</span></div>
+                        </div>
+                    </div>
+                    <div class="list-box fears" style="margin-top: 16px;">
+                        <h4>😰 <span class="en">Primary Fears</span><span class="tr">Ana Korkular</span></h4>
+                        <div class="list-item"><span class="en">Rules creating revenue leakage below MCR</span><span class="tr">Kuralların MCR altında gelir kaçağı oluşturması</span></div>
+                        <div class="list-item"><span class="en">Conflicting rules causing unpredictable pricing</span><span class="tr">Çelişen kuralların öngörülemeyen fiyatlandırmaya sebep olması</span></div>
+                        <div class="list-item"><span class="en">Capacity sold at sub-optimal prices during peak</span><span class="tr">Yoğun dönemde kapasitenin optimal altı fiyatlarla satılması</span></div>
+                        <div class="list-item"><span class="en">Integration gaps causing wrong MCR application</span><span class="tr">Entegrasyon açıklarının yanlış MCR uygulamasına sebep olması</span></div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The RM Analyst's primary goal is maximizing revenue while maintaining strict price discipline through MCR/Hurdle enforcement. They aim for 70-80% auto-approval rates to reduce manual workload while ensuring no revenue leakage below defined thresholds. Key fears include rule conflicts causing unpredictable pricing behavior, integration gaps between COMIS and ACRM causing wrong MCR application, and capacity being sold below optimal prices during high-demand periods.</span>
+                    <span class="tr">RM Analisti'nin birincil hedefi MCR/Hurdle uygulaması ile sıkı fiyat disiplinini korurken geliri maksimize etmektir.</span></p>
+                    <div class="evidence">MoM-5: "Requests up to 10% below the MCR should go to RM approval" | MoM-Solution-11: "Priority logic is duplicated across COMIS and ACRM"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Workflow & Intents -->
+        <section class="card section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="en">Workflow & Intents</span><span class="tr">İş Akışı & Niyetler</span></h2>
+                    <p><span class="en">How do they manage dynamic pricing?</span><span class="tr">Dinamik fiyatlandırmayı nasıl yönetirler?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">📊 <span class="en">Spot Evaluation Flow (ACRM)</span><span class="tr">Spot Değerlendirme Akışı (ACRM)</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step manual"><span class="en">Spot Request</span><span class="tr">Spot Talebi</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision"><span class="en">Check vs MCR</span><span class="tr">MCR Kontrolü</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision"><span class="en">Check Auto Rules</span><span class="tr">Otomatik Kural Kontrolü</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="en">Auto Approve (70-80%)</span><span class="tr">Otomatik Onay (%70-80)</span></div>
+                    </div>
+                    <div class="flow-h">
+                        <div class="flow-step reject" style="margin-left: 200px;"><span class="en">Auto Reject (< MCR)</span><span class="tr">Otomatik Red (< MCR)</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="en">RM Manual Review</span><span class="tr">RM Manuel İnceleme</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step approve"><span class="en">Approve with MCR</span><span class="tr">MCR ile Onayla</span></div>
+                    </div>
+                    
+                    <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px; margin-top: 20px;">🔢 <span class="en">MCR Calculation Logic</span><span class="tr">MCR Hesaplama Mantığı</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step auto">Bid Price</div>
+                        <span class="flow-arrow">+</span>
+                        <div class="flow-step auto">Hurdle Rate</div>
+                        <span class="flow-arrow">=</span>
+                        <div class="flow-step approve" style="font-weight: 700;">MCR</div>
+                    </div>
+                    
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="list-box">
+                            <h4 style="color: #0284c7;"><span class="en">🎯 Rule Configuration</span><span class="tr">🎯 Kural Yapılandırması</span></h4>
+                            <div class="list-item"><span class="en">Auto-approve rules uploaded via Excel</span><span class="tr">Otomatik onay kuralları Excel ile yüklenir</span></div>
+                            <div class="list-item"><span class="en">Route-specific MCR definitions</span><span class="tr">Rota bazlı MCR tanımları</span></div>
+                            <div class="list-item"><span class="en">Capacity/occupancy thresholds</span><span class="tr">Kapasite/doluluk eşikleri</span></div>
+                            <div class="list-item"><span class="en">Product/commodity-based variations</span><span class="tr">Ürün/emtia bazlı varyasyonlar</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #d97706;"><span class="en">⚠️ Override Scenarios</span><span class="tr">⚠️ Geçersiz Kılma Senaryoları</span></h4>
+                            <div class="list-item"><span class="en">MCR overrides all price types</span><span class="tr">MCR tüm fiyat tiplerini geçersiz kılar</span></div>
+                            <div class="list-item"><span class="en">Allotment: no MCR check (access rate only)</span><span class="tr">Allotment: MCR kontrolü yok (sadece access rate)</span></div>
+                            <div class="list-item"><span class="en">Super Contract: fixed price, no RM logic</span><span class="tr">Super Contract: sabit fiyat, RM mantığı yok</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The RM Analyst configures auto-approval rules in ACRM that evaluate spot requests against MCR, capacity, and business rules. If requested price ≥ MCR + auto-approve threshold, it's auto-approved. If below MCR, it's auto-rejected OR sent to RM for manual review (e.g., "requests up to 10% below MCR go to RM approval"). MCR calculation is: Bid Price + Hurdle = MCR. Special cases like Allotment (no MCR check, only access rate) and Super Contract (fixed price, no RM logic) bypass normal flow.</span>
+                    <span class="tr">RM Analisti, spot taleplerini MCR, kapasite ve iş kurallarına göre değerlendiren otomatik onay kurallarını ACRM'de yapılandırır.</span></p>
+                    <div class="evidence">MoM-5: "Auto rules MCR, auto reject, auto approval are all defined in ACRM" | MoM-Solution-11: "MCR is absolute and dominant - applies to new bookings and updates"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Data & Integration -->
+        <section class="card section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="en">Data & Integration</span><span class="tr">Veri & Entegrasyon</span></h2>
+                    <p><span class="en">What data powers RM decisions?</span><span class="tr">RM kararlarını hangi veriler besler?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="three-col">
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;">📥 <span class="en">Input Data</span><span class="tr">Girdi Verileri</span></h4>
+                            <div class="list-item"><strong>Capacity:</strong> <span class="en">Flight/route capacity</span><span class="tr">Uçuş/rota kapasitesi</span></div>
+                            <div class="list-item"><strong>Forecast:</strong> <span class="en">Demand predictions</span><span class="tr">Talep tahminleri</span></div>
+                            <div class="list-item"><strong>Occupancy:</strong> <span class="en">Current load factors</span><span class="tr">Mevcut doluluk oranları</span></div>
+                            <div class="list-item"><strong>No-show:</strong> <span class="en">Historical no-show rates</span><span class="tr">Geçmiş no-show oranları</span></div>
+                            <div class="list-item"><strong>Rate Class:</strong> <span class="en">Booking class mix</span><span class="tr">Rezervasyon sınıfı karması</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;">📤 <span class="en">Output Controls</span><span class="tr">Çıktı Kontrolleri</span></h4>
+                            <div class="list-item"><strong>MCR:</strong> <span class="en">Minimum floor price</span><span class="tr">Minimum taban fiyat</span></div>
+                            <div class="list-item"><strong>Hurdle:</strong> <span class="en">Minimum profit margin</span><span class="tr">Minimum kâr marjı</span></div>
+                            <div class="list-item"><strong>Bid Price:</strong> <span class="en">RM-determined price</span><span class="tr">RM-belirlenen fiyat</span></div>
+                            <div class="list-item"><strong>Auto Rules:</strong> <span class="en">Approve/Reject thresholds</span><span class="tr">Onay/Red eşikleri</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;">🔗 <span class="en">Key Systems</span><span class="tr">Ana Sistemler</span></h4>
+                            <div class="list-item"><strong>ACRM:</strong> <span class="en">MCR, rules, spot evaluation</span><span class="tr">MCR, kurallar, spot değerlendirme</span></div>
+                            <div class="list-item"><strong>COMIS:</strong> <span class="en">Hurdle rates, static prices</span><span class="tr">Hurdle oranları, statik fiyatlar</span></div>
+                            <div class="list-item"><strong>KTSY:</strong> <span class="en">Sales authority report</span><span class="tr">Satış yetki raporu</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-box" style="margin-top: 20px;">
+                        <h4><span class="en">System Responsibility Split</span><span class="tr">Sistem Sorumluluk Dağılımı</span></h4>
+                        <p><span class="en"><strong>ACRM:</strong> MCR, Bid Price, dynamic evaluation, auto-rules | <strong>COMIS:</strong> Hurdle rate, static tariffs, rate cards | <strong>Note:</strong> "MCR and bid price exist in ACRM. Hurdle rate and all other fees exist in COMIS."</span>
+                        <span class="tr"><strong>ACRM:</strong> MCR, Bid Price, dinamik değerlendirme, otomatik kurallar | <strong>COMIS:</strong> Hurdle rate, statik tarifeler, rate card'lar</span></p>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The RM Analyst works with capacity, forecast, occupancy, and no-show data to configure MCR and auto-approval rules. System responsibility is split: ACRM holds MCR, Bid Price, and dynamic evaluation logic; COMIS holds Hurdle rates and static tariffs. This split creates complexity as "priority logic is not transferable as master data - requires manual configuration in ACRM." The KTSY report provides sales authority information that ACRM uses for permission checks.</span>
+                    <span class="tr">RM Analisti MCR ve otomatik onay kurallarını yapılandırmak için kapasite, tahmin, doluluk ve no-show verileriyle çalışır.</span></p>
+                    <div class="evidence">MoM-1: "MCR and bid price exist in ACRM. Hurdle rate and all other fees exist in COMIS" | MoM-5: "KTSY rules are defined in ACRM"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Pain Points & Risk -->
+        <section class="card section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="en">Pain Points & Risks</span><span class="tr">Sıkıntılar & Riskler</span></h2>
+                    <p><span class="en">Where does RM struggle?</span><span class="tr">RM nerelerde zorlanır?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Duplicated Pricing Logic</span><span class="tr">Çoğaltılmış Fiyatlandırma Mantığı</span></h5>
+                                <p><span class="en">"Pricing logic is duplicated across COMIS and ACRM. Priority logic is not transferable as master data."</span>
+                                <span class="tr">"Fiyatlandırma mantığı COMIS ve ACRM'de çoğaltılmış. Öncelik mantığı master veri olarak aktarılamıyor."</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Rule Conflict Risk</span><span class="tr">Kural Çakışması Riski</span></h5>
+                                <p><span class="en">"Excessive configurability may cause conflicting definitions and hard-to-trace pricing outcomes."</span>
+                                <span class="tr">"Aşırı yapılandırılabilirlik çelişen tanımlar ve izlenmesi zor fiyat sonuçlarına sebep olabilir."</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Excel-Based Rule Upload</span><span class="tr">Excel Tabanlı Kural Yüklemesi</span></h5>
+                                <p><span class="en">"Auto Spot Approve lists are uploaded to ACRM via Excel." Manual process for strategic controls.</span>
+                                <span class="tr">"Otomatik Spot Onay listeleri ACRM'e Excel ile yüklenir." Stratejik kontroller için manuel süreç.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5><span class="en">No Price Type Visibility in Outputs</span><span class="tr">Çıktılarda Fiyat Tipi Görünürlüğü Yok</span></h5>
+                                <p><span class="en">"Returned prices do not clearly indicate which part came from tariff, contract, or dynamic calculation."</span>
+                                <span class="tr">"Dönen fiyatlar hangi kısmın tarifeden, sözleşmeden veya dinamik hesaplamadan geldiğini net göstermiyor."</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P5</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Booking Update Repricing Complexity</span><span class="tr">Rezervasyon Güncelleme Yeniden Fiyatlandırma Karmaşıklığı</span></h5>
+                                <p><span class="en">"When weight increases, original price remembered via quotation ID, additional weight priced at new rate, weighted average calculated."</span>
+                                <span class="tr">"Ağırlık arttığında orijinal fiyat quotation ID ile hatırlanır, ek ağırlık yeni fiyatla, ağırlıklı ortalama hesaplanır."</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The most critical pain point is duplicated pricing logic between COMIS and ACRM, requiring manual configuration in both systems. Rule conflict risk increases with configurability - "business users may define overlapping rules." Excel-based rule uploads add manual overhead for strategic controls. Price breakdown visibility is limited, making profitability analysis difficult. Booking update scenarios create complex repricing calculations with weighted averages.</span>
+                    <span class="tr">En kritik sıkıntı COMIS ve ACRM arasında çoğaltılmış fiyatlandırma mantığıdır, her iki sistemde manuel yapılandırma gerektirir.</span></p>
+                    <div class="evidence">MoM-Solution-11: "Priority logic is not transferable - requires manual configuration in ACRM" | MoM-Solution-13: "Returned prices do not clearly indicate which part came from tariff"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Mental Model -->
+        <section class="card section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="en">Mental Model & Behavior</span><span class="tr">Zihinsel Model & Davranış</span></h2>
+                    <p><span class="en">How does RM think?</span><span class="tr">RM nasıl düşünür?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="empathy-grid">
+                        <div class="empathy-quad says">
+                            <h4><span class="icon">💬</span> SAYS</h4>
+                            <div class="empathy-item"><span class="en">"The price never falls below MCR"</span><span class="tr">"Fiyat asla MCR'nin altına düşmez"</span></div>
+                            <div class="empathy-item"><span class="en">"Let me check the capacity before approving"</span><span class="tr">"Onaylamadan önce kapasiteyi kontrol edeyim"</span></div>
+                            <div class="empathy-item"><span class="en">"We need better rule traceability"</span><span class="tr">"Daha iyi kural izlenebilirliği lazım"</span></div>
+                        </div>
+                        <div class="empathy-avatar">
+                            <div class="empathy-avatar-circle">📈</div>
+                            <p style="font-size: 11px; color: #6b7280; margin-top: 12px; text-align: center;">RM<br>Analyst</p>
+                        </div>
+                        <div class="empathy-quad thinks">
+                            <h4><span class="icon">💭</span> THINKS</h4>
+                            <div class="empathy-item"><span class="en">"Is this rule conflicting with another?"</span><span class="tr">"Bu kural başka bir kurallarla çakışıyor mu?"</span></div>
+                            <div class="empathy-item"><span class="en">"What's the revenue impact of this threshold?"</span><span class="tr">"Bu eşiğin gelir etkisi ne?"</span></div>
+                            <div class="empathy-item"><span class="en">"We're leaving money on the table"</span><span class="tr">"Parayı masada bırakıyoruz"</span></div>
+                        </div>
+                        <div class="empathy-quad does">
+                            <h4><span class="icon">🔧</span> DOES</h4>
+                            <div class="empathy-item"><span class="en">Monitors auto-approval rates daily</span><span class="tr">Otomatik onay oranlarını günlük izler</span></div>
+                            <div class="empathy-item"><span class="en">Adjusts MCR by route/product weekly</span><span class="tr">MCR'yi rota/ürün bazında haftalık ayarlar</span></div>
+                            <div class="empathy-item"><span class="en">Reviews below-MCR exceptions manually</span><span class="tr">MCR altı istisnaları manuel inceler</span></div>
+                        </div>
+                        <div class="empathy-quad feels">
+                            <h4><span class="icon">❤️</span> FEELS</h4>
+                            <div class="empathy-item"><span class="en">Empowered by data-driven decisions</span><span class="tr">Veri odaklı kararlarla güçlenmiş</span></div>
+                            <div class="empathy-item"><span class="en">Frustrated by system fragmentation</span><span class="tr">Sistem parçalanmasından sıkılmış</span></div>
+                            <div class="empathy-item"><span class="en">Pressured during peak seasons</span><span class="tr">Yoğun sezonlarda baskı altında</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The RM Analyst thinks in terms of revenue optimization, capacity utilization, and rule effectiveness. They constantly balance volume (getting cargo) vs yield (getting good prices). They maintain strict discipline around MCR as an absolute floor. Frustration comes from system fragmentation requiring duplicate configuration. Peak pressure occurs during high-demand periods when every pricing decision has magnified revenue impact.</span>
+                    <span class="tr">RM Analisti gelir optimizasyonu, kapasite kullanımı ve kural etkinliği açısından düşünür. Hacim (kargo alma) ile verim (iyi fiyat alma) arasında sürekli denge kurar.</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: Collaboration -->
+        <section class="card section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="en">Collaboration & Support</span><span class="tr">İşbirliği & Destek</span></h2>
+                    <p><span class="en">Who does RM coordinate with?</span><span class="tr">RM kimlerle koordine olur?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="stakeholder-map">
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node provider"><span class="en">Capacity Planning</span><span class="tr">Kapasite Planlama</span><br><small>Forecasts, load factors</small></div>
+                            <div class="stakeholder-node provider"><span class="en">Pricing Team</span><span class="tr">Fiyatlandırma Ekibi</span><br><small>Tariff/Hurdle data</small></div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node persona">📈 RM ANALYST</div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node consumer">ACRM<br><small>MCR, Auto-rules</small></div>
+                            <div class="stakeholder-node consumer"><span class="en">Sales Teams</span><span class="tr">Satış Ekipleri</span><br><small>Below-MCR requests</small></div>
+                            <div class="stakeholder-node consumer"><span class="en">Booking Channels</span><span class="tr">Rezervasyon Kanalları</span><br><small>Dynamic prices</small></div>
+                        </div>
+                    </div>
+                    
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="list-box">
+                            <h4 style="color: #059669;"><span class="en">Authority Matrix</span><span class="tr">Yetki Matrisi</span></h4>
+                            <div class="list-item"><strong><span class="en">Sales Manager</span><span class="tr">Satış Müdürü</span>:</strong> <span class="en">Can discount within limits</span><span class="tr">Limitler dahilinde indirim yapabilir</span></div>
+                            <div class="list-item"><strong><span class="en">Pricing Team</span><span class="tr">Fiyatlandırma Ekibi</span>:</strong> <span class="en">Can evaluate after auto-reject</span><span class="tr">Otomatik red sonrası değerlendirebilir</span></div>
+                            <div class="list-item"><strong>RM:</strong> <span class="en">Can approve below MCR</span><span class="tr">MCR altını onaylayabilir</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #059669;"><span class="en">Critical Dependencies</span><span class="tr">Kritik Bağımlılıklar</span></h4>
+                            <div class="list-item">⛔ <span class="en">COMIS Hurdle data accuracy</span><span class="tr">COMIS Hurdle veri doğruluğu</span></div>
+                            <div class="list-item">⏳ <span class="en">Capacity forecast timeliness</span><span class="tr">Kapasite tahmini zamanlaması</span></div>
+                            <div class="list-item">🕳️ <span class="en">ACRM-COMIS sync reliability</span><span class="tr">ACRM-COMIS senkronizasyon güvenilirliği</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The RM Analyst receives capacity forecasts and load factor data from Capacity Planning, Hurdle rates from Pricing Team. They output MCR definitions and auto-approval rules to ACRM, which then affects all booking channels. They have unique authority to approve prices below MCR - "RM teams can approve fees below MCR" - a power not available to Sales or Pricing. This creates a clear escalation path for exception handling.</span>
+                    <span class="tr">RM Analisti Kapasite Planlama'dan kapasite tahminleri ve doluluk verileri, Fiyatlandırma Ekibi'nden Hurdle oranları alır.</span></p>
+                    <div class="evidence">MoM-5: "Sales Manager applies discount, Sales Manager 2 approves, Fees below MCR - Sales cannot discount, RM teams can approve fees below MCR"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: Product Opportunities -->
+        <section class="card section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="en">Product Opportunities</span><span class="tr">Ürün Fırsatları</span></h2>
+                    <p><span class="en">How can we improve RM workflows?</span><span class="tr">RM iş akışlarını nasıl iyileştirebiliriz?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="timeline">
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="en">Unified Priority Logic</span><span class="tr">Birleşik Öncelik Mantığı</span></h5>
+                            <p>→ P1 | <span class="en">Single source of truth for pricing priority rules across systems</span><span class="tr">Sistemler arası fiyatlandırma öncelik kuralları için tek kaynak</span></p>
+                        </div>
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="en">Rule Conflict Detection</span><span class="tr">Kural Çakışması Tespiti</span></h5>
+                            <p>→ P2 | <span class="en">Validate new rules against existing to prevent conflicts</span><span class="tr">Çakışmaları önlemek için yeni kuralları mevcut kurallara karşı doğrula</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT-TERM</span>
+                            <h5><span class="en">UI-Based Rule Configuration</span><span class="tr">UI Tabanlı Kural Yapılandırması</span></h5>
+                            <p>→ P3 | <span class="en">Replace Excel uploads with direct rule editor in system</span><span class="tr">Excel yüklemelerini sistemde doğrudan kural editörü ile değiştir</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT-TERM</span>
+                            <h5><span class="en">Price Breakdown Visibility</span><span class="tr">Fiyat Dağılım Görünürlüğü</span></h5>
+                            <p>→ P4 | <span class="en">Show tariff/contract/dynamic components in returned prices</span><span class="tr">Dönen fiyatlarda tarife/sözleşme/dinamik bileşenleri göster</span></p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long">LONG-TERM</span>
+                            <h5><span class="en">Configurable Priority Model</span><span class="tr">Yapılandırılabilir Öncelik Modeli</span></h5>
+                            <p>→ P1, P2 | <span class="en">"Priority rules should be configurable, controlled via restricted admin roles"</span><span class="tr">"Öncelik kuralları yapılandırılabilir olmalı, kısıtlı admin rolleriyle kontrol edilmeli"</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">Priority opportunities focus on unifying pricing logic to eliminate duplication (MVP), adding rule conflict detection to prevent overlapping definitions, and replacing Excel-based rule uploads with direct UI configuration. Medium-term goals include better price breakdown visibility showing tariff/contract/dynamic components. Long-term vision is a fully configurable priority model with admin controls.</span>
+                    <span class="tr">Öncelikli fırsatlar çoğaltmayı ortadan kaldırmak için fiyatlandırma mantığını birleştirmeye (MVP), çakışan tanımları önlemek için kural çakışması tespiti eklemeye odaklanır.</span></p>
+                    <div class="evidence">MoM-Solution-11: "Priority rules should be configurable, controlled via restricted admin roles, not open to all users"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: AI Support -->
+        <section class="card section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="en">AI Support Potential</span><span class="tr">AI Destek Potansiyeli</span></h2>
+                    <p><span class="en">Where can AI enhance RM?</span><span class="tr">AI, RM'yi nerede geliştirebilir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div style="position: relative; height: 320px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%); border-radius: 12px; padding: 16px;">
+                        <div style="position: absolute; left: 0; right: 0; top: 33%; height: 3px; background: #0891b2; z-index: 10;"></div>
+                        <div style="position: absolute; right: 16px; top: 31%; font-size: 10px; color: #0891b2; font-weight: 600;">TRUST LINE</div>
+                        
+                        <div style="position: absolute; left: 16px; top: 4%; color: #dc2626; font-size: 11px;">
+                            <strong>🚫 Level 6 - FORBIDDEN</strong><br>
+                            <span class="en">Auto-change MCR without RM approval</span><span class="tr">RM onayı olmadan MCR'yi otomatik değiştirme</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 21%; color: #b45309; font-size: 11px;">
+                            <strong>⚠️ Level 5 - APPROVAL REQUIRED</strong><br>
+                            <span class="en">Suggest MCR adjustments based on capacity trends</span><span class="tr">Kapasite trendlerine göre MCR ayarlamaları öner</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 40%; color: #15803d; font-size: 11px;">
+                            <strong>💡 Level 4 - SUGGESTION</strong><br>
+                            <span class="en">Identify underperforming routes for MCR review</span><span class="tr">MCR incelemesi için düşük performanslı rotaları belirle</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 55%; color: #15803d; font-size: 11px;">
+                            <strong>⚙️ Level 3 - PREPARATION</strong><br>
+                            <span class="en">Pre-calculate weighted average for booking updates</span><span class="tr">Rezervasyon güncellemeleri için ağırlıklı ortalamayı önceden hesapla</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 70%; color: #15803d; font-size: 11px;">
+                            <strong>📝 Level 2 - SUMMARIZATION</strong><br>
+                            <span class="en">Summarize rule conflicts and impacts</span><span class="tr">Kural çakışmalarını ve etkilerini özetle</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 85%; color: #15803d; font-size: 11px;">
+                            <strong>📊 Level 1 - INFORMATION</strong><br>
+                            <span class="en">Display auto-approval rate trends</span><span class="tr">Otomatik onay oranı trendlerini göster</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-suitable">
+                        <div class="ai-box suitable">
+                            <h5>✅ AI SUITABLE</h5>
+                            <ul>
+                                <li><span class="en">Detect rule conflicts before activation</span><span class="tr">Kuralları aktif etmeden önce çakışmaları tespit et</span></li>
+                                <li><span class="en">Forecast demand for MCR optimization</span><span class="tr">MCR optimizasyonu için talep tahmini</span></li>
+                                <li><span class="en">Identify revenue leakage patterns</span><span class="tr">Gelir kaçağı kalıplarını belirle</span></li>
+                                <li><span class="en">Simulate rule change impacts</span><span class="tr">Kural değişikliği etkilerini simüle et</span></li>
+                            </ul>
+                        </div>
+                        <div class="ai-box not-suitable">
+                            <h5>❌ AI NOT SUITABLE</h5>
+                            <ul>
+                                <li><span class="en">Setting MCR values autonomously</span><span class="tr">MCR değerlerini otonom olarak belirleme</span></li>
+                                <li><span class="en">Approving below-MCR exceptions</span><span class="tr">MCR altı istisnaları onaylama</span></li>
+                                <li><span class="en">Changing auto-rule thresholds without review</span><span class="tr">İnceleme olmadan otomatik kural eşiklerini değiştirme</span></li>
+                                <li><span class="en">Overriding RM strategic decisions</span><span class="tr">RM stratejik kararlarını geçersiz kılma</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">AI can significantly help with rule conflict detection, demand forecasting for MCR optimization, and identifying revenue leakage patterns. It can simulate rule change impacts before activation. However, AI should never autonomously change MCR values or approve below-MCR exceptions - these require human judgment given their strategic revenue impact. All AI suggestions for MCR changes must go through RM approval.</span>
+                    <span class="tr">AI kural çakışması tespiti, MCR optimizasyonu için talep tahmini ve gelir kaçağı kalıplarını belirleme konularında önemli ölçüde yardımcı olabilir.</span></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><strong>Sources:</strong></p>
+        <p style="font-size: 10px; color: #6b7280; margin-top: 4px;">MoM-1 (Workshop-1): MCR formula, Bid Price, Hurdle Rate, Auto-approval concept | MoM-4 (Workshop-4): KTSY rules, discount authorities | MoM-5 (Workshop-5): Auto-reject thresholds, RM approval flow, 10% MCR tolerance | MoM-8 (Workshop-7): Capacity-based pricing logic | MoM-11 (Workshop-10): Priority rules, TACT fallback | MoM-Solution-1: ACRM-COMIS sync delay | MoM-Solution-11: MCR dominance, Priority duplication | MoM-Solution-13: Price breakdown visibility</p>
+        <p style="margin-top: 8px;"><strong>Generated:</strong> 13 May 2026</p>
+        <p style="margin-top: 8px; color: #d97706;">⚠️ <span class="en">This persona is based on MoM analysis. User validation recommended.</span><span class="tr">Bu persona MoM analizine dayanmaktadır. Kullanıcı doğrulaması önerilir.</span></p>
+    </footer>
+    </div>
+
+    <script>
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+        
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+            });
+        }
+        
+        function toggleView(btn, view) {
+            const card = btn.closest('.card');
+            card.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            card.querySelectorAll('.view-pane').forEach(p => {
+                p.classList.toggle('active', p.dataset.view === view);
+            });
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelector('.mega-menu').classList.remove('open');
+                document.querySelector('.mega-overlay').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRM - RFS Schedule Planner Persona</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f7; color: #1f2937; line-height: 1.6; }
+        
+        .side-nav {
+            position: fixed; top: 0; left: 0; width: 72px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 16px 0; z-index: 1000;
+        }
+        .side-nav-logo {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, #0d9488, #14b8a6);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 12px; color: white;
+            margin-bottom: 24px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(13,148,136,0.4); }
+        .nav-items { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0 8px; }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 10px 4px; border-radius: 10px; text-decoration: none;
+            color: #64748b; transition: all 0.2s; font-size: 10px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .nav-item.active { background: rgba(13,148,136,0.2); color: #5eead4; }
+        .nav-num { width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+        .nav-label { font-size: 9px; text-align: center; }
+
+        .mega-menu {
+            position: fixed; top: 0; left: 72px; width: 320px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            z-index: 999; transform: translateX(-100%); transition: transform 0.3s ease;
+            overflow-y: auto; padding: 20px;
+        }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; transition: all 0.2s; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .module-header:hover { background: rgba(255,255,255,0.05); }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.trm { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; transition: all 0.2s; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #14b8a6; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+        
+        .hero {
+            background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 50%, #5eead4 100%);
+            padding: 48px 40px;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(13,148,136,0.15); color: #0f766e; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #0d9488; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #0f766e; }
+        .hero-subtitle { font-size: 16px; color: #134e4a; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #0d9488; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip { position: absolute; bottom: calc(100% + 8px); left: 0; min-width: 280px; background: #1f2937; color: white; padding: 14px 16px; border-radius: 10px; font-size: 11px; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        .source-tooltip::after { content: ''; position: absolute; bottom: -6px; left: 24px; width: 12px; height: 12px; background: #1f2937; transform: rotate(45deg); }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+        
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #0d9488; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 100px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-step.approve { background: #dcfce7; color: #16a34a; }
+        .flow-step.reject { background: #fecaca; color: #dc2626; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .jtbd-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 16px; }
+        .jtbd-table th, .jtbd-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .jtbd-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        
+        .crud-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .crud-table th, .crud-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .crud-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .crud-badge { display: inline-block; width: 20px; height: 20px; border-radius: 4px; text-align: center; line-height: 20px; font-size: 10px; font-weight: 700; }
+        .crud-badge.yes { background: #d1fae5; color: #047857; }
+        .crud-badge.no { background: #f3f4f6; color: #9ca3af; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; align-items: stretch; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #0d9488, #14b8a6); display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.does h4 span.icon { background: rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-quad.feels h4 span.icon { background: rgba(225,29,72,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #d1fae5; color: #047857; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #e0e7ff; color: #4338ca; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-pyramid { display: flex; flex-direction: column; gap: 6px; align-items: center; margin: 20px 0; }
+        .ai-level { padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; color: white; }
+        
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        
+        .discovery-needed { background: rgba(217,119,6,0.08); border: 1px dashed rgba(217,119,6,0.4); padding: 12px; border-radius: 8px; margin-top: 12px; }
+        .discovery-needed h5 { font-size: 11px; font-weight: 600; color: #b45309; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .discovery-needed p { font-size: 11px; color: #92400e; }
+        
+        .out-of-scope { background: rgba(100,116,139,0.08); border: 1px solid rgba(100,116,139,0.2); padding: 12px; border-radius: 8px; margin-top: 16px; }
+        .out-of-scope h5 { font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 6px; }
+        .out-of-scope p { font-size: 11px; color: #64748b; }
+        
+        .summary-box { background: rgba(13,148,136,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #0d9488; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .hero { padding: 32px 20px; }
+            .hero h1 { font-size: 28px; }
+            .board { padding: 16px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-en">
+    <nav class="side-nav">
+        <div class="side-nav-logo" title="All Modules" onclick="toggleMegaMenu()">TRM</div>
+        <div class="nav-items">
+            <a href="Persona_TRM_RFS_Schedule_Planner.html" class="nav-item active" title="RFS Schedule Planner">
+                <span class="nav-num">1</span>
+                <span class="nav-label">RFS Planner</span>
+            </a>
+            <a href="TRM_Gap_Analysis.html" class="nav-item" title="Gap Analysis">
+                <span class="nav-num">📊</span>
+                <span class="nav-label">Gap Analysis</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Mega Menu Overlay -->
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    
+    <!-- Mega Menu Panel -->
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 All Modules</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        
+        <!-- PCM Module -->
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon pcm">PCM</div>
+                <span class="module-name">Pricing Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span>Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span>RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span>Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span>Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span>Station User</a>
+            </div>
+        </div>
+        
+        <!-- FLM Module -->
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon flm">FLM</div>
+                <span class="module-name">Flight Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span>Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span>Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span>COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span>Revenue Capacity Analyst</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span>Solution Specialist</a>
+            </div>
+        </div>
+        
+        <!-- BKR Module -->
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon bkr">BKR</div>
+                <span class="module-name">Booking & Reservation</span>
+                <span class="module-count">7 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_BKR_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span>IST General Reservation</a>
+                <a href="Persona_BKR_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span>IST Special Cargo</a>
+                <a href="Persona_BKR_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span>Domestic Reservation</a>
+                <a href="Persona_BKR_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span>GSA International Station</a>
+                <a href="Persona_BKR_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span>Capacity Planning</a>
+                <a href="Persona_BKR_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span>Operations Cargo Acceptance</a>
+                <a href="Persona_BKR_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span>Solution Technical Team</a>
+            </div>
+        </div>
+        
+        <!-- CAM Module -->
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cam">CAM</div>
+                <span class="module-name">Capacity Management</span>
+                <span class="module-count">3 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span>Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span>Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span>Sales User</a>
+            </div>
+        </div>
+        
+        <!-- COM Module -->
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon com">COM</div>
+                <span class="module-name">Compliance Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span>Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span>Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span>Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span>Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span>Service Standards</a>
+            </div>
+        </div>
+        
+        <!-- ASM Module -->
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon asm">ASM</div>
+                <span class="module-name">AWB Stock Management</span>
+                <span class="module-count">2 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span>Stock Management</a>
+                <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span>Messaging Specialist</a>
+            </div>
+        </div>
+        
+        <!-- TRM Module -->
+        <div class="module-section">
+            <div class="module-header active">
+                <div class="module-icon trm">TRM</div>
+                <span class="module-name">Truck Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link current"><span class="persona-num">1</span>RFS Schedule Planner</a>
+            </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon scm">SCM</div>
+                <span class="module-name">Special Cargo Management</span>
+                <span class="module-count">1</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">TRM · RFS SCHEDULE PLANNER · PERSONA #1</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1>RFS <span>Schedule Planner</span></h1>
+            <p class="hero-subtitle">Road Feeder Service planning specialist who manages truck schedules extending the air network into inland areas. Creates, maintains, and optimizes truck routes with intermodal connections to flights. Responsible for Excel imports, MCT configurations, and lane management.</p>
+            <div class="hero-quote">"Truck routes and timing are maintained including departure/arrival schedules and transit times. RFS capacity is coordinated with connecting flights to ensure intermodal transfers."</div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#0d9488;"></span>
+                    <span><strong>Unit:</strong> RFS/Truck Planning Dept.</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong>Criticality:</strong> <span style="color:#f59e0b;">★★★★☆</span> High</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong>Main Systems:</strong> RFS Schedule Manager, Excel Import</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 1 BRD <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#5eead4; font-size:12px;">📄 Source Documents</div>
+                        <div style="display:flex; flex-direction:column; gap:4px;">
+                            <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>TRM Business Requirements Document</span><span style="color:#fcd34d;">BRD</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1: PERSONA PROFILE -->
+        <section class="card section-1" id="section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2>Persona Profile</h2>
+                    <p>Demographic, Behavioral, Psychographic</p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s1-chart" class="view-pane active">
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label">Department</div><div class="pf-value">RFS/Truck Planning Dept.</div></div>
+                        <div class="pf"><div class="pf-label">Level</div><div class="pf-value">Operational Planning</div></div>
+                        <div class="pf"><div class="pf-label">Work Cycle</div><div class="pf-value">Seasonal + Daily Operations</div></div>
+                        <div class="pf"><div class="pf-label">Primary Purpose</div><div class="pf-value">Truck schedule management & intermodal coordination</div></div>
+                        <div class="pf"><div class="pf-label">Main Systems</div><div class="pf-value">RFS Schedule Manager, Excel Import</div></div>
+                        <div class="pf"><div class="pf-label">Transport Types</div><div class="pf-value">Truck (TRUCK/TRKSCH), future: Railway, Seaway</div></div>
+                        <div class="pf"><div class="pf-label">Data Format</div><div class="pf-value">Excel (validated staging)</div></div>
+                        <div class="pf"><div class="pf-label">MCT Focus</div><div class="pf-value">Truck-to-Flight, Flight-to-Truck</div></div>
+                    </div>
+                    
+                    <div class="segment-card">
+                        <div class="segment-col demo">
+                            <h4>Demographic</h4>
+                            <div class="segment-item"><strong>Location:</strong> IST (Central)</div>
+                            <div class="segment-item"><strong>Unit:</strong> RFS Planning</div>
+                            <div class="segment-item"><strong>Expertise:</strong> Intermodal logistics</div>
+                            <div class="segment-item"><strong>Excel:</strong> Schedule imports</div>
+                        </div>
+                        <div class="segment-col behav">
+                            <h4>Behavioral</h4>
+                            <div class="segment-item"><strong>Monitoring:</strong> Lane validity & effective dates</div>
+                            <div class="segment-item"><strong>Intervention:</strong> Schedule create/update/cancel</div>
+                            <div class="segment-item"><strong>Import:</strong> Excel with validation</div>
+                            <div class="segment-item"><strong>Decision:</strong> MCT feasibility check</div>
+                        </div>
+                        <div class="segment-col psycho">
+                            <h4>Psychographic</h4>
+                            <div class="segment-item"><strong>Priority:</strong> Network extension efficiency</div>
+                            <div class="segment-item"><strong>Approach:</strong> Data-driven planning</div>
+                            <div class="segment-item"><strong>Risk:</strong> Invalid intermodal connections</div>
+                        </div>
+                    </div>
+                    
+                    <div class="out-of-scope">
+                        <h5>⛔ OUT OF SCOPE</h5>
+                        <p>Flight schedule management is handled by FLM module. Aircraft capacity and booking operations are NOT this persona's responsibility. This persona focuses solely on ground transportation (truck) extending the air network.</p>
+                    </div>
+                    
+                    <div class="discovery-needed">
+                        <h5>🔍 Discovery Needed</h5>
+                        <p>User interview (MoM) data not available. Profile derived from BRD requirements only. Additional discovery needed for: actual user demographics, daily workflow patterns, pain points from user perspective.</p>
+                    </div>
+                </div>
+                <div id="s1-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4>Summary</h4>
+                        <p>RFS Schedule Planner manages Road Feeder Service schedules that extend air network reach via truck transportation. Creates and maintains truck lanes with operating days, effective dates, and transit times. Coordinates intermodal connections between trucks and flights using MCT configurations. Imports schedules via Excel with staging validation.</p>
+                    </div>
+                    <div class="evidence">
+                        <strong>BRD - RFS Schedule Manager:</strong> "Manages Road Feeder Service schedules that extend air network reach via truck transportation. Truck routes and timing are maintained including departure/arrival schedules and transit times."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: GOALS & MOTIVATION -->
+        <section class="card section-2" id="section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2>Goals, Motivation & Fears</h2>
+                    <p>Goal pyramid, motivators, fears</p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s2-chart" class="view-pane active">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary">🎯 PRIMARY: Extend air network reach via reliable truck schedules</div>
+                        <div class="goal-level secondary">🥈 SECONDARY: Ensure valid intermodal connections (MCT compliance)</div>
+                        <div class="goal-level tertiary">🥉 TERTIARY: Maintain data quality in schedule imports</div>
+                    </div>
+                    
+                    <div class="two-col">
+                        <div class="list-box motivators">
+                            <h4>✓ MOTIVATORS</h4>
+                            <div class="list-item">✓ Successful intermodal connection coordination</div>
+                            <div class="list-item">✓ Clean Excel imports without validation errors</div>
+                            <div class="list-item">✓ Network coverage expansion to inland areas</div>
+                            <div class="list-item">✓ Efficient capacity alignment with flights</div>
+                        </div>
+                        <div class="list-box demotivators">
+                            <h4>✗ DEMOTIVATORS</h4>
+                            <div class="list-item">✗ Duplicate lanes from Excel reprocessing</div>
+                            <div class="list-item">✗ Invalid MCT configurations breaking connections</div>
+                            <div class="list-item">✗ Missing vendor/contract reference data</div>
+                            <div class="list-item">✗ Overlapping effective dates causing conflicts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="list-box fears" style="margin-top:16px;">
+                        <h4>⚠️ FEARS</h4>
+                        <div class="list-item">⚠️ <strong>High:</strong> Broken intermodal connections due to incorrect MCT</div>
+                        <div class="list-item">⚠️ <strong>High:</strong> Duplicate lane creation from non-idempotent imports</div>
+                        <div class="list-item">⚠️ <strong>Medium:</strong> Capacity misalignment between truck and flight</div>
+                    </div>
+                    
+                    <div class="discovery-needed">
+                        <h5>🔍 Discovery Needed</h5>
+                        <p>Motivators and fears derived from BRD requirements. User interview data needed to validate actual pain points and emotional drivers.</p>
+                    </div>
+                </div>
+                <div id="s2-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4>Summary</h4>
+                        <p>Main goal is extending air network reach through reliable truck schedules. Key success factors include valid intermodal connections and data quality. Main fears relate to duplicate data creation and MCT configuration errors.</p>
+                    </div>
+                    <div class="evidence">
+                        <strong>BRD:</strong> "RFS capacity is coordinated with connecting flights to ensure intermodal transfers."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: WORKFLOW & JTBD -->
+        <section class="card section-3" id="section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2>Workflow & JTBD</h2>
+                    <p>Main process, Jobs to be Done</p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s3-chart" class="view-pane active">
+                    <h4 style="font-size:12px; font-weight:600; margin-bottom:12px;">📋 Truck Schedule Creation Flow</h4>
+                    <div class="flow-h">
+                        <div class="flow-step manual">Excel Prepare</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">Upload & Parse</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">Staging Validation</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision">Errors?</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual">Review & Fix</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step approve">Commit</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">Connection Builder</div>
+                    </div>
+                    
+                    <div style="display:flex; gap:16px; margin:16px 0; font-size:11px;">
+                        <span><span style="display:inline-block;width:12px;height:12px;background:#dbeafe;border-radius:3px;"></span> Automatic</span>
+                        <span><span style="display:inline-block;width:12px;height:12px;background:#fef3c7;border-radius:3px;"></span> Manual</span>
+                        <span><span style="display:inline-block;width:12px;height:12px;background:#ede9fe;border-radius:3px;"></span> Decision</span>
+                        <span><span style="display:inline-block;width:12px;height:12px;background:#dcfce7;border-radius:3px;"></span> Approval</span>
+                    </div>
+                    
+                    <table class="jtbd-table">
+                        <thead>
+                            <tr>
+                                <th>Job</th>
+                                <th>Situation</th>
+                                <th>Expected Outcome</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Create truck schedule</td>
+                                <td>New RFS lane needed</td>
+                                <td>Lane with operating days, effective dates, transit times</td>
+                            </tr>
+                            <tr>
+                                <td>Import Excel schedules</td>
+                                <td>Bulk schedule update</td>
+                                <td>Validated data without duplicates</td>
+                            </tr>
+                            <tr>
+                                <td>Configure MCT</td>
+                                <td>Intermodal connection setup</td>
+                                <td>Valid truck-to-flight and flight-to-truck transfers</td>
+                            </tr>
+                            <tr>
+                                <td>Edit/Cancel lane</td>
+                                <td>Schedule change needed</td>
+                                <td>Updated lane with audit trail</td>
+                            </tr>
+                            <tr>
+                                <td>Suspend truck service</td>
+                                <td>Temporary disruption</td>
+                                <td>Date-range suspension with history preserved</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="s3-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4>Summary</h4>
+                        <p>RFS Schedule Planner creates truck schedules either manually or via Excel import. Excel imports go through staging validation (duplicates, invalid lanes, time logic errors, missing vendor, overlapping effective dates) before commitment. Schedules are modeled consistently with flight legs for Connection Builder integration.</p>
+                    </div>
+                    <div class="evidence">
+                        <strong>BRD:</strong> "Excel import with staging validation (duplicates, invalid lanes, time logic errors, missing vendor, overlapping effective dates)"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: DATA & SYSTEMS -->
+        <section class="card section-4" id="section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2>Data & Systems</h2>
+                    <p>CRUD, integrations, data sources</p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s4-chart" class="view-pane active">
+                    <table class="crud-table">
+                        <thead>
+                            <tr>
+                                <th>System/Entity</th>
+                                <th>C</th>
+                                <th>R</th>
+                                <th>U</th>
+                                <th>D</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Truck Schedule (RFS Lane)</strong></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td>Main entity - operating days, effective dates</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Operational Truck</strong></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td>Instance-level operations</td>
+                            </tr>
+                            <tr>
+                                <td><strong>MCT Configuration</strong></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td>Truck-to-flight, flight-to-truck buffers</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Excel Import Staging</strong></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td>Validation before commit</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vendor/Contract Reference</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td>Read-only reference data</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Connection Builder Output</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td>Intermodal routing results</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 style="font-size:12px; font-weight:600; margin:20px 0 12px;">🔗 System Integrations</h4>
+                    <div class="two-col">
+                        <div class="list-box">
+                            <h4 style="color:#0d9488;">UPSTREAM (Data Sources)</h4>
+                            <div class="list-item">📊 Excel Files - Schedule bulk imports</div>
+                            <div class="list-item">📋 Vendor Master - Contract references</div>
+                            <div class="list-item">🛫 Flight Schedule Repository - Connection base</div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color:#0284c7;">DOWNSTREAM (Consumers)</h4>
+                            <div class="list-item">🔗 Connection Builder - Intermodal routing</div>
+                            <div class="list-item">📦 Capacity Engine - Truck capacity alignment</div>
+                            <div class="list-item">📊 Booking Engine - Availability display</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s4-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4>Summary</h4>
+                        <p>RFS Schedule Planner has full CRUD on truck schedules and operational trucks. MCT configurations define intermodal transfer times. Excel imports use staging validation. Truck legs are modeled consistently with flight legs for unified Connection Builder processing.</p>
+                    </div>
+                    <div class="evidence">
+                        <strong>BRD:</strong> "Truck service is modeled as a scheduled transport leg (similar to flight leg) vendor(truck,trksch) and lane attributes"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: PAIN POINTS -->
+        <section class="card section-5" id="section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2>Pain Points & Risk</h2>
+                    <p>Main challenges, severity, root causes</p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s5-chart" class="view-pane active">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5>Duplicate Lane Creation from Excel Reprocessing</h5>
+                                <p>Same Excel file reprocessed creates duplicate lanes without idempotent merge logic.</p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5>No Specific Vendor Definition</h5>
+                                <p>Current system divides trucks as TRUCK (unknown capacity) and TRKSCH (known capacity) without proper vendor management.</p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5>MCT Buffer Complexity</h5>
+                                <p>Separate MCT profiles needed for truck-to-flight vs flight-to-truck transfers, different by product/commodity.</p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5>Excel Validation Gaps</h5>
+                                <p>Time logic errors, invalid lanes, overlapping effective dates require manual review before commit.</p>
+                            </div>
+                        </div>
+                        <div class="pain-item low">
+                            <span class="pain-code">P5</span>
+                            <div class="pain-text">
+                                <h5>Future Multi-Modal Support</h5>
+                                <p>System needs to support railway and seaway in addition to truck - requires unified transport model.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="discovery-needed">
+                        <h5>🔍 Discovery Needed</h5>
+                        <p>Pain points derived from BRD requirements gaps. User interviews needed to validate severity and uncover additional pain points from daily operations.</p>
+                    </div>
+                </div>
+                <div id="s5-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4>Summary</h4>
+                        <p>Critical pain points relate to data quality (duplicate lanes, vendor definition gaps) and intermodal complexity (MCT configuration). Future-proofing for multi-modal transport is a strategic concern.</p>
+                    </div>
+                    <div class="evidence">
+                        <strong>BRD:</strong> "There is no specific vendor definition in the current system but truck schedules divided as TRUCK (unknown capacity information) and TRKSCH (known capacity information)."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: MENTAL MODEL -->
+        <section class="card section-6" id="section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2>Mental Model & Behavior</h2>
+                    <p>Empathy map, cognitive patterns</p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s6-chart" class="view-pane active">
+                    <div class="empathy-grid">
+                        <div class="empathy-quad says">
+                            <h4><span class="icon">💬</span> SAYS</h4>
+                            <div class="empathy-item">"I need to import this Excel and check validation results"</div>
+                            <div class="empathy-item">"Is the MCT configured correctly for this lane?"</div>
+                            <div class="empathy-item">"We need to suspend this truck service temporarily"</div>
+                        </div>
+                        <div class="empathy-avatar">
+                            <div class="empathy-avatar-circle">🚛</div>
+                            <div style="margin-top:12px; font-weight:600; font-size:12px; text-align:center;">RFS Planner</div>
+                        </div>
+                        <div class="empathy-quad thinks">
+                            <h4><span class="icon">💭</span> THINKS</h4>
+                            <div class="empathy-item">"Will this import create duplicates?"</div>
+                            <div class="empathy-item">"Are the effective dates overlapping?"</div>
+                            <div class="empathy-item">"Is the connection builder picking up this lane?"</div>
+                        </div>
+                        <div class="empathy-quad does">
+                            <h4><span class="icon">⚡</span> DOES</h4>
+                            <div class="empathy-item">Prepares Excel with truck schedule data</div>
+                            <div class="empathy-item">Reviews staging validation errors</div>
+                            <div class="empathy-item">Configures MCT for intermodal transfers</div>
+                        </div>
+                        <div class="empathy-quad feels">
+                            <h4><span class="icon">❤️</span> FEELS</h4>
+                            <div class="empathy-item">Anxious about duplicate data creation</div>
+                            <div class="empathy-item">Frustrated with manual validation review</div>
+                            <div class="empathy-item">Satisfied when connections work correctly</div>
+                        </div>
+                    </div>
+                    
+                    <div class="discovery-needed">
+                        <h5>🔍 Discovery Needed</h5>
+                        <p>Empathy map derived from BRD requirements. Direct user observation and interviews needed to validate actual cognitive patterns and emotional responses.</p>
+                    </div>
+                </div>
+                <div id="s6-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4>Summary</h4>
+                        <p>RFS Planner thinks in terms of lanes, effective dates, and intermodal connections. Primary cognitive load comes from validation review and MCT configuration complexity. Main concerns are data quality and connection integrity.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: COLLABORATION -->
+        <section class="card section-7" id="section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2>Collaboration & Support</h2>
+                    <p>Stakeholders, dependencies</p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s7-chart" class="view-pane active">
+                    <div class="stakeholder-map">
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node provider">Vendor/Trucking Companies</div>
+                            <div class="stakeholder-node provider">Flight Schedule Team</div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node persona">🚛 RFS Schedule Planner</div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node consumer">Connection Builder</div>
+                            <div class="stakeholder-node consumer">Capacity Engine</div>
+                            <div class="stakeholder-node consumer">Booking System</div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="font-size:12px; font-weight:600; margin:20px 0 12px;">🔗 Critical Dependencies</h4>
+                    <div class="three-col">
+                        <div class="list-box" style="border-left:3px solid #dc2626;">
+                            <h4 style="color:#dc2626;">⛔ BLOCKED</h4>
+                            <div class="list-item">Vendor definition gap in current system</div>
+                        </div>
+                        <div class="list-box" style="border-left:3px solid #d97706;">
+                            <h4 style="color:#d97706;">⏳ DELAY RISK</h4>
+                            <div class="list-item">MCT configuration complexity</div>
+                            <div class="list-item">Excel validation cycle time</div>
+                        </div>
+                        <div class="list-box" style="border-left:3px solid #7c3aed;">
+                            <h4 style="color:#7c3aed;">🕳️ DATA GAP</h4>
+                            <div class="list-item">TRUCK vs TRKSCH capacity ambiguity</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s7-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4>Summary</h4>
+                        <p>RFS Planner receives vendor/contract data and flight schedules upstream. Outputs feed into Connection Builder, Capacity Engine, and Booking System. Critical dependency on unified leg modeling for intermodal routing.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: PRODUCT OPPORTUNITIES -->
+        <section class="card section-8" id="section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2>Product Opportunities</h2>
+                    <p>MVP, short-term, long-term</p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s8-chart" class="view-pane active">
+                    <div class="timeline">
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5>Idempotent Excel Import ← P1</h5>
+                            <p>Staging import with idempotent merges to prevent duplicate lane creation</p>
+                        </div>
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5>Unified Leg Modeling ← P2</h5>
+                            <p>Model truck legs consistently with flight legs for Connection Builder integration</p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT TERM</span>
+                            <h5>Centralized MCT Workbench ← P3</h5>
+                            <p>Single page for truck-to-flight and flight-to-truck MCT configuration by product/commodity</p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT TERM</span>
+                            <h5>Enhanced Validation ← P4</h5>
+                            <p>Real-time validation with clear error reporting and fix suggestions</p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long">LONG TERM</span>
+                            <h5>Multi-Modal Support ← P5</h5>
+                            <p>Extend system to support railway and seaway schedules with unified transport model</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="s8-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4>Summary</h4>
+                        <p>MVP priorities: idempotent imports and unified leg modeling. Short-term: centralized MCT workbench. Long-term: multi-modal transport support (railway, seaway).</p>
+                    </div>
+                    <div class="evidence">
+                        <strong>BRD:</strong> "For the future enhancements the system should support both railway and seaway schedules and also operations."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: AI SUPPORT -->
+        <section class="card section-9" id="section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2>AI Support Potential</h2>
+                    <p>AI suitability, trust levels</p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s9-chart" class="view-pane active">
+                    <h4 style="font-size:12px; font-weight:600; margin-bottom:16px;">🤖 AI Support Pyramid</h4>
+                    
+                    <div style="position:relative; height:280px; margin:20px auto; max-width:400px;">
+                        <div style="position:absolute; inset:0; border-radius:12px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%);"></div>
+                        <div style="position:absolute; left:0; right:0; top:33%; height:3px; background:#0891b2; z-index:2;"></div>
+                        <div style="position:absolute; left:50%; top:33%; transform:translate(-50%,-50%); background:#0891b2; color:white; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; z-index:3;">TRUST LINE</div>
+                        
+                        <div style="position:absolute; left:16px; top:4%; font-size:11px; color:#dc2626; font-weight:600;">🚫 Level 6: Auto-commit schedules without validation</div>
+                        <div style="position:absolute; left:16px; top:21%; font-size:11px; color:#b45309; font-weight:600;">⚠️ Level 5: MCT changes (approval required)</div>
+                        <div style="position:absolute; left:16px; top:40%; font-size:11px; color:#15803d; font-weight:600;">💡 Level 4: Suggest optimal MCT values</div>
+                        <div style="position:absolute; left:16px; top:55%; font-size:11px; color:#15803d; font-weight:600;">⚙️ Level 3: Pre-validate Excel before upload</div>
+                        <div style="position:absolute; left:16px; top:70%; font-size:11px; color:#15803d; font-weight:600;">📝 Level 2: Summarize validation errors</div>
+                        <div style="position:absolute; left:16px; top:85%; font-size:11px; color:#15803d; font-weight:600;">📊 Level 1: Display lane status dashboard</div>
+                    </div>
+                    
+                    <div class="ai-suitable">
+                        <div class="ai-box suitable">
+                            <h5>✓ AI SUITABLE (Level 1-4)</h5>
+                            <ul>
+                                <li>📊 Lane status and validation dashboard</li>
+                                <li>📝 Validation error summarization</li>
+                                <li>⚙️ Excel pre-validation before upload</li>
+                                <li>💡 MCT optimization suggestions</li>
+                                <li>🔍 Duplicate detection alerts</li>
+                            </ul>
+                        </div>
+                        <div class="ai-box not-suitable">
+                            <h5>⛔ AI NOT SUITABLE (Level 5-6)</h5>
+                            <ul>
+                                <li>🚫 Auto-commit schedules without review</li>
+                                <li>🚫 Automatic MCT changes</li>
+                                <li>🚫 Lane cancellation without approval</li>
+                                <li>🚫 Vendor contract modifications</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="s9-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4>Summary</h4>
+                        <p>AI is suitable for informational, summarization, and suggestion levels. Schedule commits and MCT changes require human approval due to operational impact.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><strong>Source:</strong> TRM Business Requirements Document (May 2026)</p>
+        <p><strong>Method:</strong> Persona derived from BRD requirements analysis (Öz Özetleme Promptu × HTMLUpdatePromptu)</p>
+        <p style="color:#d97706; margin-top:8px;">⚠️ <strong>Note:</strong> This persona is based solely on BRD documentation. User interview data (MoM) needed for validation of pain points, motivations, and workflows.</p>
+        <p style="margin-top:8px;">Based only on documented evidence · No speculative inference · Discovery-needed areas marked</p>
+    </footer>
+    </div>
+
+    <script>
+        function toggleView(btn, sectionId, viewType) {
+            const section = btn.closest('.card');
+            section.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            section.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById(sectionId + '-' + viewType).classList.add('active');
+        }
+        
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+            });
+        }
+        
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

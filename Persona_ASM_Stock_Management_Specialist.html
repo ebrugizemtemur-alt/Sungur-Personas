@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWB Stock Management Specialist | Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 10px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .nav-item .nav-num {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .nav-item .nav-label {
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .nav-item[data-section="1"].active { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .nav-item[data-section="2"].active { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .nav-item[data-section="3"].active { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .nav-item[data-section="4"].active { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .nav-item[data-section="5"].active { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .nav-item[data-section="6"].active { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .nav-item[data-section="7"].active { background: linear-gradient(135deg, #059669, #10b981); }
+        .nav-item[data-section="8"].active { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .nav-item[data-section="9"].active { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+
+        .nav-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 12px 10px; }
+        .module-links { display: flex; flex-direction: column; gap: 4px; padding: 0 10px 16px; }
+        .module-link { width: 52px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.05); transition: all 0.3s; }
+        .module-link:hover { background: rgba(255,255,255,0.15); color: white; }
+
+        /* Mega Menu */
+        .mega-menu {
+            position: fixed; left: 72px; top: 0; bottom: 0; width: 320px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999;
+            transform: translateX(-400px); transition: transform 0.3s ease;
+            overflow-y: auto; padding: 20px;
+        }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.trm { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #a855f7; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content {
+            margin-left: 72px;
+            min-height: 100vh;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #f0e7ff 0%, #e5deff 50%, #d4c8ff 100%);
+            padding: 60px 48px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(124, 58, 237, 0.1);
+            color: #7c3aed;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 800;
+            color: #1e1b4b;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        .hero h1 span { color: #7c3aed; }
+        .hero-subtitle {
+            font-size: 18px;
+            color: #4b5563;
+            max-width: 700px;
+            margin-bottom: 24px;
+        }
+        .hero-quote {
+            background: white;
+            border-left: 4px solid #7c3aed;
+            padding: 16px 24px;
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+            color: #374151;
+            max-width: 600px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .hero-meta {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+        .meta-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .lang-toggle {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.5);
+            color: #64748b;
+        }
+        .lang-btn.active {
+            background: #7c3aed;
+            color: white;
+        }
+
+        .board {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 18px;
+            color: white;
+        }
+        .card-title { flex: 1; }
+        .card-title h2 { font-size: 18px; font-weight: 700; color: #1f2937; }
+        .card-title p { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+        .card-body { padding: 24px; }
+
+        .toggle-wrap {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 4px;
+        }
+        .toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: transparent;
+            color: #64748b;
+        }
+        .toggle-btn.active {
+            background: white;
+            color: #4f46e5;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+
+        /* Profile Grid */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .pf {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+        }
+        .pf-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #9ca3af;
+            margin-bottom: 4px;
+        }
+        .pf-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* Segment Card */
+        .segment-card {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 24px;
+        }
+        .segment-col {
+            padding: 20px;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+        .segment-col.demo { border-top: 3px solid #475569; }
+        .segment-col.behav { border-top: 3px solid #0891b2; }
+        .segment-col.psycho { border-top: 3px solid #9333ea; }
+        .segment-col h4 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        .segment-col.demo h4 { color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; }
+        .segment-item {
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+        }
+        .segment-item:last-child { border-bottom: none; }
+        .segment-item span:first-child { color: #6b7280; }
+        .segment-item span:last-child { font-weight: 600; color: #1f2937; }
+
+        /* Goal Pyramid */
+        .goal-pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .goal-level {
+            padding: 16px 24px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: white;
+        }
+        .goal-level.primary {
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            width: 60%;
+        }
+        .goal-level.secondary {
+            background: linear-gradient(135deg, #059669, #10b981);
+            width: 75%;
+        }
+        .goal-level.tertiary {
+            background: linear-gradient(135deg, #0284c7, #0ea5e9);
+            width: 90%;
+        }
+
+        /* Two Column Layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        .list-box {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .list-box h4 {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .list-item {
+            padding: 8px 0;
+            font-size: 13px;
+            color: #374151;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .list-item:last-child { border-bottom: none; }
+
+        /* Flow Chart */
+        .flow-h {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+        .flow-step {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 100px;
+        }
+        .flow-step.manual { background: #fef3c7; color: #92400e; }
+        .flow-step.auto { background: #dbeafe; color: #1e40af; }
+        .flow-step.decision { background: #fce7f3; color: #9d174d; border-radius: 50%; min-width: 80px; }
+        .flow-step.approve { background: #dcfce7; color: #166534; }
+        .flow-step.reject { background: #fee2e2; color: #991b1b; }
+        .flow-arrow { color: #9ca3af; font-size: 18px; }
+
+        /* Pain Points */
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+        .pain-item.high { border-left: 4px solid #dc2626; }
+        .pain-item.medium { border-left: 4px solid #d97706; }
+        .pain-item.low { border-left: 4px solid #16a34a; }
+        .pain-code {
+            background: #1f2937;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+        .pain-text h5 { font-size: 14px; font-weight: 600; color: #1f2937; margin-bottom: 4px; }
+        .pain-text p { font-size: 12px; color: #6b7280; }
+
+        /* Empathy Grid */
+        .empathy-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 16px;
+        }
+        .empathy-avatar {
+            grid-row: 1 / 3;
+            grid-column: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .empathy-avatar-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9333ea, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 8px 24px rgba(147, 51, 234, 0.3);
+        }
+        .empathy-quad {
+            padding: 16px;
+            border-radius: 12px;
+        }
+        .empathy-quad.says { background: #fdf2f8; border: 1px solid #f9a8d4; }
+        .empathy-quad.thinks { background: #eef2ff; border: 1px solid #a5b4fc; }
+        .empathy-quad.does { background: #ecfdf5; border: 1px solid #6ee7b7; }
+        .empathy-quad.feels { background: #fff1f2; border: 1px solid #fda4af; }
+        .empathy-quad h4 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .empathy-quad.says h4 { color: #ec4899; }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-item {
+            font-size: 12px;
+            color: #374151;
+            padding: 4px 0;
+        }
+
+        /* Stakeholder Map */
+        .stakeholder-map {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+        .stakeholder-row {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .stakeholder-node {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 140px;
+        }
+        .stakeholder-node.provider { background: #dbeafe; color: #1e40af; }
+        .stakeholder-node.partner { background: #dcfce7; color: #166534; }
+        .stakeholder-node.persona { 
+            background: linear-gradient(135deg, #7c3aed, #a855f7); 
+            color: white; 
+            font-size: 16px;
+            padding: 20px 32px;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+        .stakeholder-node.consumer { background: #fef3c7; color: #92400e; }
+        .stakeholder-arrow {
+            color: #9ca3af;
+            font-size: 20px;
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 12px;
+        }
+        .timeline-item.mvp { background: #dcfce7; border-left: 4px solid #16a34a; }
+        .timeline-item.short { background: #e0e7ff; border-left: 4px solid #4f46e5; }
+        .timeline-item.long { background: #f1f5f9; border-left: 4px solid #64748b; }
+        .timeline-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .timeline-badge.mvp { background: #16a34a; color: white; }
+        .timeline-badge.short { background: #4f46e5; color: white; }
+        .timeline-badge.long { background: #64748b; color: white; }
+        .timeline-content h5 { font-size: 14px; font-weight: 600; color: #1f2937; }
+        .timeline-content p { font-size: 12px; color: #6b7280; margin-top: 4px; }
+
+        /* Summary Box */
+        .summary-box {
+            background: rgba(79, 70, 229, 0.04);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .summary-box h4 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #4f46e5;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .summary-box p {
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.8;
+        }
+
+        .evidence {
+            font-size: 11px;
+            font-style: italic;
+            color: #9ca3af;
+            margin-top: 8px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+            font-size: 12px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            .side-nav { display: none; }
+            .main-content { margin-left: 0; }
+            .profile-grid { grid-template-columns: repeat(2, 1fr); }
+            .segment-card { grid-template-columns: 1fr; }
+            .two-col { grid-template-columns: 1fr; }
+            .empathy-grid { grid-template-columns: 1fr; }
+            .empathy-avatar { grid-row: auto; grid-column: auto; }
+        }
+    </style>
+    <script>
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+        }
+        function toggleView(btn, section, view) {
+            const parent = btn.closest('.card');
+            parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            parent.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById(section + '-' + view).classList.add('active');
+        }
+        function scrollToSection(num) {
+            document.getElementById('section-' + num).scrollIntoView({ behavior: 'smooth' });
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector('.nav-item[data-section="' + num + '"]').classList.add('active');
+        }
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+    </script>
+</head>
+<body class="lang-en">
+
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()" title="Tüm Modüller">ASM</div>
+        <div class="nav-items">
+            <a class="nav-item active" href="Persona_ASM_Stock_Management_Specialist.html" style="background: linear-gradient(135deg, #7c3aed, #a855f7); color: white;">
+                <span class="nav-num">📦</span>
+                <span class="nav-label">Stock Mgmt</span>
+            </a>
+            <a class="nav-item" href="Persona_ASM_Messaging_Specialist.html">
+                <span class="nav-num">📨</span>
+                <span class="nav-label">Messaging</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Mega Menu -->
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 Tüm Modüller</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        
+        <!-- PCM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span>Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span>RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span>Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span>Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span>Station User</a>
+            </div>
+        </div>
+        
+        <!-- FLM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span>Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span>Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span>COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span>Revenue Capacity Analyst</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span>Solution Specialist</a>
+            </div>
+        </div>
+        
+        <!-- BKR -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div>
+            <div class="persona-list">
+                <a href="Persona_BKR_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span>IST General Reservation</a>
+                <a href="Persona_BKR_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span>IST Special Cargo</a>
+                <a href="Persona_BKR_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span>Domestic Reservation</a>
+                <a href="Persona_BKR_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span>GSA International Station</a>
+                <a href="Persona_BKR_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span>Capacity Planning</a>
+                <a href="Persona_BKR_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span>Operations Cargo Acceptance</a>
+                <a href="Persona_BKR_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span>Solution Technical Team</a>
+            </div>
+        </div>
+        
+        <!-- CAM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span>Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span>Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span>Sales User</a>
+            </div>
+        </div>
+        
+        <!-- COM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span>Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span>Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span>Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span>Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span>Service Standards</a>
+            </div>
+        </div>
+        
+        <!-- ASM -->
+        <div class="module-section">
+            <div class="module-header active"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link current"><span class="persona-num">1</span>Stock Management</a>
+                <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span>Messaging Specialist</a>
+            </div>
+        </div>
+        
+        <!-- TRM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div>
+            <div class="persona-list">
+                <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span>Trucking Coordinator</a>
+            </div>
+        </div>
+
+        <!-- SCM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span>Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content">
+        <header class="hero">
+            <div class="lang-toggle">
+                <button class="lang-btn active" data-lang="en" onclick="switchLang('en')">EN</button>
+                <button class="lang-btn" data-lang="tr" onclick="switchLang('tr')">TR</button>
+            </div>
+            <div class="hero-badge">AWB STOCK MANAGEMENT · MASTER DATA TEAM · PERSONA STUDY</div>
+            <h1>
+                <span class="tr">AWB <span>Stok Yönetimi</span> Uzmanı</span>
+                <span class="en">AWB <span>Stock Management</span> Specialist</span>
+            </h1>
+            <p class="hero-subtitle">
+                <span class="tr">IATA AWB numaralarının yaşam döngüsünü yöneten, stok tahsisini ve purge süreçlerini kontrol eden Master Data uzmanı</span>
+                <span class="en">Master Data specialist managing IATA AWB number lifecycle, controlling stock allocation and purge processes</span>
+            </p>
+            <div class="hero-quote">
+                <span class="tr">"Düzensiz AWB'leri düzenli aralıklara çekmek için dummy pool'ları manuel olarak yönetmek zorundayız - sanki pirinç ayıklar gibi çalışıyoruz."</span>
+                <span class="en">"We have to manually manage dummy pools to capture irregular AWBs into regular ranges - we work like we're sorting rice."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="meta-item">
+                    <span class="meta-dot" style="background:#7c3aed;"></span>
+                    <span class="tr">Master Data Ekibi</span>
+                    <span class="en">Master Data Team</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-dot" style="background:#059669;"></span>
+                    <span class="tr">Günlük Kullanım</span>
+                    <span class="en">Daily Usage</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-dot" style="background:#0891b2;"></span>
+                    <span class="tr">7 MoM Kaynağı</span>
+                    <span class="en">7 MoM Sources</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-dot" style="background:#d97706;"></span>
+                    <span class="tr">Kevser Gülsoy, Burak Gülderen</span>
+                    <span class="en">Kevser Gülsoy, Burak Gülderen</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="board">
+            <!-- SECTION 1: PERSONA PROFILE -->
+            <section class="card section-1" id="section-1">
+                <div class="card-header">
+                    <div class="card-icon">1</div>
+                    <div class="card-title">
+                        <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                        <p><span class="tr">Kim, rol, kullanım amacı</span><span class="en">Who, role, usage purpose</span></p>
+                    </div>
+                    <div class="toggle-wrap">
+                        <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                        <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="s1-chart" class="view-pane active">
+                        <div class="profile-grid">
+                            <div class="pf">
+                                <div class="pf-label"><span class="tr">Departman</span><span class="en">Department</span></div>
+                                <div class="pf-value"><span class="tr">Kargo Veri Standardizasyon ve Yönetimi</span><span class="en">Cargo Data Standardization & Management</span></div>
+                            </div>
+                            <div class="pf">
+                                <div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div>
+                                <div class="pf-value"><span class="tr">Master Data Ekibi</span><span class="en">Master Data Team</span></div>
+                            </div>
+                            <div class="pf">
+                                <div class="pf-label"><span class="tr">Seviye</span><span class="en">Level</span></div>
+                                <div class="pf-value"><span class="tr">Uzman / Şef</span><span class="en">Specialist / Chief</span></div>
+                            </div>
+                            <div class="pf">
+                                <div class="pf-label"><span class="tr">Lokasyon</span><span class="en">Location</span></div>
+                                <div class="pf-value"><span class="tr">İstanbul HQ</span><span class="en">Istanbul HQ</span></div>
+                            </div>
+                            <div class="pf">
+                                <div class="pf-label"><span class="tr">Kullanım Sıklığı</span><span class="en">Usage Frequency</span></div>
+                                <div class="pf-value"><span class="tr">Günlük 6-8 saat</span><span class="en">Daily 6-8 hours</span></div>
+                            </div>
+                            <div class="pf">
+                                <div class="pf-label"><span class="tr">Ana Sistemler</span><span class="en">Primary Systems</span></div>
+                                <div class="pf-value">COMIS STK007, STK019, ADM041</div>
+                            </div>
+                            <div class="pf">
+                                <div class="pf-label"><span class="tr">Temel Görev</span><span class="en">Primary Task</span></div>
+                                <div class="pf-value"><span class="tr">AWB Stok Tahsisi ve Purge Yönetimi</span><span class="en">AWB Stock Allocation and Purge Management</span></div>
+                            </div>
+                            <div class="pf">
+                                <div class="pf-label"><span class="tr">Yetki Kapsamı</span><span class="en">Authority Scope</span></div>
+                                <div class="pf-value"><span class="tr">Global (Tüm Bölgeler)</span><span class="en">Global (All Regions)</span></div>
+                            </div>
+                        </div>
+                        
+                        <div class="segment-card">
+                            <div class="segment-col demo">
+                                <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                                <div class="segment-item">
+                                    <span><span class="tr">Yaş Aralığı</span><span class="en">Age Range</span></span>
+                                    <span>30-45</span>
+                                </div>
+                                <div class="segment-item">
+                                    <span><span class="tr">Deneyim</span><span class="en">Experience</span></span>
+                                    <span>5-15 <span class="tr">yıl</span><span class="en">years</span></span>
+                                </div>
+                                <div class="segment-item">
+                                    <span><span class="tr">Eğitim</span><span class="en">Education</span></span>
+                                    <span><span class="tr">Lisans+</span><span class="en">Bachelor+</span></span>
+                                </div>
+                                <div class="segment-item">
+                                    <span><span class="tr">Teknik Seviye</span><span class="en">Tech Level</span></span>
+                                    <span><span class="tr">Orta-İleri</span><span class="en">Mid-Advanced</span></span>
+                                </div>
+                            </div>
+                            <div class="segment-col behav">
+                                <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                                <div class="segment-item">
+                                    <span><span class="tr">Cihaz</span><span class="en">Device</span></span>
+                                    <span>Desktop</span>
+                                </div>
+                                <div class="segment-item">
+                                    <span><span class="tr">Multitasking</span><span class="en">Multitasking</span></span>
+                                    <span><span class="tr">Çoklu ekran</span><span class="en">Multi-screen</span></span>
+                                </div>
+                                <div class="segment-item">
+                                    <span><span class="tr">Yardım</span><span class="en">Help</span></span>
+                                    <span><span class="tr">Self-service + Meslektaş</span><span class="en">Self-service + Peer</span></span>
+                                </div>
+                                <div class="segment-item">
+                                    <span><span class="tr">Excel Bağımlılığı</span><span class="en">Excel Dependency</span></span>
+                                    <span><span class="tr">Çok Yüksek</span><span class="en">Very High</span></span>
+                                </div>
+                            </div>
+                            <div class="segment-col psycho">
+                                <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                                <div class="segment-item">
+                                    <span><span class="tr">Öncelik</span><span class="en">Priority</span></span>
+                                    <span><span class="tr">Doğruluk > Hız</span><span class="en">Accuracy > Speed</span></span>
+                                </div>
+                                <div class="segment-item">
+                                    <span><span class="tr">Risk</span><span class="en">Risk</span></span>
+                                    <span><span class="tr">Riskten kaçınan</span><span class="en">Risk-averse</span></span>
+                                </div>
+                                <div class="segment-item">
+                                    <span><span class="tr">Kontrol</span><span class="en">Control</span></span>
+                                    <span><span class="tr">Yüksek kontrol</span><span class="en">High control</span></span>
+                                </div>
+                                <div class="segment-item">
+                                    <span><span class="tr">Değişim</span><span class="en">Change</span></span>
+                                    <span><span class="tr">Temkinli</span><span class="en">Cautious</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="s1-text" class="view-pane">
+                        <div class="summary-box">
+                            <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                            <p><span class="tr">AWB Stock Management Specialist, IATA tarafından THY'ye tahsis edilen yaklaşık 9 milyon AWB numarasının yaşam döngüsünü yöneten Master Data ekibinin kritik bir üyesidir. HQ → Region → Station → Agent hiyerarşisinde stok tahsisini, purge (geri kazanım) süreçlerini ve dummy pool yönetimini gerçekleştirir. Günlük 2.000-4.000 AWB'nin purge edilmesiyle oluşan düzensiz numaraları manuel olarak düzenli aralıklara çekmeye çalışır.</span>
+                            <span class="en">AWB Stock Management Specialist is a critical member of the Master Data team managing the lifecycle of approximately 9 million AWB numbers allocated by IATA to THY. Performs stock allocation in HQ → Region → Station → Agent hierarchy, purge (recovery) processes and dummy pool management. Manually attempts to capture irregular numbers from 2,000-4,000 AWBs purged daily into regular ranges.</span></p>
+                        </div>
+                        <div class="evidence">
+                            <strong><span class="tr">Kanıt:</span><span class="en">Evidence:</span></strong><br>
+                            MoM-Stock-1: "Ms. Kevser and Mr. Burak handle master data tasks (definitions, stock assignment, etc.) in the Master Data team"<br>
+                            MoM-Stock-2: "AWBs are generated using IATA's 235 prefix code and Mod 7 rule. The approximately 9 million AWB limit is exhausted on average over 7 years."
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 2: GOALS & MOTIVATION -->
+            <section class="card section-2" id="section-2">
+                <div class="card-header">
+                    <div class="card-icon">2</div>
+                    <div class="card-title">
+                        <h2><span class="tr">Hedef & Motivasyon</span><span class="en">Goals & Motivation</span></h2>
+                        <p><span class="tr">Birincil hedefler, korkular, başarı kriterleri</span><span class="en">Primary goals, fears, success criteria</span></p>
+                    </div>
+                    <div class="toggle-wrap">
+                        <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                        <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="s2-chart" class="view-pane active">
+                        <div class="goal-pyramid">
+                            <div class="goal-level primary">
+                                <span class="tr">🎯 AWB Stoklarının Kesintisiz Sürekliliğini Sağlamak</span>
+                                <span class="en">🎯 Ensure Uninterrupted AWB Stock Continuity</span>
+                            </div>
+                            <div class="goal-level secondary">
+                                <span class="tr">📊 Purge Süreçlerinin Düzenli İşlemesini Takip Etmek</span>
+                                <span class="en">📊 Monitor Regular Purge Process Execution</span>
+                            </div>
+                            <div class="goal-level tertiary">
+                                <span class="tr">🔧 Stok Dağıtım Optimizasyonu ve Raporlama</span>
+                                <span class="en">🔧 Stock Distribution Optimization and Reporting</span>
+                            </div>
+                        </div>
+
+                        <div class="two-col">
+                            <div class="list-box" style="border-left: 3px solid #16a34a;">
+                                <h4 style="color:#16a34a;">✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                                <div class="list-item"><span class="tr">Stok sürekliliği sağlandığında operasyonun kesintisiz devamı</span><span class="en">Uninterrupted operations when stock continuity is ensured</span></div>
+                                <div class="list-item"><span class="tr">Purge job'ların düzgün çalıştığını görmek</span><span class="en">Seeing purge jobs running properly</span></div>
+                                <div class="list-item"><span class="tr">İstasyonlardan gelen teşekkür (zamanında tahsis)</span><span class="en">Thanks from stations (timely allocation)</span></div>
+                                <div class="list-item"><span class="tr">IATA kurallarına uyumluluk</span><span class="en">Compliance with IATA rules</span></div>
+                            </div>
+                            <div class="list-box" style="border-left: 3px solid #dc2626;">
+                                <h4 style="color:#dc2626;">✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                                <div class="list-item"><span class="tr">Düzensiz AWB'lerle uğraşmak ("pirinç ayıklamak gibi")</span><span class="en">Dealing with irregular AWBs ("like sorting rice")</span></div>
+                                <div class="list-item"><span class="tr">Excel export limitleri (1M satır, 1200 kayıt)</span><span class="en">Excel export limits (1M rows, 1200 records)</span></div>
+                                <div class="list-item"><span class="tr">Gümrük kurallarının manuel kontrolü</span><span class="en">Manual customs rule checking</span></div>
+                                <div class="list-item"><span class="tr">Background job kesintileri (10 gün dursa 40K birikim)</span><span class="en">Background job interruptions (40K accumulation if stopped 10 days)</span></div>
+                            </div>
+                        </div>
+
+                        <div class="list-box" style="border-left: 3px solid #e11d48; margin-top: 24px;">
+                            <h4 style="color:#e11d48;">⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                            <div class="list-item"><span class="tr">🔴 Purge job'ların durması ve stok tükenmesi (5 yılda bitebilir)</span><span class="en">🔴 Purge jobs stopping and stock depletion (can run out in 5 years)</span></div>
+                            <div class="list-item"><span class="tr">🔴 Gümrük kuralı ihlali - aynı AWB'nin China'ya 10 yıl içinde tekrar gitmesi</span><span class="en">🔴 Customs rule violation - same AWB going to China within 10 years</span></div>
+                            <div class="list-item"><span class="tr">🟡 Agent'ın kullanmadığı stokların sistemde kaybolması</span><span class="en">🟡 Unused agent stocks getting lost in the system</span></div>
+                            <div class="list-item"><span class="tr">🟡 IATA-COMIS agent statüsü uyumsuzluğu</span><span class="en">🟡 IATA-COMIS agent status mismatch</span></div>
+                        </div>
+                    </div>
+                    <div id="s2-text" class="view-pane">
+                        <div class="summary-box">
+                            <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                            <p><span class="tr">Personanın birincil hedefi, THY'nin yaklaşık 9 milyon AWB'lik sınırlı stokunu sürdürülebilir şekilde yönetmektir. Yıllık ~1.5 milyon AWB tüketilir ve purge ile geri kazanılmazsa stok 5 yılda tükenir. En büyük korku, purge job'ların durması ve gümrük kuralı ihlalleridir. Motivasyon kaynağı, operasyonun kesintisiz devamını sağlamaktır.</span>
+                            <span class="en">The persona's primary goal is to sustainably manage THY's limited stock of approximately 9 million AWBs. ~1.5 million AWBs are consumed annually and stock depletes in 5 years if not recovered through purge. Greatest fear is purge jobs stopping and customs rule violations. Motivation source is ensuring uninterrupted operations.</span></p>
+                        </div>
+                        <div class="evidence">
+                            <strong><span class="tr">Kanıt:</span><span class="en">Evidence:</span></strong><br>
+                            MoM-Stock-ST-2: "On average, 1.5 million AWBs are consumed annually. If AWBs are not returned to the system, the stock will be depleted in about 5 years."<br>
+                            MoM-Stock-3: "Each country has different customs durations: Belgium: 5 years, China: 10 years"
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 3: WORKFLOW -->
+            <section class="card section-3" id="section-3">
+                <div class="card-header">
+                    <div class="card-icon">3</div>
+                    <div class="card-title">
+                        <h2><span class="tr">İş Akışı & Niyetler</span><span class="en">Workflow & Intents</span></h2>
+                        <p><span class="tr">Ana süreçler, karar noktaları, tetikleyiciler</span><span class="en">Main processes, decision points, triggers</span></p>
+                    </div>
+                    <div class="toggle-wrap">
+                        <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                        <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="s3-chart" class="view-pane active">
+                        <h4 style="margin-bottom:16px; color:#0284c7;"><span class="tr">AWB STOK TAHSİS AKIŞI</span><span class="en">AWB STOCK ALLOCATION FLOW</span></h4>
+                        <div class="flow-h">
+                            <div class="flow-step auto"><span class="tr">Purge Job<br>(Günlük 16:00)</span><span class="en">Purge Job<br>(Daily 16:00)</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step auto"><span class="tr">AWB'ler HQ'ya<br>Eklenir</span><span class="en">AWBs Added<br>to HQ</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step manual"><span class="tr">Dummy Pool'a<br>Çekme (Manuel)</span><span class="en">Pull to<br>Dummy Pool</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step decision"><span class="tr">Gümrük<br>Kontrol?</span><span class="en">Customs<br>Check?</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step manual"><span class="tr">HQ → Region<br>Tahsis</span><span class="en">HQ → Region<br>Allocate</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step manual"><span class="tr">Region → Station<br>Tahsis</span><span class="en">Region → Station<br>Allocate</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step manual"><span class="tr">Station → Agent<br>Tahsis</span><span class="en">Station → Agent<br>Allocate</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step approve"><span class="tr">E-posta<br>Bildirimi</span><span class="en">Email<br>Notification</span></div>
+                        </div>
+
+                        <h4 style="margin:24px 0 16px; color:#0284c7;"><span class="tr">AWB SİLME AKIŞI</span><span class="en">AWB DELETE FLOW</span></h4>
+                        <div class="flow-h">
+                            <div class="flow-step manual"><span class="tr">STK019<br>Durum Kontrol</span><span class="en">STK019<br>Status Check</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step manual"><span class="tr">CAP018<br>Rezervasyon Kontrol</span><span class="en">CAP018<br>Booking Check</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step manual"><span class="tr">OPR352<br>Uçuş Kontrol</span><span class="en">OPR352<br>Flight Check</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step decision"><span class="tr">Counter<br>0,0,0,0?</span><span class="en">Counter<br>0,0,0,0?</span></div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-step approve"><span class="tr">OPR026<br>Delete</span><span class="en">OPR026<br>Delete</span></div>
+                        </div>
+
+                        <div class="two-col" style="margin-top:24px;">
+                            <div class="list-box">
+                                <h4 style="color:#0284c7;"><span class="tr">TETİKLEYİCİLER</span><span class="en">TRIGGERS</span></h4>
+                                <div class="list-item"><span class="tr">📩 İstasyon/Sales'den stok talebi e-postası</span><span class="en">📩 Stock request email from Station/Sales</span></div>
+                                <div class="list-item"><span class="tr">⚠️ Reorder level uyarısı (stok azaldı)</span><span class="en">⚠️ Reorder level alert (low stock)</span></div>
+                                <div class="list-item"><span class="tr">🔄 Günlük purge job tamamlandı bildirimi</span><span class="en">🔄 Daily purge job completion notification</span></div>
+                                <div class="list-item"><span class="tr">📋 IATA agent statü değişikliği (terminated/default)</span><span class="en">📋 IATA agent status change (terminated/default)</span></div>
+                            </div>
+                            <div class="list-box">
+                                <h4 style="color:#0284c7;"><span class="tr">ÇIKTILAR</span><span class="en">OUTPUTS</span></h4>
+                                <div class="list-item"><span class="tr">✅ AWB aralığı tahsis edildi (STK007)</span><span class="en">✅ AWB range allocated (STK007)</span></div>
+                                <div class="list-item"><span class="tr">📧 Agent'a tahsis bildirimi e-postası</span><span class="en">📧 Allocation notification email to agent</span></div>
+                                <div class="list-item"><span class="tr">📊 ADM041 rapor export</span><span class="en">📊 ADM041 report export</span></div>
+                                <div class="list-item"><span class="tr">🗑️ AWB silme/temizleme işlemi</span><span class="en">🗑️ AWB delete/cleanup operation</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="s3-text" class="view-pane">
+                        <div class="summary-box">
+                            <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                            <p><span class="tr">Stok yönetimi hiyerarşik bir akışla çalışır: HQ → Region → Station → Agent. Purge job'lar günlük 16:00'da çalışır ve 2.000-4.000 AWB'yi HQ'ya ekler. Ancak bu AWB'ler düzensiz geldiği için dummy pool (HQ01, HQ02) mekanizması ile düzenli aralıklara çekilmeye çalışılır. Gümrük kontrolü kritiktir - sistem bunu otomatik yapmaz, manuel sampling ile kontrol edilir.</span>
+                            <span class="en">Stock management works in a hierarchical flow: HQ → Region → Station → Agent. Purge jobs run daily at 16:00 and add 2,000-4,000 AWBs to HQ. However, since these AWBs arrive irregularly, they are attempted to be captured into regular ranges through the dummy pool (HQ01, HQ02) mechanism. Customs check is critical - the system doesn't do this automatically, it's checked through manual sampling.</span></p>
+                        </div>
+                        <div class="evidence">
+                            <strong><span class="tr">Kanıt:</span><span class="en">Evidence:</span></strong><br>
+                            MoM-Stock-2: "IBS automatically assigns purged AWBs (about 4,000 per day) to the Headquarter (HQ). Since stock management at HQ is difficult, the team pulls AWBs into dummy pools like HQ01, HQ02"<br>
+                            MoM-Stock-3: "Delete AWB Process... Control Steps: 1. STK019: Check AWB status 2. CAP018: Check reservation information 3. OPR352: Check if it has flown"
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: DATA & INTEGRATION -->
+            <section class="card section-4" id="section-4">
+                <div class="card-header">
+                    <div class="card-icon">4</div>
+                    <div class="card-title">
+                        <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                        <p><span class="tr">Sistemler, veri akışı, yetki</span><span class="en">Systems, data flow, authorization</span></p>
+                    </div>
+                    <div class="toggle-wrap">
+                        <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                        <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="s4-chart" class="view-pane active">
+                        <div class="two-col">
+                            <div class="list-box">
+                                <h4 style="color:#0d9488;"><span class="tr">COMIS EKRANLARI</span><span class="en">COMIS SCREENS</span></h4>
+                                <div class="list-item"><strong>STK007</strong> - <span class="tr">Monitor Stock (Ana stok ekranı)</span><span class="en">Monitor Stock (Main stock screen)</span></div>
+                                <div class="list-item"><strong>STK019</strong> - <span class="tr">AWB History (Geçmiş sorgulama)</span><span class="en">AWB History (History query)</span></div>
+                                <div class="list-item"><strong>ADM041</strong> - <span class="tr">Report Designer (Raporlama)</span><span class="en">Report Designer (Reporting)</span></div>
+                                <div class="list-item"><strong>CMT008</strong> - <span class="tr">Agent tanımlama/güncelleme</span><span class="en">Agent definition/update</span></div>
+                                <div class="list-item"><strong>OPR026</strong> - <span class="tr">AWB Capture (Delete için)</span><span class="en">AWB Capture (For delete)</span></div>
+                                <div class="list-item"><strong>CAP018</strong> - <span class="tr">Booking (Rezervasyon kontrol)</span><span class="en">Booking (Reservation check)</span></div>
+                            </div>
+                            <div class="list-box">
+                                <h4 style="color:#0d9488;"><span class="tr">ENTEGRASYONLAR</span><span class="en">INTEGRATIONS</span></h4>
+                                <div class="list-item"><strong>IATA Portal</strong> - <span class="tr">Agent statüsü (Active/Terminated/Default)</span><span class="en">Agent status (Active/Terminated/Default)</span></div>
+                                <div class="list-item"><strong>COMIS Archive</strong> - <span class="tr">Purge edilmiş AWB geçmişi</span><span class="en">Purged AWB history</span></div>
+                                <div class="list-item"><strong>TKGO</strong> - <span class="tr">Agent rezervasyon sistemi</span><span class="en">Agent reservation system</span></div>
+                                <div class="list-item"><strong>IBS Backend</strong> - <span class="tr">Purge job'lar (arka plan)</span><span class="en">Purge jobs (background)</span></div>
+                            </div>
+                        </div>
+
+                        <div class="list-box" style="margin-top:24px;">
+                            <h4 style="color:#0d9488;"><span class="tr">STK007 İŞLEMLERİ (CRUD)</span><span class="en">STK007 OPERATIONS (CRUD)</span></h4>
+                            <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-top:12px;">
+                                <div style="background:#dcfce7; padding:12px; border-radius:8px; text-align:center;">
+                                    <div style="font-weight:700; color:#166534;">Allocate Stock</div>
+                                    <div style="font-size:11px; color:#166534;"><span class="tr">Üst→Alt seviye tahsis</span><span class="en">Upper→Lower level allocation</span></div>
+                                </div>
+                                <div style="background:#dbeafe; padding:12px; border-radius:8px; text-align:center;">
+                                    <div style="font-weight:700; color:#1e40af;">Transfer</div>
+                                    <div style="font-size:11px; color:#1e40af;"><span class="tr">Aynı seviye arası aktarım</span><span class="en">Same level transfer</span></div>
+                                </div>
+                                <div style="background:#fef3c7; padding:12px; border-radius:8px; text-align:center;">
+                                    <div style="font-weight:700; color:#92400e;">Return</div>
+                                    <div style="font-size:11px; color:#92400e;"><span class="tr">Üst seviyeye iade</span><span class="en">Return to upper level</span></div>
+                                </div>
+                                <div style="background:#f1f5f9; padding:12px; border-radius:8px; text-align:center;">
+                                    <div style="font-weight:700; color:#475569;">View Range</div>
+                                    <div style="font-size:11px; color:#475569;"><span class="tr">Aralık görüntüleme</span><span class="en">Range viewing</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-box" style="margin-top:24px; border-left:3px solid #d97706;">
+                            <h4 style="color:#d97706;"><span class="tr">YETKİ HİYERARŞİSİ</span><span class="en">AUTHORITY HIERARCHY</span></h4>
+                            <div class="list-item"><span class="tr">✅ HQ Ekibi: Tüm bölgelere tahsis yapabilir</span><span class="en">✅ HQ Team: Can allocate to all regions</span></div>
+                            <div class="list-item"><span class="tr">✅ Bölge Personeli: Kendi bölgesindeki istasyonlara tahsis yapabilir</span><span class="en">✅ Region Staff: Can allocate to stations in their region</span></div>
+                            <div class="list-item"><span class="tr">⚠️ İstasyon Personeli: Sadece altındaki agent'lara tahsis yapabilir</span><span class="en">⚠️ Station Staff: Can only allocate to agents under them</span></div>
+                            <div class="list-item"><span class="tr">❌ Agent: Sistem içinde stok işlemi yapamaz</span><span class="en">❌ Agent: Cannot perform stock operations in system</span></div>
+                        </div>
+                    </div>
+                    <div id="s4-text" class="view-pane">
+                        <div class="summary-box">
+                            <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                            <p><span class="tr">Persona başlıca COMIS STK007 (Monitor Stock) ekranını kullanır. Diğer kritik ekranlar: STK019 (AWB geçmişi), ADM041 (raporlama), CMT008 (agent tanımlama). IATA Portal ile manuel entegrasyon vardır - agent statüleri haftalık kontrol edilir. Yetki hiyerarşik: HQ→Region→Station→Agent. View Range fonksiyonu bug'lı, Excel export ile çözüm üretiliyor.</span>
+                            <span class="en">Persona primarily uses COMIS STK007 (Monitor Stock) screen. Other critical screens: STK019 (AWB history), ADM041 (reporting), CMT008 (agent definition). Manual integration with IATA Portal exists - agent statuses checked weekly. Authority is hierarchical: HQ→Region→Station→Agent. View Range function is buggy, workaround via Excel export.</span></p>
+                        </div>
+                        <div class="evidence">
+                            <strong><span class="tr">Kanıt:</span><span class="en">Evidence:</span></strong><br>
+                            MoM-Stock-2: "The most frequently used screens related to AWB are STK007 (Stock assignment/Stock Monitor), CMT008 (Agency creation/definition), and STK19 (AWB history review) screens."<br>
+                            MoM-Stock-3: "Normally, it is viewed with the 'View range' button on the STK7 screen. However, due to a system bug, it is usually viewed by Export to Excel"
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 5: PAIN POINTS -->
+            <section class="card section-5" id="section-5">
+                <div class="card-header">
+                    <div class="card-icon">5</div>
+                    <div class="card-title">
+                        <h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2>
+                        <p><span class="tr">Zorluklar, kök nedenler, riskler</span><span class="en">Challenges, root causes, risks</span></p>
+                    </div>
+                    <div class="toggle-wrap">
+                        <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                        <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="s5-chart" class="view-pane active">
+                        <div class="pain-list">
+                            <div class="pain-item high">
+                                <span class="pain-code">P1</span>
+                                <div class="pain-text">
+                                    <h5><span class="tr">Düzensiz AWB Yönetimi - "Pirinç Ayıklama"</span><span class="en">Irregular AWB Management - "Rice Sorting"</span></h5>
+                                    <p><span class="tr">Purge'dan gelen AWB'ler ardışık değil, düzensiz. Düzenli aralıklara çekmek için dummy pool'lar manuel yönetilir.</span><span class="en">AWBs from purge are not consecutive, irregular. Dummy pools manually managed to capture into regular ranges.</span></p>
+                                </div>
+                            </div>
+                            <div class="pain-item high">
+                                <span class="pain-code">P2</span>
+                                <div class="pain-text">
+                                    <h5><span class="tr">Gümrük Kuralları Manuel Kontrolü</span><span class="en">Manual Customs Rules Check</span></h5>
+                                    <p><span class="tr">Ülke bazlı gümrük süreleri (Belçika 5, Çin 10 yıl) sistem tarafından kontrol edilmiyor. Manuel sampling ile risk azaltılıyor.</span><span class="en">Country-based customs durations (Belgium 5, China 10 years) not checked by system. Risk reduced through manual sampling.</span></p>
+                                </div>
+                            </div>
+                            <div class="pain-item high">
+                                <span class="pain-code">P3</span>
+                                <div class="pain-text">
+                                    <h5><span class="tr">Excel Export Limitleri</span><span class="en">Excel Export Limits</span></h5>
+                                    <p><span class="tr">ADM041 rapor export: 1.200 kayıt limiti. Yüz binlerce stok varken bu yetersiz. Excel row limit: 1M.</span><span class="en">ADM041 report export: 1,200 record limit. Insufficient with hundreds of thousands of stock. Excel row limit: 1M.</span></p>
+                                </div>
+                            </div>
+                            <div class="pain-item medium">
+                                <span class="pain-code">P4</span>
+                                <div class="pain-text">
+                                    <h5><span class="tr">Purge Job Kesintileri</span><span class="en">Purge Job Interruptions</span></h5>
+                                    <p><span class="tr">İki background job var. Durduğunda 10 günde 40.000 AWB birikir ve stok tahsisi durur.</span><span class="en">Two background jobs exist. When stopped, 40,000 AWBs accumulate in 10 days and stock allocation halts.</span></p>
+                                </div>
+                            </div>
+                            <div class="pain-item medium">
+                                <span class="pain-code">P5</span>
+                                <div class="pain-text">
+                                    <h5><span class="tr">Kullanılmayan Agent Stokları</span><span class="en">Unused Agent Stocks</span></h5>
+                                    <p><span class="tr">Agent'a tahsis edilen ama kullanılmayan stoklar otomatik geri alınmıyor. 1+ yıl bekleyen stoklar var.</span><span class="en">Stocks allocated to agents but unused are not automatically retrieved. Stocks waiting 1+ years exist.</span></p>
+                                </div>
+                            </div>
+                            <div class="pain-item medium">
+                                <span class="pain-code">P6</span>
+                                <div class="pain-text">
+                                    <h5><span class="tr">IATA-COMIS Manuel Eşleme</span><span class="en">IATA-COMIS Manual Matching</span></h5>
+                                    <p><span class="tr">Agent statüleri (Terminated, Default) IATA Portal'dan manuel kontrol edilir. Haftalık/iki haftalık sıklıkla.</span><span class="en">Agent statuses (Terminated, Default) manually checked from IATA Portal. Weekly/biweekly frequency.</span></p>
+                                </div>
+                            </div>
+                            <div class="pain-item low">
+                                <span class="pain-code">P7</span>
+                                <div class="pain-text">
+                                    <h5><span class="tr">View Range Bug</span><span class="en">View Range Bug</span></h5>
+                                    <p><span class="tr">STK007'deki View Range butonu düzgün çalışmıyor. Workaround: Export to Excel veya List AWB Stock.</span><span class="en">View Range button in STK007 doesn't work properly. Workaround: Export to Excel or List AWB Stock.</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="list-box" style="margin-top:24px; border-left:3px solid #9333ea;">
+                            <h4 style="color:#9333ea;"><span class="tr">KÖK NEDEN ANALİZİ</span><span class="en">ROOT CAUSE ANALYSIS</span></h4>
+                            <div class="list-item"><span class="tr">🔴 Sistem tasarımı düzensiz AWB'leri öngörmemiş (IBS mimarisi)</span><span class="en">🔴 System design didn't anticipate irregular AWBs (IBS architecture)</span></div>
+                            <div class="list-item"><span class="tr">🔴 Gümrük kuralları stok tahsisi anında bilinmiyor (O-D bilgisi yok)</span><span class="en">🔴 Customs rules unknown at stock allocation (no O-D info)</span></div>
+                            <div class="list-item"><span class="tr">🟡 Raporlama altyapısı büyük veri için optimize değil</span><span class="en">🟡 Reporting infrastructure not optimized for big data</span></div>
+                            <div class="list-item"><span class="tr">🟡 IATA-COMIS entegrasyonu yok (API mevcut mu araştırılacak)</span><span class="en">🟡 No IATA-COMIS integration (API availability to be researched)</span></div>
+                        </div>
+                    </div>
+                    <div id="s5-text" class="view-pane">
+                        <div class="summary-box">
+                            <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                            <p><span class="tr">En kritik pain point'ler: (1) Düzensiz AWB'lerin düzenli aralıklara çekilmesi için dummy pool'ların manuel yönetimi, (2) Gümrük kurallarının sistem tarafından kontrol edilmemesi, (3) Excel export limitlerinin yetersizliği. Kök neden, IBS sistem tasarımının bu edge case'leri öngörmemiş olması ve entegrasyon eksiklikleri.</span>
+                            <span class="en">Most critical pain points: (1) Manual management of dummy pools to capture irregular AWBs into regular ranges, (2) Customs rules not checked by system, (3) Insufficient Excel export limits. Root cause is IBS system design not anticipating these edge cases and integration gaps.</span></p>
+                        </div>
+                        <div class="evidence">
+                            <strong><span class="tr">Kanıt:</span><span class="en">Evidence:</span></strong><br>
+                            MoM-Stock-3: "Stocks are managed by splitting into dummy pools. Manual filtering and working like separating rice from stones."<br>
+                            MoM-Stock-3: "Comis does not perform customs control. No control during assignment. Error occurs when agent selects AWB in reservation screen."
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 6: MENTAL MODEL -->
+            <section class="card section-6" id="section-6">
+                <div class="card-header">
+                    <div class="card-icon">6</div>
+                    <div class="card-title">
+                        <h2><span class="tr">Zihinsel Model</span><span class="en">Mental Model</span></h2>
+                        <p><span class="tr">Empati haritası, davranış, bilişsel yük</span><span class="en">Empathy map, behavior, cognitive load</span></p>
+                    </div>
+                    <div class="toggle-wrap">
+                        <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                        <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="s6-chart" class="view-pane active">
+                        <div class="empathy-grid">
+                            <div class="empathy-quad says">
+                                <h4><span class="tr">💬 SÖYLER</span><span class="en">💬 SAYS</span></h4>
+                                <div class="empathy-item"><span class="tr">"Pirinç ayıklar gibi çalışıyoruz"</span><span class="en">"We work like sorting rice"</span></div>
+                                <div class="empathy-item"><span class="tr">"Excel limiti yetmiyor"</span><span class="en">"Excel limit is not enough"</span></div>
+                                <div class="empathy-item"><span class="tr">"Gümrük kontrolü manuel yapılıyor"</span><span class="en">"Customs check is done manually"</span></div>
+                                <div class="empathy-item"><span class="tr">"Job durdu mu diye her gün kontrol ediyorum"</span><span class="en">"I check every day if the job stopped"</span></div>
+                            </div>
+                            <div class="empathy-quad thinks">
+                                <h4><span class="tr">💭 DÜŞÜNÜR</span><span class="en">💭 THINKS</span></h4>
+                                <div class="empathy-item"><span class="tr">"Bu kadar manuel süreç olmamalı"</span><span class="en">"There shouldn't be so many manual processes"</span></div>
+                                <div class="empathy-item"><span class="tr">"5 yıl sonra stok tükenirse ne olacak?"</span><span class="en">"What happens if stock depletes in 5 years?"</span></div>
+                                <div class="empathy-item"><span class="tr">"IATA entegrasyonu neden yok?"</span><span class="en">"Why is there no IATA integration?"</span></div>
+                                <div class="empathy-item"><span class="tr">"Dummy pool'suz çalışabilsek..."</span><span class="en">"If only we could work without dummy pools..."</span></div>
+                            </div>
+                            <div class="empathy-avatar">
+                                <div class="empathy-avatar-circle">📊</div>
+                            </div>
+                            <div class="empathy-quad does">
+                                <h4><span class="tr">🔧 YAPAR</span><span class="en">🔧 DOES</span></h4>
+                                <div class="empathy-item"><span class="tr">Her gün purge tarihini kontrol eder</span><span class="en">Checks purge date every day</span></div>
+                                <div class="empathy-item"><span class="tr">Excel'e export edip filtreler</span><span class="en">Exports to Excel and filters</span></div>
+                                <div class="empathy-item"><span class="tr">Dummy pool'a region geçici bağlar</span><span class="en">Temporarily links region to dummy pool</span></div>
+                                <div class="empathy-item"><span class="tr">IATA Portal'dan agent statüsü bakar</span><span class="en">Checks agent status from IATA Portal</span></div>
+                            </div>
+                            <div class="empathy-quad feels">
+                                <h4><span class="tr">❤️ HİSSEDER</span><span class="en">❤️ FEELS</span></h4>
+                                <div class="empathy-item"><span class="tr">😤 Frustrasyonlu - sistem yetersiz</span><span class="en">😤 Frustrated - system is inadequate</span></div>
+                                <div class="empathy-item"><span class="tr">😟 Endişeli - stok tükenmesi riski</span><span class="en">😟 Worried - stock depletion risk</span></div>
+                                <div class="empathy-item"><span class="tr">🤔 Temkinli - değişime açık ama dikkatli</span><span class="en">🤔 Cautious - open to change but careful</span></div>
+                                <div class="empathy-item"><span class="tr">💪 Sorumlu - operasyonun devamlılığı için</span><span class="en">💪 Responsible - for operational continuity</span></div>
+                            </div>
+                        </div>
+
+                        <div class="list-box" style="margin-top:24px; border-left:3px solid #9333ea;">
+                            <h4 style="color:#9333ea;"><span class="tr">BİLİŞSEL YÜK NOKTALARI</span><span class="en">COGNITIVE LOAD POINTS</span></h4>
+                            <div class="list-item"><span class="tr">🧠 Gümrük kurallarını ezberden bilmek (ülke bazlı farklılıklar)</span><span class="en">🧠 Memorizing customs rules (country-based differences)</span></div>
+                            <div class="list-item"><span class="tr">🧠 Hangi AWB'nin hangi ülkede kullanıldığını takip etmek</span><span class="en">🧠 Tracking which AWB was used in which country</span></div>
+                            <div class="list-item"><span class="tr">🧠 Dummy pool → region → station hiyerarşisini yönetmek</span><span class="en">🧠 Managing dummy pool → region → station hierarchy</span></div>
+                            <div class="list-item"><span class="tr">🧠 Birden fazla ekranda silme sürecini koordine etmek</span><span class="en">🧠 Coordinating delete process across multiple screens</span></div>
+                        </div>
+                    </div>
+                    <div id="s6-text" class="view-pane">
+                        <div class="summary-box">
+                            <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                            <p><span class="tr">Persona pratik ve organize düşünen (HBDI B çeyrek baskın), detaycı ve prosedürel bir profile sahip. Ana frustrasyon kaynağı manuel süreçlerin çokluğu ve sistem yetersizlikleri. Değişime temkinli yaklaşır çünkü mevcut workaround'lar çalışıyor. Bilişsel yük, gümrük kurallarını ezberlemek ve birden fazla ekran arasında koordinasyon sağlamak zorunda kalmasından kaynaklanıyor.</span>
+                            <span class="en">Persona has a practical and organized thinking profile (HBDI B quadrant dominant), detail-oriented and procedural. Main frustration source is abundance of manual processes and system inadequacies. Approaches change cautiously because current workarounds work. Cognitive load stems from having to memorize customs rules and coordinate across multiple screens.</span></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 7: COLLABORATION -->
+            <section class="card section-7" id="section-7">
+                <div class="card-header">
+                    <div class="card-icon">7</div>
+                    <div class="card-title">
+                        <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                        <p><span class="tr">Paydaşlar, bağımlılıklar, eğitim</span><span class="en">Stakeholders, dependencies, training</span></p>
+                    </div>
+                    <div class="toggle-wrap">
+                        <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                        <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="s7-chart" class="view-pane active">
+                        <div class="stakeholder-map">
+                            <div class="stakeholder-row">
+                                <div class="stakeholder-node provider"><span class="tr">IBS Backend<br>(Purge Jobs)</span><span class="en">IBS Backend<br>(Purge Jobs)</span></div>
+                                <div class="stakeholder-node provider"><span class="tr">IATA Portal<br>(Agent Statüsü)</span><span class="en">IATA Portal<br>(Agent Status)</span></div>
+                            </div>
+                            <div class="stakeholder-arrow">↓</div>
+                            <div class="stakeholder-row">
+                                <div class="stakeholder-node partner"><span class="tr">Euro2 Bölge<br>(AWB Silme Uzmanı)</span><span class="en">Euro2 Region<br>(AWB Delete Expert)</span></div>
+                                <div class="stakeholder-node persona"><span class="tr">Stock Management<br>Specialist</span><span class="en">Stock Management<br>Specialist</span></div>
+                                <div class="stakeholder-node partner"><span class="tr">IT/IBS<br>(Sistem Desteği)</span><span class="en">IT/IBS<br>(System Support)</span></div>
+                            </div>
+                            <div class="stakeholder-arrow">↓</div>
+                            <div class="stakeholder-row">
+                                <div class="stakeholder-node consumer"><span class="tr">Bölge Yöneticileri<br>(Stock Talebi)</span><span class="en">Region Managers<br>(Stock Request)</span></div>
+                                <div class="stakeholder-node consumer"><span class="tr">Sales Temsilcileri<br>(Agent Tahsisi)</span><span class="en">Sales Reps<br>(Agent Allocation)</span></div>
+                                <div class="stakeholder-node consumer"><span class="tr">İstasyon Şefleri<br>(Lokal Tahsis)</span><span class="en">Station Chiefs<br>(Local Allocation)</span></div>
+                            </div>
+                        </div>
+
+                        <div class="two-col" style="margin-top:32px;">
+                            <div class="list-box" style="border-left:3px solid #dc2626;">
+                                <h4 style="color:#dc2626;"><span class="tr">⛔ KRİTİK BAĞIMLILIKLAR</span><span class="en">⛔ CRITICAL DEPENDENCIES</span></h4>
+                                <div class="list-item"><span class="tr">🔴 Purge job'ların durması → Stok tahsisi durur</span><span class="en">🔴 Purge jobs stopping → Stock allocation halts</span></div>
+                                <div class="list-item"><span class="tr">🟡 IATA Portal erişimi → Agent statü kontrolü</span><span class="en">🟡 IATA Portal access → Agent status control</span></div>
+                                <div class="list-item"><span class="tr">🟡 Euro2'nin AWB silme bilgisi → Delete süreç</span><span class="en">🟡 Euro2's AWB delete knowledge → Delete process</span></div>
+                            </div>
+                            <div class="list-box" style="border-left:3px solid #059669;">
+                                <h4 style="color:#059669;"><span class="tr">📚 EĞİTİM & DESTEK</span><span class="en">📚 TRAINING & SUPPORT</span></h4>
+                                <div class="list-item"><span class="tr">✅ COMIS ekran eğitimi (STK007, STK019)</span><span class="en">✅ COMIS screen training (STK007, STK019)</span></div>
+                                <div class="list-item"><span class="tr">✅ IATA kuralları ve Mod7 eğitimi</span><span class="en">✅ IATA rules and Mod7 training</span></div>
+                                <div class="list-item"><span class="tr">⚠️ Gümrük kuralları (ülke bazlı) dokümantasyonu eksik</span><span class="en">⚠️ Customs rules (country-based) documentation missing</span></div>
+                                <div class="list-item"><span class="tr">⚠️ Dummy pool best practice dokümantasyonu yok</span><span class="en">⚠️ No dummy pool best practice documentation</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="s7-text" class="view-pane">
+                        <div class="summary-box">
+                            <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                            <p><span class="tr">Persona, IBS backend (purge job'lar) ve IATA Portal'a bağımlıdır. Euro2 bölgesi AWB silme süreçlerinde uzman ve bilgi paylaşır. Downstream olarak bölge yöneticileri, sales temsilcileri ve istasyon şefleri stok talep eder. Kritik bağımlılık: Purge job durduğunda tüm stok tahsisi durur. Eğitim açığı: Gümrük kuralları ve dummy pool best practice dokümantasyonu eksik.</span>
+                            <span class="en">Persona depends on IBS backend (purge jobs) and IATA Portal. Euro2 region is expert in AWB delete processes and shares knowledge. Downstream, region managers, sales reps and station chiefs request stock. Critical dependency: When purge job stops, all stock allocation halts. Training gap: Customs rules and dummy pool best practice documentation missing.</span></p>
+                        </div>
+                        <div class="evidence">
+                            <strong><span class="tr">Kanıt:</span><span class="en">Evidence:</span></strong><br>
+                            MoM-Stock-3: "Euro2 region manages this process well and provides information"<br>
+                            MoM-Stock-ST-2: "If these jobs stop (e.g., for 10 days), 40,000 AWBs accumulate and stock assignment halts"
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 8: OPPORTUNITIES -->
+            <section class="card section-8" id="section-8">
+                <div class="card-header">
+                    <div class="card-icon">8</div>
+                    <div class="card-title">
+                        <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+                        <p><span class="tr">MVP, kısa/uzun vade önerileri</span><span class="en">MVP, short/long term suggestions</span></p>
+                    </div>
+                    <div class="toggle-wrap">
+                        <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                        <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="s8-chart" class="view-pane active">
+                        <div class="timeline">
+                            <div class="timeline-item mvp">
+                                <span class="timeline-badge mvp">MVP</span>
+                                <div class="timeline-content">
+                                    <h5><span class="tr">Gümrük Kuralı Validasyonu (P2)</span><span class="en">Customs Rule Validation (P2)</span></h5>
+                                    <p><span class="tr">Stok tahsisi öncesinde ülke bazlı gümrük sürelerini kontrol eden sistem. STK019 geçmişi + ülke kuralları matrisi.</span><span class="en">System checking country-based customs durations before stock allocation. STK019 history + country rules matrix.</span></p>
+                                </div>
+                            </div>
+                            <div class="timeline-item mvp">
+                                <span class="timeline-badge mvp">MVP</span>
+                                <div class="timeline-content">
+                                    <h5><span class="tr">Purge Job Monitoring Dashboard (P4)</span><span class="en">Purge Job Monitoring Dashboard (P4)</span></h5>
+                                    <p><span class="tr">Purge job'ların çalışma durumu, son çalışma zamanı, birikim uyarısı. Günlük manuel kontrol yerine otomatik bildirim.</span><span class="en">Purge job status, last run time, accumulation alert. Automatic notification instead of daily manual check.</span></p>
+                                </div>
+                            </div>
+                            <div class="timeline-item short">
+                                <span class="timeline-badge short">SHORT</span>
+                                <div class="timeline-content">
+                                    <h5><span class="tr">Otomatik Stok Geri Çekme (P5)</span><span class="en">Automatic Stock Retrieval (P5)</span></h5>
+                                    <p><span class="tr">1 yıldan fazla kullanılmayan agent stoklarını otomatik HQ'ya geri döndürme. Agent'a bildirim + sözleşme maddesi.</span><span class="en">Automatically return agent stocks unused for 1+ years to HQ. Agent notification + contract clause.</span></p>
+                                </div>
+                            </div>
+                            <div class="timeline-item short">
+                                <span class="timeline-badge short">SHORT</span>
+                                <div class="timeline-content">
+                                    <h5><span class="tr">Akıllı Raporlama (P3)</span><span class="en">Smart Reporting (P3)</span></h5>
+                                    <p><span class="tr">Excel export limiti sorununu çözen, STK007 içinde origin-destination bilgisi gösteren, sayfalama destekli raporlama.</span><span class="en">Reporting solving Excel export limit issue, showing origin-destination info in STK007, with pagination support.</span></p>
+                                </div>
+                            </div>
+                            <div class="timeline-item long">
+                                <span class="timeline-badge long">LONG</span>
+                                <div class="timeline-content">
+                                    <h5><span class="tr">Dummy Pool Eliminasyonu (P1)</span><span class="en">Dummy Pool Elimination (P1)</span></h5>
+                                    <p><span class="tr">Düzensiz AWB'lerin otomatik ardışık aralıklara dönüştürülmesi. Purge algoritması iyileştirmesi.</span><span class="en">Automatic conversion of irregular AWBs to consecutive ranges. Purge algorithm improvement.</span></p>
+                                </div>
+                            </div>
+                            <div class="timeline-item long">
+                                <span class="timeline-badge long">LONG</span>
+                                <div class="timeline-content">
+                                    <h5><span class="tr">IATA-COMIS Entegrasyonu (P6)</span><span class="en">IATA-COMIS Integration (P6)</span></h5>
+                                    <p><span class="tr">Agent statüsü (Terminated, Default) otomatik senkronizasyonu. IATA API araştırması gerekli.</span><span class="en">Automatic synchronization of agent status (Terminated, Default). IATA API research needed.</span></p>
+                                </div>
+                            </div>
+                            <div class="timeline-item long">
+                                <span class="timeline-badge long">LONG</span>
+                                <div class="timeline-content">
+                                    <h5><span class="tr">Domestic AWB Alternatif Prefix</span><span class="en">Domestic AWB Alternative Prefix</span></h5>
+                                    <p><span class="tr">Yurtiçi uçuşlar için 235 yerine alternatif prefix (örn: 864). Ana stok üzerindeki yükü azaltır.</span><span class="en">Alternative prefix for domestic flights instead of 235 (e.g., 864). Reduces load on main stock.</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="s8-text" class="view-pane">
+                        <div class="summary-box">
+                            <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                            <p><span class="tr">MVP öncelikleri: Gümrük kuralı validasyonu ve purge job monitoring. Bu iki özellik en kritik riskleri (gümrük cezası, stok tükenmesi) adresler. Kısa vadede otomatik stok geri çekme ve akıllı raporlama. Uzun vadede dummy pool eliminasyonu (sistem mimarisi değişikliği gerektirir) ve IATA entegrasyonu.</span>
+                            <span class="en">MVP priorities: Customs rule validation and purge job monitoring. These two features address the most critical risks (customs penalties, stock depletion). Short-term: automatic stock retrieval and smart reporting. Long-term: dummy pool elimination (requires system architecture change) and IATA integration.</span></p>
+                        </div>
+                        <div class="evidence">
+                            <strong><span class="tr">Kanıt:</span><span class="en">Evidence:</span></strong><br>
+                            MoM-Stock-3 Decisions: "Unused stocks at agencies should automatically return to HQ... No new stock should be assigned before the agency's stock falls below a certain threshold"<br>
+                            MoM-Stock-3: "Alternative prefix should be used other than 235 (e.g., 864) for domestic flights"
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 9: AI SUPPORT -->
+            <section class="card section-9" id="section-9">
+                <div class="card-header">
+                    <div class="card-icon">9</div>
+                    <div class="card-title">
+                        <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                        <p><span class="tr">AI potansiyeli, güven seviyeleri</span><span class="en">AI potential, trust levels</span></p>
+                    </div>
+                    <div class="toggle-wrap">
+                        <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                        <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="s9-chart" class="view-pane active">
+                        <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                        <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                            <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                            <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                        </p>
+                        
+                        <div style="display:flex; gap:24px; margin-bottom:32px;">
+                            <div style="display:flex; flex-direction:column; justify-content:space-between; width:100px; padding:8px 0;">
+                                <div style="text-align:right;">
+                                    <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 <span class="tr">YASAK</span><span class="en">FORBIDDEN</span></span>
+                                    <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI yapmamalı</span><span class="en">AI must not</span></div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ <span class="tr">ONAY GEREKLİ</span><span class="en">APPROVAL NEEDED</span></span>
+                                    <div style="font-size:8px; color:#9ca3af;"><span class="tr">İnsan onayı şart</span><span class="en">Human approval required</span></div>
+                                </div>
+                                <div style="text-align:right;">
+                                    <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ <span class="tr">GÜVENLİ</span><span class="en">SAFE</span></span>
+                                    <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI serbest</span><span class="en">AI free</span></div>
+                                </div>
+                            </div>
+                            
+                            <div style="flex:1; position:relative;">
+                                <div style="height:240px; border-radius:12px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                                    
+                                    <div style="position:absolute; left:12px; top:4%; font-size:10px; color:#dc2626; font-weight:600;">
+                                        <span class="tr">6 - 🚫 Final stok tahsis kararı (HQ dışına)</span>
+                                        <span class="en">6 - 🚫 Final stock allocation decision (outside HQ)</span>
+                                    </div>
+                                    <div style="position:absolute; left:12px; top:21%; font-size:10px; color:#b45309; font-weight:600;">
+                                        <span class="tr">5 - ⚠️ Gümrük riski tespit edildi - tahsis önerisi (onay ile)</span>
+                                        <span class="en">5 - ⚠️ Customs risk detected - allocation suggestion (with approval)</span>
+                                    </div>
+                                    
+                                    <div style="position:absolute; left:0; right:0; top:33%; height:3px; background:#0891b2; z-index:10;"></div>
+                                    <div style="position:absolute; right:8px; top:31%; background:#0891b2; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                        <span class="tr">⬆️ SINIR: AI burada durmalı</span>
+                                        <span class="en">⬆️ LIMIT: AI stops here</span>
+                                    </div>
+                                    
+                                    <div style="position:absolute; left:12px; top:40%; font-size:10px; color:#15803d; font-weight:600;">
+                                        <span class="tr">4 - 💡 Gümrük kuralı ihlali uyarısı</span>
+                                        <span class="en">4 - 💡 Customs rule violation warning</span>
+                                    </div>
+                                    <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">
+                                        <span class="tr">3 - ⚙️ AWB geçmişi sorgu ve risk skoru hesaplama</span>
+                                        <span class="en">3 - ⚙️ AWB history query and risk score calculation</span>
+                                    </div>
+                                    <div style="position:absolute; left:12px; top:70%; font-size:10px; color:#15803d; font-weight:600;">
+                                        <span class="tr">2 - 📝 Kullanılmayan stok raporu özeti</span>
+                                        <span class="en">2 - 📝 Unused stock report summary</span>
+                                    </div>
+                                    <div style="position:absolute; left:12px; top:85%; font-size:10px; color:#15803d; font-weight:600;">
+                                        <span class="tr">1 - 📊 Purge job durumu ve HQ stok gösterimi</span>
+                                        <span class="en">1 - 📊 Purge job status and HQ stock display</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h4 style="font-size:11px; color:#0891b2; margin:24px 0 12px;"><span class="tr">AI KULLANIM ALANLARI</span><span class="en">AI USE CASES</span></h4>
+                        <div class="two-col">
+                            <div class="list-box" style="border-left:3px solid #16a34a;">
+                                <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN (Seviye 1-4)</span><span class="en">✓ AI SUITABLE (Level 1-4)</span></h4>
+                                <div class="list-item"><span class="tr">📊 Purge job durumu izleme ve bildirim</span><span class="en">📊 Purge job status monitoring and notification</span></div>
+                                <div class="list-item"><span class="tr">🔍 Gümrük kuralı ihlali taraması (otomatik)</span><span class="en">🔍 Customs rule violation scan (automatic)</span></div>
+                                <div class="list-item"><span class="tr">📋 Kullanılmayan stok analizi ve raporu</span><span class="en">📋 Unused stock analysis and report</span></div>
+                                <div class="list-item"><span class="tr">⚠️ IATA agent statü değişikliği uyarısı</span><span class="en">⚠️ IATA agent status change alert</span></div>
+                                <div class="list-item"><span class="tr">🧮 AWB geçmişi sorgu ve risk skoru</span><span class="en">🧮 AWB history query and risk score</span></div>
+                                <div class="list-item"><span class="tr">📈 Stok tüketim trend analizi</span><span class="en">📈 Stock consumption trend analysis</span></div>
+                            </div>
+                            <div class="list-box" style="border-left:3px solid #dc2626;">
+                                <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL (İnsan Kararı)</span><span class="en">⛔ AI NOT SUITABLE (Human Decision)</span></h4>
+                                <div class="list-item"><span class="tr">🚫 Final stok tahsis kararı</span><span class="en">🚫 Final stock allocation decision</span></div>
+                                <div class="list-item"><span class="tr">🚫 Region/Station hiyerarşi değişikliği</span><span class="en">🚫 Region/Station hierarchy change</span></div>
+                                <div class="list-item"><span class="tr">🚫 Agent stok geri çekme kararı</span><span class="en">🚫 Agent stock retrieval decision</span></div>
+                                <div class="list-item"><span class="tr">🚫 Purge süresini kısaltma kararı</span><span class="en">🚫 Purge duration shortening decision</span></div>
+                                <div class="list-item"><span class="tr">🚫 Gümrük istisnası onayı</span><span class="en">🚫 Customs exception approval</span></div>
+                                <div class="list-item"><span class="tr">🚫 IATA ile iletişim</span><span class="en">🚫 IATA communication</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="s9-text" class="view-pane">
+                        <div class="summary-box">
+                            <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                            <p><span class="tr">AWB Stock Management orta-yüksek AI potansiyeline sahip. AI, bilgi sunma (seviye 1-2) ve öneri/hazırlık (seviye 3-4) alanlarında güçlü destek sağlayabilir: purge job izleme, gümrük kuralı taraması, kullanılmayan stok raporu, risk skorlama. Seviye 5'te (onaylı aksiyon) gümrük riski tespiti sonrası tahsis önerisi verilebilir ama insan onayı şart. Seviye 6 (yapmamalı): Final tahsis kararı, hiyerarşi değişikliği ve IATA iletişimi kesinlikle insan kontrolünde kalmalı.</span>
+                            <span class="en">AWB Stock Management has medium-high AI potential. AI can provide strong support in information (level 1-2) and recommendation/preparation (level 3-4) areas: purge job monitoring, customs rule scanning, unused stock report, risk scoring. At level 5 (approved action) allocation suggestion can be given after customs risk detection but human approval required. Level 6 (must not): Final allocation decision, hierarchy change and IATA communication must absolutely remain under human control.</span></p>
+                        </div>
+                        <div class="evidence">
+                            <strong><span class="tr">AI Uygunluk Gerekçesi:</span><span class="en">AI Suitability Rationale:</span></strong><br>
+                            <span class="tr">• Gümrük kuralı taraması kural bazlı, AI için ideal</span><span class="en">• Customs rule scanning is rule-based, ideal for AI</span><br>
+                            <span class="tr">• Stok tüketim analizi tarihsel veriye dayalı, ML uygun</span><span class="en">• Stock consumption analysis based on historical data, ML suitable</span><br>
+                            <span class="tr">• Tahsis kararı hiyerarşik onay gerektiriyor, AI karar vermemeli</span><span class="en">• Allocation decision requires hierarchical approval, AI should not decide</span><br>
+                            <span class="tr">• IATA iletişimi dış kurum ilişkisi, insan gerekli</span><span class="en">• IATA communication is external institution relation, human needed</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p><span class="tr">ASM - AWB Stock Management Modülü | Stock Management Specialist Persona | MoM Analizinden Üretildi</span>
+            <span class="en">ASM - AWB Stock Management Module | Stock Management Specialist Persona | Generated from MoM Analysis</span></p>
+            <p style="margin-top:4px;"><span class="tr">Kaynaklar: Key User Stock MoM 1-3, Solution Team MoM 1-2</span>
+            <span class="en">Sources: Key User Stock MoM 1-3, Solution Team MoM 1-2</span></p>
+            <p style="margin-top:8px; font-size:10px; color:#9ca3af;">
+                <span class="tr">⚠️ Yalnızca doküman kanıtlarına dayalıdır · Spekülatif çıkarım içermez</span>
+                <span class="en">⚠️ Based solely on document evidence · Contains no speculative inference</span>
+            </p>
+        </footer>
+    </main>
+
+</body>
+</html>

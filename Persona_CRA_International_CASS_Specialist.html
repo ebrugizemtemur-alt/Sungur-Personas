@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yurt Dışı CASS Uzmanı | Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        .side-nav { position: fixed; left: 0; top: 0; bottom: 0; width: 72px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 1000; box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+        .side-nav-logo { width: 44px; height: 44px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; color: white; margin-bottom: 24px; cursor: pointer; transition: transform 0.3s; }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items { display: flex; flex-direction: column; gap: 6px; flex: 1; width: 100%; padding: 0 10px; overflow-y: auto; }
+        .nav-item { width: 52px; height: 52px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #64748b; font-size: 9px; font-weight: 500; transition: all 0.3s; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+        .nav-item.active { background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; box-shadow: 0 4px 12px rgba(79,70,229,0.4); }
+        .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
+        .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; transition: all 0.2s; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .module-header:hover { background: rgba(255,255,255,0.05); }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; transition: all 0.2s; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #ef4444; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+        
+        .hero { background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%); padding: 48px 40px; position: relative; }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(220,38,38,0.1); color: #dc2626; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #dc2626; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #dc2626; }
+        .hero-subtitle { font-size: 16px; color: #6b7280; max-width: 600px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #dc2626; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #dc2626; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 100px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-step.reject { background: #fee2e2; color: #dc2626; }
+        .flow-step.approve { background: #d1fae5; color: #047857; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; align-items: stretch; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.does h4 span.icon { background: rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-quad.feels h4 span.icon { background: rgba(225,29,72,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #d1fae5; color: #047857; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #e0e7ff; color: #4338ca; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -16px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-badge { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-bottom: 4px; display: inline-block; }
+        .timeline-badge.mvp { background: #fee2e2; color: #dc2626; }
+        .timeline-badge.short { background: #fef3c7; color: #b45309; }
+        .timeline-badge.long { background: #d1fae5; color: #047857; }
+        .timeline-item h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        
+        .ai-slider { position: relative; height: 400px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%); border-radius: 12px; padding: 20px; }
+        .ai-level { position: absolute; left: 30px; right: 30px; display: flex; align-items: center; gap: 12px; }
+        .ai-level-num { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; }
+        .ai-level-text { font-size: 12px; font-weight: 500; }
+        .trust-line { position: absolute; left: 0; right: 0; top: 33%; height: 3px; background: #0891b2; }
+        .trust-label { position: absolute; right: 10px; top: 31%; font-size: 10px; font-weight: 700; color: #0891b2; }
+        
+        .summary-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; color: #6b7280; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .evidence { font-size: 10px; color: #9ca3af; font-style: italic; margin-top: 4px; }
+        
+        .footer { text-align: center; padding: 32px; font-size: 11px; color: #9ca3af; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 32px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .mega-menu { left: 60px; width: 280px; }
+            .two-col, .segment-card { grid-template-columns: 1fr; }
+            .empathy-grid { grid-template-columns: 1fr; }
+            .empathy-avatar { grid-row: auto; }
+        }
+    </style>
+</head>
+<body class="lang-en">
+
+<nav class="side-nav">
+    <div class="side-nav-logo" onclick="toggleMegaMenu()">CRA</div>
+    <div class="nav-items">
+        <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="nav-item">
+            <span class="nav-num">1</span>
+            <span class="nav-label">Domestic</span>
+        </a>
+        <a href="Persona_CRA_International_CASS_Specialist.html" class="nav-item active">
+            <span class="nav-num">2</span>
+            <span class="nav-label">CASS</span>
+        </a>
+        <a href="Persona_CRA_Interline_Billing_Specialist.html" class="nav-item">
+            <span class="nav-num">3</span>
+            <span class="nav-label">Interline</span>
+        </a>
+        <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="nav-item">
+            <span class="nav-num">4</span>
+            <span class="nav-label">Supervisor</span>
+        </a>
+    </div>
+</nav>
+
+<div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+<div class="mega-menu">
+    <div class="mega-menu-header">
+        <span class="mega-menu-title">📦 Tüm Modüller</span>
+        <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+    </div>
+    
+    <!-- PCM -->
+    <div class="module-section">
+        <div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div>
+        <div class="persona-list">
+            <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a>
+            <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a>
+            <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a>
+            <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a>
+            <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a>
+        </div>
+    </div>
+    
+    <!-- FLM -->
+    <div class="module-section">
+        <div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div>
+        <div class="persona-list">
+            <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a>
+            <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a>
+            <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a>
+            <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue Capacity Analyst</a>
+            <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a>
+        </div>
+    </div>
+    
+    <!-- BKR -->
+    <div class="module-section">
+        <div class="module-header"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div>
+        <div class="persona-list">
+            <a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a>
+            <a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a>
+            <a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a>
+            <a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a>
+            <a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a>
+            <a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a>
+            <a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a>
+        </div>
+    </div>
+    
+    <!-- CAM -->
+    <div class="module-section">
+        <div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div>
+        <div class="persona-list">
+            <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a>
+            <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a>
+            <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a>
+        </div>
+    </div>
+    
+    <!-- COM -->
+    <div class="module-section">
+        <div class="module-header"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div>
+        <div class="persona-list">
+            <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a>
+            <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a>
+            <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a>
+            <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a>
+            <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a>
+        </div>
+    </div>
+    
+    <!-- ASM -->
+    <div class="module-section">
+        <div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div>
+        <div class="persona-list">
+            <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a>
+            <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a>
+        </div>
+    </div>
+    
+    <!-- TRM -->
+    <div class="module-section">
+        <div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div>
+        <div class="persona-list">
+            <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a>
+        </div>
+    </div>
+    
+    <!-- SCM -->
+    <div class="module-section">
+        <div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div>
+        <div class="persona-list">
+            <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a>
+        </div>
+    </div>
+    
+    <!-- CRA -->
+    <div class="module-section">
+        <div class="module-header active"><div class="module-icon cra">CRA</div><span class="module-name">Cargo Revenue Accounting</span><span class="module-count">4</span></div>
+        <div class="persona-list">
+            <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+            <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link current"><span class="persona-num">2</span> International CASS Specialist</a>
+            <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+            <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">CRA · INTERNATIONAL CASS · PERSONA #2</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn" onclick="switchLang('tr')">TR</button>
+                    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+                </div>
+            </div>
+            <h1>
+                <span class="tr">Yurt Dışı <span>CASS</span> Uzmanı</span>
+                <span class="en">International <span>CASS</span> Specialist</span>
+            </h1>
+            <p class="hero-subtitle">
+                <span class="tr">Uluslararası çıkışlı kargo için rate audit, finalization ve IATA CASS dosya yükleme süreçlerini yöneten uzman</span>
+                <span class="en">Specialist managing rate audit, finalization and IATA CASS file upload processes for international-origin cargo</span>
+            </p>
+            <blockquote class="hero-quote">
+                <span class="tr">"Ağırlık tutarlılığı ana kontrol noktamız. Chargeable weight validasyonu en sık kullandığımız kontrol."</span>
+                <span class="en">"Weight consistency is our main control point. Chargeable weight validation is our most frequent check."</span>
+            </blockquote>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#dc2626;"></span>
+                    <span><strong>User:</strong> <span class="tr">CASS Uzmanı</span><span class="en">CASS Specialist</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong>Criticality:</strong> <span style="color:#f59e0b;">★★★★★</span> <span class="tr">Çok Yüksek</span><span class="en">Very High</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong>Main Systems:</strong> CRA212, CRA089, CRA041, IATA</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 7 MoM</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+
+        <section id="section-1" class="card section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                    <p><span class="tr">Demografik, davranışsal ve psikografik profil</span><span class="en">Demographic, behavioral and psychographic profile</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s1-chart" class="view-pane active">
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label"><span class="tr">Departman</span><span class="en">Department</span></div><div class="pf-value"><span class="tr">Kargo Gelir Muhasebe</span><span class="en">Cargo Revenue Accounting</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Rol</span><span class="en">Role</span></div><div class="pf-value"><span class="tr">Yurt Dışı CASS Uzmanı</span><span class="en">International CASS Specialist</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Seviye</span><span class="en">Level</span></div><div class="pf-value"><span class="tr">Uzman / Kıdemli Uzman</span><span class="en">Specialist / Senior Specialist</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Ana Sistemler</span><span class="en">Core Systems</span></div><div class="pf-value">CRA212, CRA089, CRA041, IATA</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Kullanım Sıklığı</span><span class="en">Usage Frequency</span></div><div class="pf-value"><span class="tr">Günlük 6-8 saat</span><span class="en">Daily 6-8 hours</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Kapsam</span><span class="en">Scope</span></div><div class="pf-value"><span class="tr">Yurt dışı çıkışlı kargo</span><span class="en">International-origin cargo</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Ülke Havuzu</span><span class="en">Country Pool</span></div><div class="pf-value"><span class="tr">Havuz modeli - Günlük öncelik</span><span class="en">Pool model - Daily priority</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">İşlem Hacmi</span><span class="en">Transaction Volume</span></div><div class="pf-value"><span class="tr">Yüksek hacim - Toplu işlem</span><span class="en">High volume - Bulk processing</span></div></div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-col demo">
+                            <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Yaş:</span><span class="en">Age:</span></strong> 28-45</div>
+                            <div class="segment-item"><strong><span class="tr">Eğitim:</span><span class="en">Education:</span></strong> <span class="tr">Lisans (İşletme/Finans)</span><span class="en">Bachelor's (Business/Finance)</span></div>
+                            <div class="segment-item"><strong><span class="tr">Deneyim:</span><span class="en">Experience:</span></strong> 3-10 <span class="tr">yıl</span><span class="en">years</span></div>
+                            <div class="segment-item"><strong><span class="tr">Teknik:</span><span class="en">Technical:</span></strong> <span class="tr">Orta-İleri</span><span class="en">Intermediate-Advanced</span></div>
+                        </div>
+                        <div class="segment-col behav">
+                            <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Cihaz:</span><span class="en">Device:</span></strong> Desktop</div>
+                            <div class="segment-item"><strong><span class="tr">İşlem:</span><span class="en">Process:</span></strong> <span class="tr">Toplu (Bulk)</span><span class="en">Bulk</span></div>
+                            <div class="segment-item"><strong><span class="tr">Tempo:</span><span class="en">Pace:</span></strong> <span class="tr">Hız + Hacim Odaklı</span><span class="en">Speed + Volume focused</span></div>
+                            <div class="segment-item"><strong><span class="tr">Destek:</span><span class="en">Support:</span></strong> <span class="tr">Supervisor / Rate Team</span><span class="en">Supervisor / Rate Team</span></div>
+                        </div>
+                        <div class="segment-col psycho">
+                            <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Değerler:</span><span class="en">Values:</span></strong> <span class="tr">Verimlilik, Hız</span><span class="en">Efficiency, Speed</span></div>
+                            <div class="segment-item"><strong><span class="tr">Risk:</span><span class="en">Risk:</span></strong> <span class="tr">Hesaplı</span><span class="en">Calculated</span></div>
+                            <div class="segment-item"><strong><span class="tr">Değişim:</span><span class="en">Change:</span></strong> <span class="tr">Açık</span><span class="en">Open</span></div>
+                            <div class="segment-item"><strong><span class="tr">Otomasyon:</span><span class="en">Automation:</span></strong> <span class="tr">İstekli</span><span class="en">Eager</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s1-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">ÖZET</span><span class="en">SUMMARY</span></h4>
+                        <p><span class="tr">Yurt Dışı CASS Uzmanı, uluslararası çıkışlı kargolar için rate audit, toplu finalize ve IATA dosya yükleme süreçlerini yönetir. Ekip havuz modeline geçmiş, günlük öncelikli AWB listeleri supervisor tarafından dağıtılır.</span><span class="en">International CASS Specialist manages rate audit, bulk finalize and IATA file upload processes for international-origin cargo. Team moved to pool model, daily prioritized AWB lists distributed by supervisor.</span></p>
+                    </div>
+                    <p class="evidence">MoM-7: "Team moved from strict country ownership to a pool model; supervisors distribute daily prioritized AWB lists."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-2" class="card section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="tr">Hedef, Motivasyon & Korku</span><span class="en">Goals, Motivation & Fears</span></h2>
+                    <p><span class="tr">İş hedefleri ve motivasyon kaynakları</span><span class="en">Business goals and motivation sources</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s2-chart" class="view-pane active">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="tr">IATA dönem kapanışını zamanında tamamlamak</span><span class="en">Complete IATA period closure on time</span></div>
+                        <div class="goal-level secondary"><span class="tr">Rate audit ve finalization doğruluğu</span><span class="en">Rate audit and finalization accuracy</span></div>
+                        <div class="goal-level tertiary"><span class="tr">Rejected AWB backlog'unu minimize etmek</span><span class="en">Minimize rejected AWB backlog</span></div>
+                    </div>
+                    <div class="two-col">
+                        <div class="list-box motivators">
+                            <h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                            <div class="list-item"><span class="tr">Toplu işlem ile yüksek hacmi hızla bitirmek</span><span class="en">Completing high volume quickly with bulk processing</span></div>
+                            <div class="list-item"><span class="tr">Temiz dönem kapanışı</span><span class="en">Clean period closure</span></div>
+                            <div class="list-item"><span class="tr">Exception'sız IATA upload</span><span class="en">Exception-free IATA upload</span></div>
+                        </div>
+                        <div class="list-box demotivators">
+                            <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                            <div class="list-item"><span class="tr">Rejected AWB takibi ve vitron backlog</span><span class="en">Rejected AWB tracking and vitron backlog</span></div>
+                            <div class="list-item"><span class="tr">Ülkeye özgü kuralların kurumsal olmayışı</span><span class="en">Country-specific rules not institutionalized</span></div>
+                            <div class="list-item"><span class="tr">Operasyondan gelen veri hataları</span><span class="en">Data errors from operations</span></div>
+                        </div>
+                    </div>
+                    <div class="list-box fears" style="margin-top: 16px;">
+                        <h4>⚠ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item"><span class="tr">Gizli alacak (vitron) nedeniyle gelir kaybı</span><span class="en">Revenue loss due to hidden receivables (vitron)</span></div>
+                        <div class="list-item"><span class="tr">IATA rejected AWB'lerin gözden kaçması</span><span class="en">IATA rejected AWBs being overlooked</span></div>
+                        <div class="list-item"><span class="tr">Dönem kapanışına yetişememe</span><span class="en">Missing period closure deadline</span></div>
+                    </div>
+                </div>
+                <div id="s2-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">ÖZET</span><span class="en">SUMMARY</span></h4>
+                        <p><span class="tr">Ana hedef IATA dönem kapanışlarını zamanında ve hatasız tamamlamaktır. Yüksek hacim nedeniyle bulk finalize zorunludur. En büyük korku rejected AWB'lerin takip edilememesi ve gizli alacak oluşmasıdır.</span><span class="en">Main goal is completing IATA period closures on time and error-free. Bulk finalize is mandatory due to high volume. Biggest fear is inability to track rejected AWBs and hidden receivables forming.</span></p>
+                    </div>
+                    <p class="evidence">MoM-7: "Hidden receivables can stay outside normal closure views, causing unnoticed revenue leakage unless actively monitored."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-3" class="card section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="tr">İş Akışı & Niyetler</span><span class="en">Workflow & Intents</span></h2>
+                    <p><span class="tr">Süreç adımları ve kullanıcı niyetleri</span><span class="en">Process steps and user intents</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s3-chart" class="view-pane active">
+                    <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px;"><span class="tr">RATE AUDIT → FINALIZE → IATA AKIŞI</span><span class="en">RATE AUDIT → FINALIZE → IATA FLOW</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step auto">To Be Rate Audit</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">Ağırlık Kontrolü</span><span class="en">Weight Check</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step approve">Rate Audited</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">CRA089 Bulk</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step approve">Finalized</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">CRA041 IATA</div>
+                    </div>
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="list-box">
+                            <h4 style="color: #0284c7;"><span class="tr">ANA KONTROL NOKTALARI</span><span class="en">MAIN CONTROL POINTS</span></h4>
+                            <div class="list-item"><strong>CRA212:</strong> <span class="tr">Rate audit - Chargeable weight validasyonu</span><span class="en">Rate audit - Chargeable weight validation</span></div>
+                            <div class="list-item"><strong>CRA089:</strong> <span class="tr">Bulk finalization - Toplu işlem</span><span class="en">Bulk finalization - Batch processing</span></div>
+                            <div class="list-item"><strong>CRA041:</strong> <span class="tr">IATA dosya oluşturma ve yükleme</span><span class="en">IATA file generation and upload</span></div>
+                            <div class="list-item"><strong>CRA215:</strong> <span class="tr">Post-bulk kontrol - Kalan AWB tespiti</span><span class="en">Post-bulk check - Remaining AWB detection</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #0284c7;"><span class="tr">EXCEPTION HANDLING</span><span class="en">EXCEPTION HANDLING</span></h4>
+                            <div class="list-item"><span class="tr">Rejected AWB → Withdraw → Sonraki dönem</span><span class="en">Rejected AWB → Withdraw → Next period</span></div>
+                            <div class="list-item"><span class="tr">Spot kayıtlar onaysız gelebilir</span><span class="en">Spot records may arrive unapproved</span></div>
+                            <div class="list-item"><span class="tr">Reopen sonrası yeni ücret talebi</span><span class="en">New charge request after reopen</span></div>
+                            <div class="list-item"><span class="tr">CCA düzeltme (finalize sonrası)</span><span class="en">CCA correction (after finalize)</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s3-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">ÖZET</span><span class="en">SUMMARY</span></h4>
+                        <p><span class="tr">Rate audit'te ana kontrol chargeable weight validasyonudur. CRA089 ile bulk finalize yapılır, exception kayıtlar manuel ele alınır. IATA rejected AWB'ler withdraw edilip sonraki döneme dahil edilir.</span><span class="en">Main control in rate audit is chargeable weight validation. Bulk finalize via CRA089, exception records handled manually. IATA rejected AWBs withdrawn and included in next period.</span></p>
+                    </div>
+                    <p class="evidence">MoM-7: "Main control in practice is kg/chargeable weight validation."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-4" class="card section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                    <p><span class="tr">Sistem entegrasyonları ve veri akışı</span><span class="en">System integrations and data flow</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s4-chart" class="view-pane active">
+                    <div class="two-col">
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;"><span class="tr">SİSTEMLER</span><span class="en">SYSTEMS</span></h4>
+                            <div class="list-item"><strong>COMIS:</strong> CRA212, CRA089, CRA041, CRA215, CRA032</div>
+                            <div class="list-item"><strong>IATA CASS:</strong> <span class="tr">Dosya yükleme ve validasyon</span><span class="en">File upload and validation</span></div>
+                            <div class="list-item"><strong>SAP:</strong> <span class="tr">Finans transferi</span><span class="en">Finance transfer</span></div>
+                            <div class="list-item"><strong>OPR:</strong> <span class="tr">Execute sonrası veri akışı</span><span class="en">Data flow after execute</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;"><span class="tr">VERİ AKIŞI</span><span class="en">DATA FLOW</span></h4>
+                            <div class="list-item"><span class="tr">Execution date → Billing period belirleme</span><span class="en">Execution date → Billing period determination</span></div>
+                            <div class="list-item"><span class="tr">First flight date → Exception filter</span><span class="en">First flight date → Exception filter</span></div>
+                            <div class="list-item"><span class="tr">CRA041 → IATA IS File (XML)</span><span class="en">CRA041 → IATA IS File (XML)</span></div>
+                            <div class="list-item"><span class="tr">IATA validation → Rejected AWB listesi</span><span class="en">IATA validation → Rejected AWB list</span></div>
+                        </div>
+                    </div>
+                    <div class="summary-box" style="margin-top: 16px; background: rgba(13,148,136,0.06);">
+                        <h4 style="color: #0d9488;"><span class="tr">ÜLKEYE ÖZGÜ AYARLAR</span><span class="en">COUNTRY-SPECIFIC SETTINGS</span></h4>
+                        <p><span class="tr">Bazı ülkeler özel other-charge veya market-rate tutarlılık kontrolü gerektirir. Çin örneğinde market-rate eşitliği ve komisyon etkileri manuel ayarlama gerektirebilir. Faturalama sıklığı (15 günlük/aylık) agent-ülke ayarlarıyla kontrol edilir.</span><span class="en">Some countries require specific other-charge or market-rate consistency checks. China case may require manual adjustments for market-rate equality and commission implications. Billing frequency (semi-monthly/monthly) controlled through agent-country settings.</span></p>
+                    </div>
+                </div>
+                <div id="s4-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">ÖZET</span><span class="en">SUMMARY</span></h4>
+                        <p><span class="tr">IATA CASS entegrasyonu kritiktir. Billing period execution date'e göre belirlenir, first flight date ikincil filtre olarak kullanılır. Ülkeye özgü kurallar henüz tam kurumsal değil, deneyime dayalı.</span><span class="en">IATA CASS integration is critical. Billing period determined by execution date, first flight date used as secondary filter. Country-specific rules not fully institutionalized yet, experience-based.</span></p>
+                    </div>
+                    <p class="evidence">MoM-7: "Country-specific rules are real, but institutionalized knowledge is weak."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-5" class="card section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2>
+                    <p><span class="tr">Zorluklar ve risk alanları</span><span class="en">Challenges and risk areas</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s5-chart" class="view-pane active">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Rejected AWB Takip Eksikliği (Vitron)</span><span class="en">Rejected AWB Tracking Gap (Vitron)</span></h5>
+                                <p><span class="tr">IATA rejected AWB'ler düzgün withdraw edilmezse gizli alacak oluşur, CASS-SAP-tahsilat uyumsuzluğu riski</span><span class="en">If IATA rejected AWBs are not properly withdrawn, hidden receivables form, CASS-SAP-collection mismatch risk</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Ülke Kuralları Kurumsal Değil</span><span class="en">Country Rules Not Institutionalized</span></h5>
+                                <p><span class="tr">Ülkeye özgü kontrol nüansları kişiye bağlı, merkezi doküman yok, bilgi kaybı riski</span><span class="en">Country-specific control nuances are person-based, no central documentation, knowledge loss risk</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Rate Audited → Finalized Gereksiz Adım</span><span class="en">Rate Audited → Finalized Unnecessary Step</span></h5>
+                                <p><span class="tr">İki adım arasında sınırlı ek değer, zaman kaybı tartışmaları</span><span class="en">Limited additional value between two steps, time loss discussions</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Sık Reopen Talebi</span><span class="en">Frequent Reopen Request</span></h5>
+                                <p><span class="tr">Finalized AWB'nin reopeni daha erken workflow durumuna döndürür, ekstra iş yükü yaratır</span><span class="en">Reopening finalized AWB returns to earlier workflow state, creates extra workload</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P5</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Robot/Otomasyon Kararsızlığı</span><span class="en">Robot/Automation Instability</span></h5>
+                                <p><span class="tr">Base64/robot kontrolleri tam stabil değil, OCR ve exception handling hala manuel müdahale gerektiriyor</span><span class="en">Base64/robot controls not fully stable, OCR and exception handling still require manual intervention</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s5-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">KÖK NEDEN ANALİZİ</span><span class="en">ROOT CAUSE ANALYSIS</span></h4>
+                        <p><span class="tr">En kritik risk rejected AWB takibi. Vitron backlog görünmez gelir kaybı yaratır. İkinci önemli sorun ülke kurallarının kişiye bağlı olması - personel değişiminde bilgi kaybı riski yüksek.</span><span class="en">Most critical risk is rejected AWB tracking. Vitron backlog creates invisible revenue loss. Second important issue is country rules being person-dependent - high knowledge loss risk with personnel changes.</span></p>
+                    </div>
+                    <p class="evidence">MoM-7: "Improperly tracked reject/vitron records can create revenue leakage despite apparent collection closure."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-6" class="card section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="tr">Zihinsel Model & Davranış</span><span class="en">Mental Model & Behavior</span></h2>
+                    <p><span class="tr">Düşünce yapısı ve empati haritası</span><span class="en">Thought structure and empathy map</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s6-chart" class="view-pane active">
+                    <div class="empathy-grid">
+                        <div class="empathy-quad says">
+                            <h4><span class="icon">💬</span> <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                            <div class="empathy-item"><span class="tr">"Bulk finalize olmazsa dönem kapanışı imkansız"</span><span class="en">"Period closure impossible without bulk finalize"</span></div>
+                            <div class="empathy-item"><span class="tr">"Rejected AWB'leri takip etmek zor"</span><span class="en">"Tracking rejected AWBs is difficult"</span></div>
+                            <div class="empathy-item"><span class="tr">"Ülke kurallarını bilen biri olmalı"</span><span class="en">"Someone should know country rules"</span></div>
+                        </div>
+                        <div class="empathy-avatar">
+                            <div class="empathy-avatar-circle">👤</div>
+                            <p style="margin-top: 12px; font-size: 11px; color: #6b7280; text-align: center;"><span class="tr">Yurt Dışı CASS<br>Uzmanı</span><span class="en">International CASS<br>Specialist</span></p>
+                        </div>
+                        <div class="empathy-quad thinks">
+                            <h4><span class="icon">💭</span> <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                            <div class="empathy-item"><span class="tr">"Bu vitron listesi temiz mi?"</span><span class="en">"Is this vitron list clean?"</span></div>
+                            <div class="empathy-item"><span class="tr">"Çin için özel kural ne idi?"</span><span class="en">"What was the special rule for China?"</span></div>
+                            <div class="empathy-item"><span class="tr">"Otomasyon gerçekten çalışıyor mu?"</span><span class="en">"Is automation really working?"</span></div>
+                        </div>
+                        <div class="empathy-quad does">
+                            <h4><span class="icon">⚡</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                            <div class="empathy-item"><span class="tr">Günlük öncelik listesini alır</span><span class="en">Gets daily priority list</span></div>
+                            <div class="empathy-item"><span class="tr">Bulk finalize ile hacmi eritir</span><span class="en">Clears volume with bulk finalize</span></div>
+                            <div class="empathy-item"><span class="tr">Exception'ları manuel kontrol eder</span><span class="en">Manually checks exceptions</span></div>
+                        </div>
+                        <div class="empathy-quad feels">
+                            <h4><span class="icon">❤️</span> <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                            <div class="empathy-item"><span class="tr">Dönem sonunda baskı</span><span class="en">Pressure at period end</span></div>
+                            <div class="empathy-item"><span class="tr">Vitron backlog endişesi</span><span class="en">Vitron backlog anxiety</span></div>
+                            <div class="empathy-item"><span class="tr">Otomasyon beklentisi</span><span class="en">Automation expectation</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s6-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">ÖZET</span><span class="en">SUMMARY</span></h4>
+                        <p><span class="tr">CASS uzmanı verimlilik ve hız odaklı, yüksek hacimle başa çıkmak için bulk işlemleri tercih eder. Otomasyon konusunda istekli ancak mevcut robot çözümlerinin kararsızlığından endişeli.</span><span class="en">CASS specialist is efficiency and speed focused, prefers bulk operations to handle high volume. Eager about automation but concerned about instability of current robot solutions.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-7" class="card section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                    <p><span class="tr">Paydaş haritası ve bağımlılıklar</span><span class="en">Stakeholder map and dependencies</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s7-chart" class="view-pane active">
+                    <div class="stakeholder-map">
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node provider"><span class="tr">Operasyon (OPR)</span><span class="en">Operations (OPR)</span></div>
+                            <div class="stakeholder-node provider"><span class="tr">Pricing Team</span><span class="en">Pricing Team</span></div>
+                            <div class="stakeholder-node provider"><span class="tr">Rate Team</span><span class="en">Rate Team</span></div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node persona"><span class="tr">Yurt Dışı CASS Uzmanı</span><span class="en">International CASS Specialist</span></div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node consumer">IATA CASS</div>
+                            <div class="stakeholder-node consumer">SAP</div>
+                            <div class="stakeholder-node consumer"><span class="tr">Acenteler</span><span class="en">Agents</span></div>
+                        </div>
+                    </div>
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="list-box">
+                            <h4 style="color: #059669;"><span class="tr">KRİTİK BAĞIMLILIKLAR</span><span class="en">CRITICAL DEPENDENCIES</span></h4>
+                            <div class="list-item">⛔ <span class="tr">IATA validation feedback</span><span class="en">IATA validation feedback</span></div>
+                            <div class="list-item">⏳ <span class="tr">Pricing'den spot onayı</span><span class="en">Spot approval from pricing</span></div>
+                            <div class="list-item">🕳️ <span class="tr">Ülke kuralları dokümanı (YOK)</span><span class="en">Country rules documentation (NONE)</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #059669;"><span class="tr">EĞİTİM İHTİYACI</span><span class="en">TRAINING NEEDS</span></h4>
+                            <div class="list-item"><span class="tr">Ülkeye özgü kural katalogu</span><span class="en">Country-specific rule catalog</span></div>
+                            <div class="list-item"><span class="tr">Vitron/rejected AWB yönetimi</span><span class="en">Vitron/rejected AWB management</span></div>
+                            <div class="list-item"><span class="tr">CASS vs CNS farkları</span><span class="en">CASS vs CNS differences</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s7-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">ÖZET</span><span class="en">SUMMARY</span></h4>
+                        <p><span class="tr">CASS uzmanı operasyon, pricing ve rate team'den veri alır, IATA, SAP ve acentelere çıktı üretir. En kritik eksiklik ülke kuralları dokümanının olmamasıdır.</span><span class="en">CASS specialist receives data from operations, pricing and rate team, produces output for IATA, SAP and agents. Most critical gap is lack of country rules documentation.</span></p>
+                    </div>
+                    <p class="evidence">MoM-7: "Many control nuances are still person-based rather than centrally documented."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-8" class="card section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+                    <p><span class="tr">İyileştirme önerileri ve yol haritası</span><span class="en">Improvement suggestions and roadmap</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s8-chart" class="view-pane active">
+                    <div class="timeline">
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="tr">Rejected AWB İzleme Dashboard</span><span class="en">Rejected AWB Monitoring Dashboard</span></h5>
+                            <p><span class="tr">← P1: Periyodik tracking listesi ve sahiplik atama, gizli alacak backlog önleme</span><span class="en">← P1: Periodic tracking list and ownership assignment, hidden receivable backlog prevention</span></p>
+                        </div>
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="tr">Ülke Kural Katalogu</span><span class="en">Country Rule Catalog</span></h5>
+                            <p><span class="tr">← P2: Zorunlu kontroller, other-charge gereksinimleri ve exception filter'ları ülke bazında dokümante</span><span class="en">← P2: Mandatory checks, other-charge requirements and exception filters documented by country</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT</span>
+                            <h5><span class="tr">Basitleştirilmiş Durum Geçişi</span><span class="en">Simplified Status Transition</span></h5>
+                            <p><span class="tr">← P3: Rate audited ve finalized geçişlerinin exception-dışı kayıtlar için birleştirilmesi</span><span class="en">← P3: Merging rate audited and finalized transitions for non-exception records</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT</span>
+                            <h5><span class="tr">OPR Değişiklik Uyarıları</span><span class="en">OPR Change Alerts</span></h5>
+                            <p><span class="tr">← P4: Operasyon tarafındaki değişikliklerin otomatik CRA yansıması</span><span class="en">← P4: Automatic CRA reflection of operational-side changes</span></p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long">LONG</span>
+                            <h5><span class="tr">IATA Validation Otomasyon</span><span class="en">IATA Validation Automation</span></h5>
+                            <p><span class="tr">← P5: Rejected AWB'ler için otomatik bildirim ve aksiyon yönlendirme</span><span class="en">← P5: Automatic notification and action guidance for rejected AWBs</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="s8-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">ÖNCELİKLENDİRME GEREKÇESİ</span><span class="en">PRIORITIZATION RATIONALE</span></h4>
+                        <p><span class="tr">Rejected AWB izleme en yüksek öncelik çünkü doğrudan gelir kaybı riski taşır. Ülke kural katalogu personel bağımlılığını azaltır ve bilgi sürekliliği sağlar.</span><span class="en">Rejected AWB monitoring is highest priority because it carries direct revenue loss risk. Country rule catalog reduces personnel dependency and ensures knowledge continuity.</span></p>
+                    </div>
+                    <p class="evidence">MoM-7: "Introduce periodic tracking list and clear ownership to prevent hidden receivable backlog."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="section-9" class="card section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                    <p><span class="tr">Yapay zeka destek seviyeleri</span><span class="en">Artificial intelligence support levels</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s9-chart" class="view-pane active">
+                    <div class="ai-slider">
+                        <div class="trust-line"></div>
+                        <span class="trust-label">TRUST LINE</span>
+                        <div class="ai-level" style="top: 4%;">
+                            <span class="ai-level-num" style="background: #dc2626;">6</span>
+                            <span class="ai-level-text" style="color: #dc2626;"><span class="tr">🚫 Otomatik IATA dosya yükleme ve finalize</span><span class="en">🚫 Automatic IATA file upload and finalize</span></span>
+                        </div>
+                        <div class="ai-level" style="top: 21%;">
+                            <span class="ai-level-num" style="background: #b45309;">5</span>
+                            <span class="ai-level-text" style="color: #b45309;"><span class="tr">⚠️ Bulk finalize önerisi (onay gerekli)</span><span class="en">⚠️ Bulk finalize suggestion (approval required)</span></span>
+                        </div>
+                        <div class="ai-level" style="top: 40%;">
+                            <span class="ai-level-num" style="background: #15803d;">4</span>
+                            <span class="ai-level-text" style="color: #15803d;"><span class="tr">💡 Weight anomali tespiti ve uyarı</span><span class="en">💡 Weight anomaly detection and alert</span></span>
+                        </div>
+                        <div class="ai-level" style="top: 55%;">
+                            <span class="ai-level-num" style="background: #15803d;">3</span>
+                            <span class="ai-level-text" style="color: #15803d;"><span class="tr">⚙️ Rejected AWB listesi ön hazırlığı</span><span class="en">⚙️ Rejected AWB list preparation</span></span>
+                        </div>
+                        <div class="ai-level" style="top: 70%;">
+                            <span class="ai-level-num" style="background: #15803d;">2</span>
+                            <span class="ai-level-text" style="color: #15803d;"><span class="tr">📝 Dönem özeti ve vitron raporu</span><span class="en">📝 Period summary and vitron report</span></span>
+                        </div>
+                        <div class="ai-level" style="top: 85%;">
+                            <span class="ai-level-num" style="background: #15803d;">1</span>
+                            <span class="ai-level-text" style="color: #15803d;"><span class="tr">📊 AWB durumu ve ülke kuralı gösterimi</span><span class="en">📊 AWB status and country rule display</span></span>
+                        </div>
+                    </div>
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="list-box" style="border-left: 3px solid #059669;">
+                            <h4 style="color: #059669;"><span class="tr">AI UYGUN</span><span class="en">AI SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">Değişmeyen kayıtları otomatik işleme</span><span class="en">Auto-process unchanged records</span></div>
+                            <div class="list-item"><span class="tr">Rejected AWB sebep analizi</span><span class="en">Rejected AWB reason analysis</span></div>
+                            <div class="list-item"><span class="tr">Ülke kuralı hatırlatıcısı</span><span class="en">Country rule reminder</span></div>
+                        </div>
+                        <div class="list-box" style="border-left: 3px solid #dc2626;">
+                            <h4 style="color: #dc2626;"><span class="tr">AI UYGUN DEĞİL</span><span class="en">AI NOT SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">← P1: IATA submission kararı</span><span class="en">← P1: IATA submission decision</span></div>
+                            <div class="list-item"><span class="tr">← P4: Rate artış/azalış onayı</span><span class="en">← P4: Rate increase/decrease approval</span></div>
+                            <div class="list-item"><span class="tr">Finansal reconciliation</span><span class="en">Financial reconciliation</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s9-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">AI BAŞARI METRİKLERİ</span><span class="en">AI SUCCESS METRICS</span></h4>
+                        <p><span class="tr">Target model: değişmeyen kayıtları yüksek hacimde otomatik işle, sadece tutarsız kayıtları kullanıcıya yönlendir. Weight anomali tespit oranı %98+, false positive %3 altında olmalı.</span><span class="en">Target model: auto-process unchanged records in large volumes, route only discrepant items to users. Weight anomaly detection rate should be 98%+, false positive below 3%.</span></p>
+                    </div>
+                    <p class="evidence">MoM-7: "Target model: auto-process unchanged records in large volumes and route only discrepant items to users."</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="footer">
+        <p><span class="tr">Kaynak: CRA Key User Workshop MoM 1-7 (Nisan 2026)</span><span class="en">Source: CRA Key User Workshop MoM 1-7 (April 2026)</span></p>
+        <p><span class="tr">Katılımcılar: Yunus Emre Sarı, Başak Ayhan Kayacık, Naz Burcu Vardar, Gökhan Çulfacı</span><span class="en">Participants: Yunus Emre Sarı, Başak Ayhan Kayacık, Naz Burcu Vardar, Gökhan Çulfacı</span></p>
+        <p style="margin-top: 12px; font-size: 10px;"><span class="tr">⚠️ Bu doküman yalnızca MoM kanıtlarına dayalıdır. Spekülatif çıkarım içermez.</span><span class="en">⚠️ This document is based solely on MoM evidence. Contains no speculative inference.</span></p>
+    </footer>
+
+</div>
+
+<script>
+    function toggleMegaMenu() { document.querySelector('.mega-menu').classList.toggle('open'); document.querySelector('.mega-overlay').classList.toggle('open'); }
+    function switchLang(lang) { document.body.className = 'lang-' + lang; document.querySelectorAll('.lang-btn').forEach(btn => { btn.classList.remove('active'); if (btn.getAttribute('onclick').includes(lang)) { btn.classList.add('active'); } }); }
+    function toggleView(btn, section, view) { const parent = btn.closest('.card'); parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); parent.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active')); document.getElementById(section + '-' + view).classList.add('active'); }
+    document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('click', function(e) { document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); this.classList.add('active'); }); });
+</script>
+
+</body>
+</html>

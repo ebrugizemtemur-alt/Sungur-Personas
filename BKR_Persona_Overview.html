@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BKR - Booking & Reservation | Persona Overview</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(79,70,229,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: rgba(79,70,229,0.1);
+            color: #4f46e5;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .lang-toggle {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.8);
+            padding: 4px;
+            border-radius: 8px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .lang-btn.active {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        
+        .hero h1 span {
+            color: #4f46e5;
+        }
+        
+        .hero-subtitle {
+            font-size: 18px;
+            color: #6b7280;
+            max-width: 700px;
+            margin-bottom: 24px;
+        }
+        
+        .hero-quote {
+            border-left: 3px solid #4f46e5;
+            padding-left: 20px;
+            font-style: italic;
+            color: #374151;
+            margin-bottom: 32px;
+            max-width: 600px;
+        }
+        
+        .hero-meta {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+        
+        .meta-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        /* Board Container */
+        .board {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+        
+        /* Cards */
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 24px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .card-title {
+            flex: 1;
+        }
+        
+        .card-title h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .card-title p {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-top: 2px;
+        }
+        
+        .card-body {
+            padding: 24px;
+        }
+        
+        /* Persona Grid */
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 24px;
+        }
+        
+        .persona-card {
+            background: #ffffff;
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .persona-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .persona-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .persona-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        
+        .persona-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .persona-info .role {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+        
+        .persona-info .badge-small {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .persona-body {
+            padding: 0 20px 20px;
+        }
+        
+        .persona-section {
+            margin-bottom: 16px;
+        }
+        
+        .persona-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 13px;
+            color: #374151;
+        }
+        
+        .task-item::before {
+            content: '•';
+            color: #9ca3af;
+            font-weight: bold;
+        }
+        
+        .screen-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .screen-tag {
+            padding: 4px 10px;
+            background: rgba(0,0,0,0.04);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+        
+        .pain-points {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .pain-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 12px;
+            color: #dc2626;
+            background: rgba(220,38,38,0.05);
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        
+        .pain-item .icon {
+            flex-shrink: 0;
+        }
+        
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: rgba(0,0,0,0.02);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #4f46e5;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        /* Persona Colors */
+        .persona-1 .persona-header { border-left: 4px solid #4f46e5; }
+        .persona-1 .persona-avatar { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .persona-1 .badge-small { background: rgba(79,70,229,0.1); color: #4f46e5; }
+        
+        .persona-2 .persona-header { border-left: 4px solid #0891b2; }
+        .persona-2 .persona-avatar { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .persona-2 .badge-small { background: rgba(8,145,178,0.1); color: #0891b2; }
+        
+        .persona-3 .persona-header { border-left: 4px solid #d97706; }
+        .persona-3 .persona-avatar { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .persona-3 .badge-small { background: rgba(217,119,6,0.1); color: #d97706; }
+        
+        .persona-4 .persona-header { border-left: 4px solid #059669; }
+        .persona-4 .persona-avatar { background: linear-gradient(135deg, #059669, #10b981); }
+        .persona-4 .badge-small { background: rgba(5,150,105,0.1); color: #059669; }
+        
+        .persona-5 .persona-header { border-left: 4px solid #9333ea; }
+        .persona-5 .persona-avatar { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .persona-5 .badge-small { background: rgba(147,51,234,0.1); color: #9333ea; }
+        
+        .persona-6 .persona-header { border-left: 4px solid #e11d48; }
+        .persona-6 .persona-avatar { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .persona-6 .badge-small { background: rgba(225,29,72,0.1); color: #e11d48; }
+        
+        /* Relationship Map */
+        .relationship-map {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            padding: 40px 20px;
+        }
+        
+        .map-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .map-node {
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 160px;
+        }
+        
+        .map-node.central {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            padding: 24px 40px;
+            font-size: 16px;
+            box-shadow: 0 8px 24px rgba(79,70,229,0.3);
+        }
+        
+        .map-node.external {
+            background: #f3f4f6;
+            color: #374151;
+            border: 2px dashed #d1d5db;
+        }
+        
+        .map-node.internal {
+            background: rgba(79,70,229,0.1);
+            color: #4f46e5;
+            border: 1px solid rgba(79,70,229,0.2);
+        }
+        
+        .map-connector {
+            width: 2px;
+            height: 32px;
+            background: linear-gradient(to bottom, #4f46e5, #c7d2fe);
+        }
+        
+        .map-connector-h {
+            width: 60px;
+            height: 2px;
+            background: #d1d5db;
+        }
+        
+        /* Systems Grid */
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+        
+        .system-card {
+            background: rgba(0,0,0,0.02);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .system-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 20px;
+        }
+        
+        .system-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        
+        .system-card p {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+        
+        /* Channel Flow */
+        .channel-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+        
+        .channel-box {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .channel-box.digital { background: #dbeafe; color: #1d4ed8; }
+        .channel-box.manual { background: #fef3c7; color: #b45309; }
+        .channel-box.system { background: #d1fae5; color: #047857; }
+        
+        .flow-arrow {
+            color: #9ca3af;
+            font-size: 20px;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+        
+        .footer p {
+            margin-bottom: 8px;
+        }
+        
+        /* Toggle */
+        .toggle-wrap {
+            display: flex;
+            background: rgba(0,0,0,0.04);
+            padding: 4px;
+            border-radius: 8px;
+        }
+        
+        .toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #6b7280;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .toggle-btn.active {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .view-pane {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .view-pane.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero { padding: 40px 20px; }
+            .hero h1 { font-size: 32px; }
+            .board { padding: 20px; }
+            .persona-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-en">
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">BKR · BOOKING & RESERVATION · PERSONA STUDY</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="switchLang('en')" data-lang="en">EN</button>
+                    <button class="lang-btn" onclick="switchLang('tr')" data-lang="tr">TR</button>
+                </div>
+            </div>
+            
+            <h1>
+                <span class="tr">THY Cargo <span>Rezervasyon</span> Personaları</span>
+                <span class="en">THY Cargo <span>Reservation</span> Personas</span>
+            </h1>
+            
+            <p class="hero-subtitle">
+                <span class="tr">13 Workshop MoM dokümanından çıkarılan 6 temel kullanıcı profili. Key User ve Solution Team görüşmelerinden elde edilen içgörüler.</span>
+                <span class="en">6 core user profiles extracted from 13 Workshop MoM documents. Insights gathered from Key User and Solution Team interviews.</span>
+            </p>
+            
+            <div class="hero-quote">
+                <span class="tr">"Günlük 1000-1500 arama, 12.000 aylık AWB, 104 farklı rol... Her persona farklı bir ihtiyaca hizmet ediyor."</span>
+                <span class="en">"Daily 1000-1500 calls, 12,000 monthly AWBs, 104 different roles... Each persona serves a different need."</span>
+            </div>
+            
+            <div class="hero-meta">
+                <div class="meta-item">
+                    <span class="meta-dot" style="background: #4f46e5;"></span>
+                    <span class="tr">6 Persona Tipi</span>
+                    <span class="en">6 Persona Types</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-dot" style="background: #059669;"></span>
+                    <span class="tr">13 Kaynak Doküman</span>
+                    <span class="en">13 Source Documents</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-dot" style="background: #d97706;"></span>
+                    <span class="tr">10 Key User + 3 Solution Team</span>
+                    <span class="en">10 Key User + 3 Solution Team</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-dot" style="background: #e11d48;"></span>
+                    <span class="tr">Aralık 2025 - Ocak 2026</span>
+                    <span class="en">December 2025 - January 2026</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Board -->
+    <div class="board">
+        
+        <!-- Stats Overview -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #4f46e5, #6366f1);">📊</div>
+                <div class="card-title">
+                    <h2>
+                        <span class="tr">Genel Bakış</span>
+                        <span class="en">Overview</span>
+                    </h2>
+                    <p>
+                        <span class="tr">Temel metrikler ve istatistikler</span>
+                        <span class="en">Key metrics and statistics</span>
+                    </p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">
+                            <span class="tr">Persona Tipi</span>
+                            <span class="en">Persona Types</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">104</div>
+                        <div class="stat-label">
+                            <span class="tr">Sistem Rolü</span>
+                            <span class="en">System Roles</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12K</div>
+                        <div class="stat-label">
+                            <span class="tr">Aylık AWB (IST)</span>
+                            <span class="en">Monthly AWBs (IST)</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1.5K</div>
+                        <div class="stat-label">
+                            <span class="tr">Günlük Arama</span>
+                            <span class="en">Daily Calls</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">28</div>
+                        <div class="stat-label">
+                            <span class="tr">Gün (Maks. Rezervasyon)</span>
+                            <span class="en">Days (Max Booking)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Persona Cards -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #059669, #10b981);">👥</div>
+                <div class="card-title">
+                    <h2>
+                        <span class="tr">Persona Profilleri</span>
+                        <span class="en">Persona Profiles</span>
+                    </h2>
+                    <p>
+                        <span class="tr">6 temel kullanıcı tipi ve özellikleri</span>
+                        <span class="en">6 core user types and their characteristics</span>
+                    </p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'personas','cards')">
+                        <span class="tr">Kartlar</span>
+                        <span class="en">Cards</span>
+                    </button>
+                    <button class="toggle-btn" onclick="toggleView(this,'personas','list')">
+                        <span class="tr">Liste</span>
+                        <span class="en">List</span>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="personas-cards" class="view-pane active">
+                    <div class="persona-grid">
+                        
+                        <!-- Persona 1: IST Outbound -->
+                        <div class="persona-card persona-1">
+                            <div class="persona-header">
+                                <div class="persona-avatar">✈️</div>
+                                <div class="persona-info">
+                                    <h3>
+                                        <span class="tr">IST Çıkış Rezervasyon Personeli</span>
+                                        <span class="en">IST Outbound Reservation Agent</span>
+                                    </h3>
+                                    <p class="role">
+                                        <span class="tr">Uluslararası Kargo Rezervasyonu</span>
+                                        <span class="en">International Cargo Reservation</span>
+                                    </p>
+                                    <span class="badge-small">
+                                        <span class="tr">YÜKSEK KRİTİKLİK</span>
+                                        <span class="en">HIGH CRITICALITY</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="persona-body">
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">TEMEL GÖREVLER</span>
+                                        <span class="en">KEY TASKS</span>
+                                    </div>
+                                    <div class="task-list">
+                                        <div class="task-item">
+                                            <span class="tr">Uluslararası kargo rezervasyonu oluşturma</span>
+                                            <span class="en">Create international cargo reservations</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Embargo/restriction kontrolleri</span>
+                                            <span class="en">Embargo/restriction checks</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">ACRM fiyatlama onayları</span>
+                                            <span class="en">ACRM pricing approvals</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Accuity sistem entegrasyonu</span>
+                                            <span class="en">Accuity system integration</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">KULLANILAN EKRANLAR</span>
+                                        <span class="en">SCREENS USED</span>
+                                    </div>
+                                    <div class="screen-tags">
+                                        <span class="screen-tag">CAP018</span>
+                                        <span class="screen-tag">STK007</span>
+                                        <span class="screen-tag">COMIS</span>
+                                        <span class="screen-tag">ACRM</span>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">PAIN POINT</span>
+                                        <span class="en">PAIN POINT</span>
+                                    </div>
+                                    <div class="pain-points">
+                                        <div class="pain-item">
+                                            <span class="icon">⚠️</span>
+                                            <span class="tr">Embargo aktif/pasif geçişleri diğer rezervasyonları etkiliyor</span>
+                                            <span class="en">Embargo active/inactive transitions affect other reservations</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Persona 2: Domestic -->
+                        <div class="persona-card persona-2">
+                            <div class="persona-header">
+                                <div class="persona-avatar">🏠</div>
+                                <div class="persona-info">
+                                    <h3>
+                                        <span class="tr">Yurtiçi Rezervasyon Personeli</span>
+                                        <span class="en">Domestic Reservation Agent</span>
+                                    </h3>
+                                    <p class="role">
+                                        <span class="tr">Yurtiçi Kargo Operasyonları</span>
+                                        <span class="en">Domestic Cargo Operations</span>
+                                    </p>
+                                    <span class="badge-small">
+                                        <span class="tr">YÜKSEK KRİTİKLİK</span>
+                                        <span class="en">HIGH CRITICALITY</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="persona-body">
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">TEMEL GÖREVLER</span>
+                                        <span class="en">KEY TASKS</span>
+                                    </div>
+                                    <div class="task-list">
+                                        <div class="task-item">
+                                            <span class="tr">Yurtiçi kargo rezervasyonları</span>
+                                            <span class="en">Domestic cargo reservations</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Tezgahta ödeme tahsilatı</span>
+                                            <span class="en">Counter payment collection</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Walk-in müşteri kaydı</span>
+                                            <span class="en">Walk-in customer registration</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Gerçek ağırlık/ölçü girişi</span>
+                                            <span class="en">Actual weight/dimension entry</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">KULLANILAN EKRANLAR</span>
+                                        <span class="en">SCREENS USED</span>
+                                    </div>
+                                    <div class="screen-tags">
+                                        <span class="screen-tag">OPR026</span>
+                                        <span class="screen-tag">CMT008</span>
+                                        <span class="screen-tag">CSA008</span>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">PAIN POINT</span>
+                                        <span class="en">PAIN POINT</span>
+                                    </div>
+                                    <div class="pain-points">
+                                        <div class="pain-item">
+                                            <span class="icon">⚠️</span>
+                                            <span class="tr">10 dk session süresi dolunca tüm bilgiler kayboluyor</span>
+                                            <span class="en">All data lost when 10-min session expires</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Persona 3: Capacity -->
+                        <div class="persona-card persona-3">
+                            <div class="persona-header">
+                                <div class="persona-avatar">📊</div>
+                                <div class="persona-info">
+                                    <h3>
+                                        <span class="tr">Kapasite Planlama Ekibi</span>
+                                        <span class="en">Capacity Planning Team</span>
+                                    </h3>
+                                    <p class="role">
+                                        <span class="tr">Uçak Kapasite Yönetimi</span>
+                                        <span class="en">Aircraft Capacity Management</span>
+                                    </p>
+                                    <span class="badge-small">
+                                        <span class="tr">YÜKSEK KRİTİKLİK</span>
+                                        <span class="en">HIGH CRITICALITY</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="persona-body">
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">TEMEL GÖREVLER</span>
+                                        <span class="en">KEY TASKS</span>
+                                    </div>
+                                    <div class="task-list">
+                                        <div class="task-item">
+                                            <span class="tr">Uçak kapasite optimizasyonu</span>
+                                            <span class="en">Aircraft capacity optimization</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Kısıtlama yönetimi (açma/kapama)</span>
+                                            <span class="en">Constraint management (open/close)</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Tonnaj onayları (5-10 ton üzeri)</span>
+                                            <span class="en">Tonnage approvals (5-10+ tons)</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Reassign/reject/queue işlemleri</span>
+                                            <span class="en">Reassign/reject/queue operations</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">KULLANILAN EKRANLAR</span>
+                                        <span class="en">SCREENS USED</span>
+                                    </div>
+                                    <div class="screen-tags">
+                                        <span class="screen-tag">Monitor Flight</span>
+                                        <span class="screen-tag">CAP018</span>
+                                        <span class="screen-tag">FLT002</span>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">PAIN POINT</span>
+                                        <span class="en">PAIN POINT</span>
+                                    </div>
+                                    <div class="pain-points">
+                                        <div class="pain-item">
+                                            <span class="icon">⚠️</span>
+                                            <span class="tr">Multi-leg uçuşlarda reject sonrası takip kaybı</span>
+                                            <span class="en">Lost tracking after reject on multi-leg flights</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Persona 4: Operations -->
+                        <div class="persona-card persona-4">
+                            <div class="persona-header">
+                                <div class="persona-avatar">🛠️</div>
+                                <div class="persona-info">
+                                    <h3>
+                                        <span class="tr">Operasyon Ekibi</span>
+                                        <span class="en">Operations Team</span>
+                                    </h3>
+                                    <p class="role">
+                                        <span class="tr">Kargo Kabul & Uçuş Operasyonları</span>
+                                        <span class="en">Cargo Acceptance & Flight Ops</span>
+                                    </p>
+                                    <span class="badge-small">
+                                        <span class="tr">YÜKSEK KRİTİKLİK</span>
+                                        <span class="en">HIGH CRITICALITY</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="persona-body">
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">TEMEL GÖREVLER</span>
+                                        <span class="en">KEY TASKS</span>
+                                    </div>
+                                    <div class="task-list">
+                                        <div class="task-item">
+                                            <span class="tr">Uçuş kapatma işlemleri</span>
+                                            <span class="en">Flight closing operations</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Kargo kabul ve tartım</span>
+                                            <span class="en">Cargo acceptance and weighing</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Offload kararları</span>
+                                            <span class="en">Offload decisions</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Dokümantasyon kontrolü</span>
+                                            <span class="en">Documentation control</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">KULLANILAN EKRANLAR</span>
+                                        <span class="en">SCREENS USED</span>
+                                    </div>
+                                    <div class="screen-tags">
+                                        <span class="screen-tag">OPR344</span>
+                                        <span class="screen-tag">OPR026</span>
+                                        <span class="screen-tag">OPR352</span>
+                                        <span class="screen-tag">Capture Regulatory</span>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">PAIN POINT</span>
+                                        <span class="en">PAIN POINT</span>
+                                    </div>
+                                    <div class="pain-points">
+                                        <div class="pain-item">
+                                            <span class="icon">⚠️</span>
+                                            <span class="tr">3 yıllık veri çekme performans düşüklüğü</span>
+                                            <span class="en">Performance issues when pulling 3 years of data</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Persona 5: International/GSA -->
+                        <div class="persona-card persona-5">
+                            <div class="persona-header">
+                                <div class="persona-avatar">🌍</div>
+                                <div class="persona-info">
+                                    <h3>
+                                        <span class="tr">Yurtdışı Rezervasyon (GSA/Station)</span>
+                                        <span class="en">International Reservation (GSA/Station)</span>
+                                    </h3>
+                                    <p class="role">
+                                        <span class="tr">Yurtdışı İstasyon Operasyonları</span>
+                                        <span class="en">Overseas Station Operations</span>
+                                    </p>
+                                    <span class="badge-small">
+                                        <span class="tr">ORTA KRİTİKLİK</span>
+                                        <span class="en">MEDIUM CRITICALITY</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="persona-body">
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">TEMEL GÖREVLER</span>
+                                        <span class="en">KEY TASKS</span>
+                                    </div>
+                                    <div class="task-list">
+                                        <div class="task-item">
+                                            <span class="tr">Yurtdışı istasyonlardan rezervasyon</span>
+                                            <span class="en">Reservations from overseas stations</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">GSA koordinasyonu</span>
+                                            <span class="en">GSA coordination</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Non-IATA agent yönetimi</span>
+                                            <span class="en">Non-IATA agent management</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">GHA ile koordinasyon</span>
+                                            <span class="en">GHA coordination</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">KULLANILAN EKRANLAR</span>
+                                        <span class="en">SCREENS USED</span>
+                                    </div>
+                                    <div class="screen-tags">
+                                        <span class="screen-tag">COMIS</span>
+                                        <span class="screen-tag">TK GO</span>
+                                        <span class="screen-tag">Capture AWB</span>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">PAIN POINT</span>
+                                        <span class="en">PAIN POINT</span>
+                                    </div>
+                                    <div class="pain-points">
+                                        <div class="pain-item">
+                                            <span class="icon">⚠️</span>
+                                            <span class="tr">Ülkelere göre değişen süreçler ve yetkiler</span>
+                                            <span class="en">Varying processes and permissions by country</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Persona 6: Solution/Technical -->
+                        <div class="persona-card persona-6">
+                            <div class="persona-header">
+                                <div class="persona-avatar">⚙️</div>
+                                <div class="persona-info">
+                                    <h3>
+                                        <span class="tr">Çözüm/Teknik Ekibi</span>
+                                        <span class="en">Solution/Technical Team</span>
+                                    </h3>
+                                    <p class="role">
+                                        <span class="tr">Sistem & Entegrasyon Desteği</span>
+                                        <span class="en">System & Integration Support</span>
+                                    </p>
+                                    <span class="badge-small">
+                                        <span class="tr">DESTEK</span>
+                                        <span class="en">SUPPORT</span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="persona-body">
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">TEMEL GÖREVLER</span>
+                                        <span class="en">KEY TASKS</span>
+                                    </div>
+                                    <div class="task-list">
+                                        <div class="task-item">
+                                            <span class="tr">Sistem konfigürasyonu</span>
+                                            <span class="en">System configuration</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">Rol ve yetki yönetimi (104 rol)</span>
+                                            <span class="en">Role & permission management (104 roles)</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">API entegrasyon desteği</span>
+                                            <span class="en">API integration support</span>
+                                        </div>
+                                        <div class="task-item">
+                                            <span class="tr">TK GO - COMIS senkronizasyonu</span>
+                                            <span class="en">TK GO - COMIS synchronization</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">KULLANILAN EKRANLAR</span>
+                                        <span class="en">SCREENS USED</span>
+                                    </div>
+                                    <div class="screen-tags">
+                                        <span class="screen-tag">ADM007</span>
+                                        <span class="screen-tag">Tüm Ekranlar</span>
+                                        <span class="screen-tag">API Dashboard</span>
+                                    </div>
+                                </div>
+                                <div class="persona-section">
+                                    <div class="section-label">
+                                        <span class="tr">PAIN POINT</span>
+                                        <span class="en">PAIN POINT</span>
+                                    </div>
+                                    <div class="pain-points">
+                                        <div class="pain-item">
+                                            <span class="icon">⚠️</span>
+                                            <span class="tr">104 farklı rol yönetimi karmaşıklığı</span>
+                                            <span class="en">Complexity of managing 104 different roles</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div id="personas-list" class="view-pane">
+                    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                        <thead>
+                            <tr style="background:#f9fafb;">
+                                <th style="padding:12px; text-align:left; border-bottom:2px solid #e5e7eb;">#</th>
+                                <th style="padding:12px; text-align:left; border-bottom:2px solid #e5e7eb;">
+                                    <span class="tr">Persona</span>
+                                    <span class="en">Persona</span>
+                                </th>
+                                <th style="padding:12px; text-align:left; border-bottom:2px solid #e5e7eb;">
+                                    <span class="tr">Ana Sistem</span>
+                                    <span class="en">Main System</span>
+                                </th>
+                                <th style="padding:12px; text-align:left; border-bottom:2px solid #e5e7eb;">
+                                    <span class="tr">Kullanıcı Tipi</span>
+                                    <span class="en">User Type</span>
+                                </th>
+                                <th style="padding:12px; text-align:left; border-bottom:2px solid #e5e7eb;">
+                                    <span class="tr">Kritiklik</span>
+                                    <span class="en">Criticality</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom:1px solid #e5e7eb;">
+                                <td style="padding:12px;">1</td>
+                                <td style="padding:12px; font-weight:600;">
+                                    <span class="tr">IST Çıkış Rezervasyon Personeli</span>
+                                    <span class="en">IST Outbound Reservation Agent</span>
+                                </td>
+                                <td style="padding:12px;">CAP018, COMIS</td>
+                                <td style="padding:12px;">
+                                    <span class="tr">TK Personeli</span>
+                                    <span class="en">TK Staff</span>
+                                </td>
+                                <td style="padding:12px;"><span style="background:#fef2f2; color:#dc2626; padding:4px 8px; border-radius:4px; font-size:11px;">
+                                    <span class="tr">Yüksek</span>
+                                    <span class="en">High</span>
+                                </span></td>
+                            </tr>
+                            <tr style="border-bottom:1px solid #e5e7eb;">
+                                <td style="padding:12px;">2</td>
+                                <td style="padding:12px; font-weight:600;">
+                                    <span class="tr">Yurtiçi Rezervasyon Personeli</span>
+                                    <span class="en">Domestic Reservation Agent</span>
+                                </td>
+                                <td style="padding:12px;">OPR026, CMT008</td>
+                                <td style="padding:12px;">
+                                    <span class="tr">TK Personeli</span>
+                                    <span class="en">TK Staff</span>
+                                </td>
+                                <td style="padding:12px;"><span style="background:#fef2f2; color:#dc2626; padding:4px 8px; border-radius:4px; font-size:11px;">
+                                    <span class="tr">Yüksek</span>
+                                    <span class="en">High</span>
+                                </span></td>
+                            </tr>
+                            <tr style="border-bottom:1px solid #e5e7eb;">
+                                <td style="padding:12px;">3</td>
+                                <td style="padding:12px; font-weight:600;">
+                                    <span class="tr">Kapasite Planlama Ekibi</span>
+                                    <span class="en">Capacity Planning Team</span>
+                                </td>
+                                <td style="padding:12px;">Monitor Flight, CAP018</td>
+                                <td style="padding:12px;">
+                                    <span class="tr">TK Personeli</span>
+                                    <span class="en">TK Staff</span>
+                                </td>
+                                <td style="padding:12px;"><span style="background:#fef2f2; color:#dc2626; padding:4px 8px; border-radius:4px; font-size:11px;">
+                                    <span class="tr">Yüksek</span>
+                                    <span class="en">High</span>
+                                </span></td>
+                            </tr>
+                            <tr style="border-bottom:1px solid #e5e7eb;">
+                                <td style="padding:12px;">4</td>
+                                <td style="padding:12px; font-weight:600;">
+                                    <span class="tr">Operasyon Ekibi</span>
+                                    <span class="en">Operations Team</span>
+                                </td>
+                                <td style="padding:12px;">OPR344, OPR026</td>
+                                <td style="padding:12px;">
+                                    <span class="tr">TK Personeli</span>
+                                    <span class="en">TK Staff</span>
+                                </td>
+                                <td style="padding:12px;"><span style="background:#fef2f2; color:#dc2626; padding:4px 8px; border-radius:4px; font-size:11px;">
+                                    <span class="tr">Yüksek</span>
+                                    <span class="en">High</span>
+                                </span></td>
+                            </tr>
+                            <tr style="border-bottom:1px solid #e5e7eb;">
+                                <td style="padding:12px;">5</td>
+                                <td style="padding:12px; font-weight:600;">
+                                    <span class="tr">Yurtdışı Rezervasyon (GSA/Station)</span>
+                                    <span class="en">International Reservation (GSA/Station)</span>
+                                </td>
+                                <td style="padding:12px;">COMIS, TK GO</td>
+                                <td style="padding:12px;">GSA/GHA</td>
+                                <td style="padding:12px;"><span style="background:#fefce8; color:#b45309; padding:4px 8px; border-radius:4px; font-size:11px;">
+                                    <span class="tr">Orta</span>
+                                    <span class="en">Medium</span>
+                                </span></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:12px;">6</td>
+                                <td style="padding:12px; font-weight:600;">
+                                    <span class="tr">Çözüm/Teknik Ekibi</span>
+                                    <span class="en">Solution/Technical Team</span>
+                                </td>
+                                <td style="padding:12px;">ADM007, All</td>
+                                <td style="padding:12px;">IT/Solution</td>
+                                <td style="padding:12px;"><span style="background:#f0fdf4; color:#16a34a; padding:4px 8px; border-radius:4px; font-size:11px;">
+                                    <span class="tr">Destek</span>
+                                    <span class="en">Support</span>
+                                </span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Reservation Channels -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #0891b2, #06b6d4);">📡</div>
+                <div class="card-title">
+                    <h2>
+                        <span class="tr">Rezervasyon Kanalları</span>
+                        <span class="en">Reservation Channels</span>
+                    </h2>
+                    <p>
+                        <span class="tr">Dijital ve manuel kanal akışı</span>
+                        <span class="en">Digital and manual channel flow</span>
+                    </p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="channel-flow">
+                    <div class="channel-box digital">TK GO</div>
+                    <div class="channel-box digital">API</div>
+                    <div class="channel-box digital">FFR</div>
+                    <div class="channel-box digital">Cargo One</div>
+                    <div class="channel-box digital">WebCargo</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="channel-box system">COMIS</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="channel-box system">ACRM</div>
+                    <div class="channel-box system">Accuity</div>
+                </div>
+                <div class="channel-flow" style="margin-top:16px;">
+                    <div class="channel-box manual">Call Center</div>
+                    <div class="channel-box manual">Email</div>
+                    <div class="channel-box manual">Walk-in</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="channel-box system">CAP018 / OPR026</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="channel-box system">COMIS</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Systems Used -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #9333ea, #a855f7);">💻</div>
+                <div class="card-title">
+                    <h2>
+                        <span class="tr">Kullanılan Sistemler</span>
+                        <span class="en">Systems Used</span>
+                    </h2>
+                    <p>
+                        <span class="tr">Ana ekranlar ve entegrasyonlar</span>
+                        <span class="en">Main screens and integrations</span>
+                    </p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="systems-grid">
+                    <div class="system-card">
+                        <div class="system-icon" style="background: rgba(79,70,229,0.1);">📋</div>
+                        <h4>CAP018</h4>
+                        <p>
+                            <span class="tr">Ana rezervasyon ekranı (Uluslararası)</span>
+                            <span class="en">Main booking screen (International)</span>
+                        </p>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon" style="background: rgba(8,145,178,0.1);">📦</div>
+                        <h4>OPR026</h4>
+                        <p>
+                            <span class="tr">Capture AWB (Yurtiçi)</span>
+                            <span class="en">Capture AWB (Domestic)</span>
+                        </p>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon" style="background: rgba(217,119,6,0.1);">📊</div>
+                        <h4>OPR344</h4>
+                        <p>
+                            <span class="tr">Operasyon izleme</span>
+                            <span class="en">Operations monitoring</span>
+                        </p>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon" style="background: rgba(5,150,105,0.1);">👥</div>
+                        <h4>CMT008</h4>
+                        <p>
+                            <span class="tr">Müşteri kaydı</span>
+                            <span class="en">Customer registration</span>
+                        </p>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon" style="background: rgba(147,51,234,0.1);">✈️</div>
+                        <h4>FLT002</h4>
+                        <p>
+                            <span class="tr">Uçuş/Truck planlama</span>
+                            <span class="en">Flight/Truck planning</span>
+                        </p>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon" style="background: rgba(225,29,72,0.1);">🔒</div>
+                        <h4>ADM007</h4>
+                        <p>
+                            <span class="tr">Rol & yetki yönetimi</span>
+                            <span class="en">Role & permission mgmt</span>
+                        </p>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon" style="background: rgba(79,70,229,0.1);">💰</div>
+                        <h4>ACRM</h4>
+                        <p>
+                            <span class="tr">Dinamik fiyatlama</span>
+                            <span class="en">Dynamic pricing</span>
+                        </p>
+                    </div>
+                    <div class="system-card">
+                        <div class="system-icon" style="background: rgba(220,38,38,0.1);">🛡️</div>
+                        <h4>Accuity</h4>
+                        <p>
+                            <span class="tr">Embargo/Compliance kontrolü</span>
+                            <span class="en">Embargo/Compliance check</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Reservation Statuses -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #d97706, #f59e0b);">🔄</div>
+                <div class="card-title">
+                    <h2>
+                        <span class="tr">Rezervasyon Statüleri</span>
+                        <span class="en">Reservation Statuses</span>
+                    </h2>
+                    <p>
+                        <span class="tr">Yaşam döngüsü ve durum geçişleri</span>
+                        <span class="en">Lifecycle and status transitions</span>
+                    </p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="channel-flow">
+                    <div class="channel-box" style="background:#dbeafe; color:#1d4ed8;">Reservation</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="channel-box" style="background:#d1fae5; color:#047857;">Confirmed</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="channel-box" style="background:#fef3c7; color:#b45309;">Queued</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="channel-box" style="background:#e0e7ff; color:#4338ca;">Executed</div>
+                </div>
+                <div style="display:flex; gap:16px; justify-content:center; margin-top:24px; flex-wrap:wrap;">
+                    <div style="padding:8px 16px; background:#fef2f2; color:#dc2626; border-radius:8px; font-size:12px;">
+                        <strong>Cancelled</strong>
+                    </div>
+                    <div style="padding:8px 16px; background:#fef2f2; color:#dc2626; border-radius:8px; font-size:12px;">
+                        <strong>Rejected</strong>
+                    </div>
+                    <div style="padding:8px 16px; background:#f3f4f6; color:#6b7280; border-radius:8px; font-size:12px;">
+                        <strong>Waitlisted</strong>
+                    </div>
+                    <div style="padding:8px 16px; background:#dbeafe; color:#1d4ed8; border-radius:8px; font-size:12px;">
+                        <strong>Re-opened</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Source Documents -->
+        <section class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #e11d48, #f43f5e);">📁</div>
+                <div class="card-title">
+                    <h2>
+                        <span class="tr">Kaynak Dokümanlar</span>
+                        <span class="en">Source Documents</span>
+                    </h2>
+                    <p>
+                        <span class="tr">13 Workshop MoM dokümanı</span>
+                        <span class="en">13 Workshop MoM documents</span>
+                    </p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+                    <div>
+                        <div class="section-label" style="margin-bottom:12px;">
+                            <span class="tr">KEY USER (10 DOKÜMAN)</span>
+                            <span class="en">KEY USER (10 DOCUMENTS)</span>
+                        </div>
+                        <div class="task-list" style="font-size:12px; color:#6b7280;">
+                            <div class="task-item">2025-12-01 IST Çıkış Rezervasyon</div>
+                            <div class="task-item">2025-12-02 Operasyon</div>
+                            <div class="task-item">2025-12-05 IST Çıkış + Balkan</div>
+                            <div class="task-item">2025-12-09 IST Çıkış Yurtdışı</div>
+                            <div class="task-item">2025-12-11 ULD Rezervasyon</div>
+                            <div class="task-item">2025-12-12 Kapasite Planlama</div>
+                            <div class="task-item">2025-12-15 Yurtiçi Rezervasyon</div>
+                            <div class="task-item">2025-12-23 IST Çıkış Yurtdışı</div>
+                            <div class="task-item">2026-01-02 IST Çıkış Yurtdışı</div>
+                            <div class="task-item">2026-01-06 Yurtiçi Rezervasyon</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="section-label" style="margin-bottom:12px;">
+                            <span class="tr">SOLUTION TEAM (3 DOKÜMAN)</span>
+                            <span class="en">SOLUTION TEAM (3 DOCUMENTS)</span>
+                        </div>
+                        <div class="task-list" style="font-size:12px; color:#6b7280;">
+                            <div class="task-item">2025-12-15 API & Sistem Bilgisi</div>
+                            <div class="task-item">2026-01-09 TK GO & Akış</div>
+                            <div class="task-item">2026-01-13 Statüler & Yaşam Döngüsü</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <p>
+            <span class="tr">📅 Analiz Tarihi: 7 Mayıs 2026 | 📊 13 Kaynak Doküman | 👥 6 Persona Tipi</span>
+            <span class="en">📅 Analysis Date: May 7, 2026 | 📊 13 Source Documents | 👥 6 Persona Types</span>
+        </p>
+        <p>
+            <span class="tr">⚠️ Yalnızca doküman kanıtlarına dayalıdır · Spekülatif çıkarım içermez</span>
+            <span class="en">⚠️ Based on document evidence only · No speculative inference</span>
+        </p>
+        <p style="margin-top:16px; color:#cbd5e1;">
+            BKR - Booking & Reservation | THY Cargo | Sungur Product Team
+        </p>
+    </footer>
+    
+    <script>
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.lang === lang) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        function toggleView(btn, section, view) {
+            // Update buttons
+            btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Update panes
+            document.getElementById(section + '-cards').classList.remove('active');
+            document.getElementById(section + '-list').classList.remove('active');
+            document.getElementById(section + '-' + view).classList.add('active');
+        }
+    </script>
+</body>
+</html>

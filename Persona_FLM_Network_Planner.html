@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cargo Network Planner | FLM Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        /* ===== SIDE NAVIGATION ===== */
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0284c7, #0ea5e9);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 11px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+        }
+        .nav-item .nav-num {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .nav-item .nav-label {
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 12px 10px;
+        }
+        .module-links { display: flex; flex-direction: column; gap: 4px; padding: 0 10px 16px; }
+        .module-link { width: 52px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.05); transition: all 0.3s; }
+        .module-link:hover { background: rgba(255,255,255,0.15); color: white; }
+
+        /* Main content wrapper */
+        
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #f59e0b; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content {
+            margin-left: 72px;
+        }
+        
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+            padding: 48px 40px;
+            position: relative;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(2,132,199,0.15); color: #0369a1; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #0284c7; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #0284c7; }
+        .hero-subtitle { font-size: 16px; color: #475569; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #0284c7; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        
+        /* Source Tooltip */
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .source-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 24px;
+            width: 12px;
+            height: 12px;
+            background: #1f2937;
+            transform: rotate(45deg);
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+        
+        /* Board */
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        /* Card */
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        /* Toggle */
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #0284c7; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Section Colors */
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        /* Grids & Lists */
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 100px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .jtbd-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 16px; }
+        .jtbd-table th, .jtbd-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .jtbd-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        
+        .crud-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .crud-table th, .crud-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .crud-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .crud-badge { display: inline-block; width: 20px; height: 20px; border-radius: 4px; text-align: center; line-height: 20px; font-size: 10px; font-weight: 700; }
+        .crud-badge.yes { background: #d1fae5; color: #047857; }
+        .crud-badge.no { background: #f3f4f6; color: #9ca3af; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .risk-matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+        .risk-cell { padding: 12px; border-radius: 8px; text-align: center; font-size: 11px; }
+        .risk-cell.high-high { background: #fecaca; color: #991b1b; }
+        .risk-cell.high-low { background: #fed7aa; color: #9a3412; }
+        .risk-cell.low-high { background: #fef08a; color: #854d0e; }
+        .risk-cell.low-low { background: #bbf7d0; color: #166534; }
+        
+        .empathy-grid { 
+            display: grid; 
+            grid-template-columns: 1fr auto 1fr; 
+            grid-template-rows: auto auto; 
+            gap: 16px; 
+            align-items: stretch; 
+        }
+        .empathy-avatar {
+            grid-row: 1 / 3;
+            grid-column: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-width: 130px;
+        }
+        .empathy-avatar-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0284c7, #0ea5e9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 4px solid white;
+        }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.does h4 span.icon { background: rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-quad.feels h4 span.icon { background: rgba(225,29,72,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #d1fae5; color: #047857; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #0284c7, #0ea5e9); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #e0e7ff; color: #4338ca; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .raci-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 16px; }
+        .raci-table th, .raci-table td { padding: 8px; text-align: center; border: 1px solid rgba(0,0,0,0.08); }
+        .raci-table th { background: rgba(0,0,0,0.02); font-weight: 600; }
+        .raci-badge { display: inline-block; width: 24px; height: 24px; border-radius: 50%; line-height: 24px; font-weight: 700; font-size: 10px; }
+        .raci-badge.r { background: #fecaca; color: #991b1b; }
+        .raci-badge.a { background: #fed7aa; color: #9a3412; }
+        .raci-badge.c { background: #bfdbfe; color: #1e40af; }
+        .raci-badge.i { background: #d1d5db; color: #374151; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-slider { margin: 20px 0; }
+        .ai-slider-track { height: 12px; background: linear-gradient(to right, #16a34a, #84cc16, #eab308, #f97316, #dc2626); border-radius: 6px; position: relative; }
+        .ai-slider-marker { position: absolute; top: -4px; width: 20px; height: 20px; background: white; border: 3px solid #1f2937; border-radius: 50%; transform: translateX(-50%); }
+        .ai-slider-labels { display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; color: #6b7280; }
+        .ai-trust-line { position: absolute; top: 0; bottom: 0; width: 2px; background: #dc2626; left: 33%; }
+        
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        
+        .discovery-needed { background: rgba(217,119,6,0.08); border: 1px dashed rgba(217,119,6,0.4); padding: 12px; border-radius: 8px; margin-top: 12px; }
+        .discovery-needed h5 { font-size: 11px; font-weight: 600; color: #b45309; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .discovery-needed p { font-size: 11px; color: #92400e; }
+        
+        .out-of-scope { background: rgba(100,116,139,0.08); border: 1px solid rgba(100,116,139,0.2); padding: 12px; border-radius: 8px; margin-top: 16px; }
+        .out-of-scope h5 { font-size: 11px; font-weight: 600; color: #475569; margin-bottom: 6px; }
+        .out-of-scope p { font-size: 11px; color: #64748b; }
+        
+        .summary-box { background: rgba(2,132,199,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #0284c7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #f59e0b; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 60px; }
+            .nav-item { width: 44px; height: 44px; }
+            .nav-item .nav-num { font-size: 14px; }
+            .nav-item .nav-label { font-size: 7px; }
+            .hero { padding: 32px 20px; }
+            .hero h1 { font-size: 28px; }
+            .board { padding: 16px; }
+            .segment-card, .two-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <!-- SIDE NAVIGATION -->
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()" title="Tüm Modüller">FLM</div>
+        <div class="nav-items">
+            <a href="Persona_FLM_Network_Planner.html" class="nav-item active" title="Network Planner">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Network</span>
+            </a>
+            <a href="Persona_FLM_Schedule_Planner.html" class="nav-item" title="Schedule Planner">
+                <span class="nav-num">2</span>
+                <span class="nav-label">Schedule</span>
+            </a>
+            <a href="Persona_FLM_COCC_Coordinator.html" class="nav-item" title="COCC Coordinator">
+                <span class="nav-num">3</span>
+                <span class="nav-label">COCC</span>
+            </a>
+            <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="nav-item" title="Revenue & Capacity">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Revenue</span>
+            </a>
+            <a href="Persona_FLM_Solution_Specialist.html" class="nav-item" title="Solution Specialist">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Solution</span>
+            </a>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="module-links">
+            <a href="Persona_ASM_Stock_Management_Specialist.html" class="module-link" title="ASM Module">ASM</a>
+            <a href="Persona_COM_Embargo_Specialist.html" class="module-link" title="COM Module">COM</a>
+            <a href="BKR_Persona_Hub.html" class="module-link" title="BKR Module">BKR</a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header"><span class="mega-menu-title">📦 Tüm Modüller</span><button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a><a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a><a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a><a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a><a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a></div></div>
+        <div class="module-section"><div class="module-header active"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_FLM_Network_Planner.html" class="persona-link current"><span class="persona-num">1</span> Network Planner</a><a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a><a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a><a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a><a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div><div class="persona-list"><a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a><a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a><a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a><a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a><a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a><a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a><a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div><div class="persona-list"><a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a><a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a><a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a><a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a><a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a><a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a><a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div><div class="persona-list"><a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a><a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a></div></div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">FLM · NETWORK PLANNER · PERSONA #1</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1>
+                <span class="tr">Cargo <span>Network Planner</span></span>
+                <span class="en">Cargo <span>Network Planner</span></span>
+            </h1>
+            <p class="hero-subtitle">
+                <span class="tr">Mevsimlik (Yaz/Kış) kargo uçuş ağını tasarlayan, bölgesel talepleri analiz eden ve fizibilite çalışmalarını yürüten planlama uzmanı. NetLine SCHED üzerinden çalışır, COMMIS kullanmaz. Slot onayları ve SSIM dosyası üretimi sorumluluğu dışındadır.</span>
+                <span class="en">Planning specialist who designs seasonal (Summer/Winter) cargo flight network, analyzes regional demands and conducts feasibility studies. Works via NetLine SCHED, does not use COMMIS. Slot approvals and SSIM file production are outside responsibility.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="tr">"Network Planning ekibi IATA'nın iki sezon takvimini takip eder: Yaz ve Kış. Bölgesel müşterilerle workshoplar düzenlenir, geçmiş uçuş verilerine dayalı tahminler yapılır ve fizibilite çalışması gerçekleştirilir."</span>
+                <span class="en">"Network Planning team follows IATA's two-season calendar: Summer and Winter. Workshops are held with regional customers, forecasts are made based on historical flight data and feasibility studies are conducted."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#0284c7;"></span>
+                    <span><strong>Unit:</strong> Cargo Network Planning Dept.</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong>Criticality:</strong> <span style="color:#f59e0b;">★★★★☆</span> <span class="tr">Yüksek</span><span class="en">High</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong>Main System:</strong> NetLine SCHED</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 3 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#7dd3fc; font-size:12px;">📄 Source MoM Documents</div>
+                        <div style="display:flex; flex-direction:column; gap:4px;">
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-02 (MoM-1)</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-09 (MoM-5)</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-2026-01-15 (MoM-8)</span><span style="color:#86efac;">Key User</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1: PERSONA PROFILE -->
+        <section class="card section-1" id="section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                    <p><span class="tr">Demografik, Davranışsal, Psikografik</span><span class="en">Demographic, Behavioral, Psychographic</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s1-chart" class="view-pane active">
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label"><span class="tr">Departman</span><span class="en">Department</span></div><div class="pf-value">Cargo Network Planning Dept.</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Seviye</span><span class="en">Level</span></div><div class="pf-value"><span class="tr">Stratejik Planlama</span><span class="en">Strategic Planning</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Kullanıcı Tipi</span><span class="en">User Type</span></div><div class="pf-value"><span class="tr">TK Personeli</span><span class="en">TK Staff</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Çalışma Döngüsü</span><span class="en">Work Cycle</span></div><div class="pf-value"><span class="tr">Sezonluk (6 ay)</span><span class="en">Seasonal (6 months)</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Temel Amaç</span><span class="en">Primary Purpose</span></div><div class="pf-value"><span class="tr">Sezon ağ tasarımı</span><span class="en">Season network design</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Ana Sistem</span><span class="en">Main System</span></div><div class="pf-value">NetLine SCHED</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">COMMIS Kullanımı</span><span class="en">COMMIS Usage</span></div><div class="pf-value"><span class="tr">Hayır - Kullanmaz</span><span class="en">No - Does not use</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Uçuş Tipi</span><span class="en">Flight Type</span></div><div class="pf-value"><span class="tr">Kargo (6 ile başlayan)</span><span class="en">Cargo (starting with 6)</span></div></div>
+                    </div>
+                    
+                    <div class="segment-card">
+                        <div class="segment-col demo">
+                            <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Lokasyon:</span><span class="en">Location:</span></strong> IST (Merkez)</div>
+                            <div class="segment-item"><strong><span class="tr">Birim:</span><span class="en">Unit:</span></strong> Network Planning</div>
+                            <div class="segment-item"><strong><span class="tr">Uzmanlık:</span><span class="en">Expertise:</span></strong> NetLine SCHED Expert</div>
+                            <div class="segment-item"><strong><span class="tr">Raporlama:</span><span class="en">Reporting:</span></strong> <span class="tr">4 farklı rapor + analizler</span><span class="en">4 different reports + analyses</span></div>
+                        </div>
+                        <div class="segment-col behav">
+                            <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Döngü:</span><span class="en">Cycle:</span></strong> <span class="tr">IATA Yaz/Kış sezonu</span><span class="en">IATA Summer/Winter season</span></div>
+                            <div class="segment-item"><strong><span class="tr">Workshop:</span><span class="en">Workshop:</span></strong> <span class="tr">Bölgesel müşterilerle</span><span class="en">With regional customers</span></div>
+                            <div class="segment-item"><strong><span class="tr">Tahmin:</span><span class="en">Forecasting:</span></strong> <span class="tr">Geçmiş uçuş + know-how</span><span class="en">Historical flight + know-how</span></div>
+                            <div class="segment-item"><strong><span class="tr">Devir:</span><span class="en">Handover:</span></strong> <span class="tr">Schedule team'e email ile</span><span class="en">Via email to Schedule team</span></div>
+                        </div>
+                        <div class="segment-col psycho">
+                            <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Öncelik:</span><span class="en">Priority:</span></strong> <span class="tr">Veri odaklı kararlar</span><span class="en">Data-driven decisions</span></div>
+                            <div class="segment-item"><strong><span class="tr">Yaklaşım:</span><span class="en">Approach:</span></strong> <span class="tr">Stratejik, uzun vadeli</span><span class="en">Strategic, long-term</span></div>
+                            <div class="segment-item"><strong><span class="tr">Risk:</span><span class="en">Risk:</span></strong> <span class="tr">Fizibilite olmadan ilerlemez</span><span class="en">Won't proceed w/o feasibility</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="out-of-scope">
+                        <h5>⛔ <span class="tr">KAPSAM DIŞI</span><span class="en">OUT OF SCOPE</span></h5>
+                        <p><span class="tr">SSIM dosyası üretimi bu persona'nın sorumluluğunda DEĞİLDİR. Aircraft tail assignment COCC ekibi tarafından yapılır. Slot onayları ayrı süreçtir.</span>
+                        <span class="en">SSIM file production is NOT this persona's responsibility. Aircraft tail assignment is done by COCC team. Slot approvals are a separate process.</span></p>
+                    </div>
+                </div>
+                <div id="s1-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Cargo Network Planning departmanında çalışan stratejik planlama uzmanı. IATA'nın Yaz ve Kış sezon takvimini takip ederek kargo uçuş ağını tasarlar. NetLine SCHED sistemi üzerinden çalışır, COMMIS kullanmaz. 5 bölgeden toplanan talepler, geçmiş uçuş verileri ve fizibilite analizleriyle sezon planı oluşturur.</span>
+                        <span class="en">Strategic planning specialist working in Cargo Network Planning department. Designs cargo flight network following IATA's Summer and Winter season calendar. Works via NetLine SCHED system, does not use COMMIS. Creates season plan with demands collected from 5 regions, historical flight data and feasibility analyses.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-02:</strong> "The Network Planning unit does not use COMMIS at all. In NetLine, both passenger and cargo flights can be viewed. Flight numbers starting with 6 are cargo flights; those starting with 1 and 0 are passenger flights."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: GOALS & MOTIVATION -->
+        <section class="card section-2" id="section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="tr">Hedef, Motivasyon & Korku</span><span class="en">Goals, Motivation & Fears</span></h2>
+                    <p><span class="tr">Hedef piramidi, motivatörler, korkular</span><span class="en">Goal pyramid, motivators, fears</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s2-chart" class="view-pane active">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="tr">🎯 PRİMER: Karlı ve operasyonel açıdan uygulanabilir sezon ağı tasarlamak</span><span class="en">🎯 PRIMARY: Design profitable and operationally feasible seasonal network</span></div>
+                        <div class="goal-level secondary"><span class="tr">🥈 SEKONDER: Bölgesel talepleri doğru analiz etmek</span><span class="en">🥈 SECONDARY: Accurately analyze regional demands</span></div>
+                        <div class="goal-level tertiary"><span class="tr">🥉 TERSİYER: Slot onaylarını zamanında almak</span><span class="en">🥉 TERTIARY: Obtain slot approvals on time</span></div>
+                    </div>
+                    
+                    <div class="two-col">
+                        <div class="list-box motivators">
+                            <h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                            <div class="list-item">✓ <span class="tr">Yeni kârlı rotalar keşfetmek</span><span class="en">Discovering new profitable routes</span></div>
+                            <div class="list-item">✓ <span class="tr">Sezon planının başarıyla yayınlanması</span><span class="en">Successful publication of season plan</span></div>
+                            <div class="list-item">✓ <span class="tr">Bölgesel ekiplerden olumlu geri bildirim</span><span class="en">Positive feedback from regional teams</span></div>
+                            <div class="list-item">✓ <span class="tr">WorldACD ve POS raporlarından değerli insight</span><span class="en">Valuable insights from WorldACD and POS reports</span></div>
+                        </div>
+                        <div class="list-box demotivators">
+                            <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                            <div class="list-item">✗ <span class="tr">Manuel süreçler ve otomasyon eksikliği</span><span class="en">Manual processes and lack of automation</span></div>
+                            <div class="list-item">✗ <span class="tr">Slot onaylarında gecikmeler</span><span class="en">Delays in slot approvals</span></div>
+                            <div class="list-item">✗ <span class="tr">Belirsiz pazar koşulları (savaş, kriz)</span><span class="en">Uncertain market conditions (war, crisis)</span></div>
+                            <div class="list-item">✗ <span class="tr">Koordinasyon zorluğu (çok paydaş)</span><span class="en">Coordination difficulty (many stakeholders)</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="list-box fears" style="margin-top:16px;">
+                        <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Yanlış fizibilite analizi sonucu zarar eden rotalar açmak</span><span class="en"><strong>High:</strong> Opening loss-making routes due to wrong feasibility analysis</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Slot onayı alamayıp sezonu geciktirmek</span><span class="en"><strong>High:</strong> Delaying season due to slot approval failure</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Orta:</strong> Beklenmedik pazar değişikliklerine adapte olamamak</span><span class="en"><strong>Medium:</strong> Unable to adapt to unexpected market changes</span></div>
+                    </div>
+                </div>
+                <div id="s2-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Ana hedef karlı ve operasyonel açıdan uygulanabilir bir sezon ağı tasarlamak. Fizibilite analizi kritik öneme sahip. En büyük korku yanlış analizle zarar eden rotalar açmak.</span>
+                        <span class="en">Main goal is to design a profitable and operationally feasible seasonal network. Feasibility analysis is critical. Greatest fear is opening loss-making routes due to wrong analysis.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-02:</strong> "A feasibility study is performed. Market research is conducted. Relevant data is checked using the Country-to-Country report (a paid report procured by GMY). The WorldACD report is used to identify who carried which product/SCC."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: WORKFLOW & JTBD -->
+        <section class="card section-3" id="section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="tr">İş Akışı & JTBD</span><span class="en">Workflow & JTBD</span></h2>
+                    <p><span class="tr">Ana süreç, Jobs to be Done</span><span class="en">Main process, Jobs to be Done</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s3-chart" class="view-pane active">
+                    <h4 style="font-size:12px; font-weight:600; margin-bottom:12px;"><span class="tr">📋 Sezonluk Planlama Akışı</span><span class="en">📋 Seasonal Planning Flow</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step manual"><span class="tr">Bölgesel Talep Toplama</span><span class="en">Regional Demand Collection</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">Workshop (5 Bölge)</span><span class="en">Workshop (5 Regions)</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision"><span class="tr">Fizibilite Analizi</span><span class="en">Feasibility Analysis</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">Pazar Araştırması</span><span class="en">Market Research</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">Draft Plan (NetLine)</span><span class="en">Draft Plan (NetLine)</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision"><span class="tr">Slot Onayı Bekleme</span><span class="en">Slot Approval Wait</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">Final Publish</span><span class="en">Final Publish</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">Schedule Team'e Devir</span><span class="en">Handover to Schedule Team</span></div>
+                    </div>
+                    
+                    <table class="jtbd-table">
+                        <thead>
+                            <tr>
+                                <th><span class="tr">İş (Job)</span><span class="en">Job</span></th>
+                                <th><span class="tr">Durum</span><span class="en">Situation</span></th>
+                                <th><span class="tr">Beklenen Sonuç</span><span class="en">Expected Outcome</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tr">Bölgesel talep toplama</span><span class="en">Regional demand collection</span></td>
+                                <td><span class="tr">Sezon planlaması başlangıcı</span><span class="en">Season planning start</span></td>
+                                <td><span class="tr">5 bölgeden konsolide talep listesi</span><span class="en">Consolidated demand list from 5 regions</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Fizibilite analizi</span><span class="en">Feasibility analysis</span></td>
+                                <td><span class="tr">Yeni rota değerlendirmesi</span><span class="en">New route evaluation</span></td>
+                                <td><span class="tr">Kârlılık ve operasyonel uygunluk raporu</span><span class="en">Profitability and operational suitability report</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Draft plan oluşturma</span><span class="en">Draft plan creation</span></td>
+                                <td><span class="tr">Analizler tamamlandığında</span><span class="en">When analyses are complete</span></td>
+                                <td><span class="tr">NetLine'da yayınlanabilir taslak</span><span class="en">Publishable draft in NetLine</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Schedule team'e devir</span><span class="en">Handover to Schedule team</span></td>
+                                <td><span class="tr">Sezon planı finalize edildiğinde</span><span class="en">When season plan is finalized</span></td>
+                                <td><span class="tr">Email ile resmi devir</span><span class="en">Official handover via email</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="s3-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Network Planning, IATA sezon takvimini takip eder. 5 bölgeden talepler toplanır, workshoplar yapılır, fizibilite analizi gerçekleştirilir. Draft plan NetLine'da oluşturulur, slot onayları beklenir ve final plan yayınlanır. Ardından Schedule team'e email ile devir yapılır.</span>
+                        <span class="en">Network Planning follows IATA season calendar. Demands are collected from 5 regions, workshops are held, feasibility analysis is performed. Draft plan is created in NetLine, slot approvals are awaited and final plan is published. Then handover to Schedule team via email.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-02:</strong> "After Network Planning defines the two seasons, the schedule is handed over to the Schedule Planning team (via email). From this point on, changes are owned by the Schedule Planning team."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: DATA & SYSTEMS -->
+        <section class="card section-4" id="section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="tr">Veri & Sistemler</span><span class="en">Data & Systems</span></h2>
+                    <p><span class="tr">CRUD, entegrasyonlar, veri kaynakları</span><span class="en">CRUD, integrations, data sources</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s4-chart" class="view-pane active">
+                    <h4 style="font-size:12px; font-weight:600; margin-bottom:12px;"><span class="tr">🔧 Sistem CRUD Matrisi</span><span class="en">🔧 System CRUD Matrix</span></h4>
+                    <table class="crud-table">
+                        <thead>
+                            <tr>
+                                <th><span class="tr">Sistem/Ekran</span><span class="en">System/Screen</span></th>
+                                <th>C</th>
+                                <th>R</th>
+                                <th>U</th>
+                                <th>D</th>
+                                <th><span class="tr">Notlar</span><span class="en">Notes</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>NetLine SCHED</strong></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="tr">Ana planlama sistemi</span><span class="en">Main planning system</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>COMMIS</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">Kullanılmaz</span><span class="en">Not used</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>WorldACD Report</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">Pazar analizi raporu</span><span class="en">Market analysis report</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Country-to-Country Report</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">GMY tarafından temin edilir</span><span class="en">Procured by GMY</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>POS Report</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">Satış noktası verileri</span><span class="en">Point of sale data</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Lane-based Report</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">Rota bazlı analiz</span><span class="en">Route-based analysis</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="discovery-needed">
+                        <h5>🔍 <span class="tr">KEŞİF GEREKLİ</span><span class="en">DISCOVERY NEEDED</span></h5>
+                        <p><span class="tr">NetLine SCHED ekranlarının detaylı kullanım senaryoları ve validation kuralları MoM'larda yeterince dokümante edilmemiş.</span>
+                        <span class="en">Detailed usage scenarios and validation rules for NetLine SCHED screens are not sufficiently documented in MoMs.</span></p>
+                    </div>
+                </div>
+                <div id="s4-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Network Planner sadece NetLine SCHED kullanır, COMMIS ile çalışmaz. Analiz için 4 farklı rapor kullanılır: WorldACD, Country-to-Country, POS ve Lane-based. Tüm raporlar read-only olarak tüketilir.</span>
+                        <span class="en">Network Planner only uses NetLine SCHED, does not work with COMMIS. 4 different reports are used for analysis: WorldACD, Country-to-Country, POS and Lane-based. All reports are consumed read-only.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-02:</strong> "The Network Planning unit does not use COMMIS at all."<br>
+                        <strong>MoM-2025-12-02:</strong> "There is no automated process for schedule planning; decisions are made manually based on four different reports and additional analyses."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: PAIN POINTS & RISKS -->
+        <section class="card section-5" id="section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="tr">Sorunlar & Riskler</span><span class="en">Pain Points & Risks</span></h2>
+                    <p><span class="tr">Ağrı noktaları, risk matrisi</span><span class="en">Pain points, risk matrix</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s5-chart" class="view-pane active">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Manuel Planlama Süreçleri</span><span class="en">Manual Planning Processes</span></h5>
+                                <p><span class="tr">Otomasyon yok, tüm kararlar manuel olarak 4 farklı rapor ve ek analizler üzerinden verilir.</span>
+                                <span class="en">No automation, all decisions made manually based on 4 different reports and additional analyses.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Beklenmedik Pazar Değişiklikleri</span><span class="en">Unexpected Market Changes</span></h5>
+                                <p><span class="tr">Savaş, kriz gibi olağanüstü durumlarda sezon içi rota değişikliği yönetimi zor.</span>
+                                <span class="en">Managing in-season route changes during extraordinary situations like war, crisis is difficult.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Slot Onay Gecikmeleri</span><span class="en">Slot Approval Delays</span></h5>
+                                <p><span class="tr">Slot konferansı sonrası onay süreçleri sezon planını geciktirebilir.</span>
+                                <span class="en">Approval processes after slot conference can delay season plan.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Çoklu Paydaş Koordinasyonu</span><span class="en">Multi-Stakeholder Coordination</span></h5>
+                                <p><span class="tr">Operation, Tariff, Capacity, Station ekipleriyle koordinasyon karmaşıklığı.</span>
+                                <span class="en">Coordination complexity with Operation, Tariff, Capacity, Station teams.</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-matrix">
+                        <div class="risk-cell high-high"><strong><span class="tr">Yüksek Etki + Yüksek Olasılık</span><span class="en">High Impact + High Probability</span></strong><br><span class="tr">Manuel süreçler</span><span class="en">Manual processes</span></div>
+                        <div class="risk-cell high-low"><strong><span class="tr">Yüksek Etki + Düşük Olasılık</span><span class="en">High Impact + Low Probability</span></strong><br><span class="tr">Pazar krizi</span><span class="en">Market crisis</span></div>
+                        <div class="risk-cell low-high"><strong><span class="tr">Düşük Etki + Yüksek Olasılık</span><span class="en">Low Impact + High Probability</span></strong><br><span class="tr">Koordinasyon gecikmeleri</span><span class="en">Coordination delays</span></div>
+                        <div class="risk-cell low-low"><strong><span class="tr">Düşük Etki + Düşük Olasılık</span><span class="en">Low Impact + Low Probability</span></strong><br><span class="tr">Rapor erişim sorunları</span><span class="en">Report access issues</span></div>
+                    </div>
+                </div>
+                <div id="s5-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">En kritik sorun manuel planlama süreçleri ve otomasyon eksikliği. Beklenmedik pazar değişiklikleri (savaş, kriz) sezon içi adaptasyonu zorlaştırır. Slot onay gecikmeleri ve çoklu paydaş koordinasyonu da önemli zorluklar.</span>
+                        <span class="en">Most critical issue is manual planning processes and lack of automation. Unexpected market changes (war, crisis) make in-season adaptation difficult. Slot approval delays and multi-stakeholder coordination are also significant challenges.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2026-01-15:</strong> "In extraordinary situations during the season (e.g., war, route change), steps for creating a new schedule and how to handle in-season additions/removals were discussed."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: EMPATHY MAP -->
+        <section class="card section-6" id="section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="tr">Empati Haritası</span><span class="en">Empathy Map</span></h2>
+                    <p><span class="tr">Söyler, Düşünür, Yapar, Hisseder</span><span class="en">Says, Thinks, Does, Feels</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s6-chart" class="view-pane active">
+                    <div class="empathy-grid">
+                        <div class="empathy-quad says">
+                            <h4><span class="icon">💬</span> <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                            <div class="empathy-item"><span class="tr">"IATA sezon takvimini takip ediyoruz"</span><span class="en">"We follow IATA season calendar"</span></div>
+                            <div class="empathy-item"><span class="tr">"Fizibilite çalışması olmadan rota açmayız"</span><span class="en">"We don't open routes without feasibility study"</span></div>
+                            <div class="empathy-item"><span class="tr">"5 bölgeden talep topluyoruz"</span><span class="en">"We collect demands from 5 regions"</span></div>
+                            <div class="empathy-item"><span class="tr">"Schedule team'e email ile devrediyoruz"</span><span class="en">"We handover via email to Schedule team"</span></div>
+                        </div>
+                        <div class="empathy-avatar">
+                            <div class="empathy-avatar-circle">✈️</div>
+                            <div style="margin-top:12px; font-weight:600; font-size:13px;">Network Planner</div>
+                        </div>
+                        <div class="empathy-quad thinks">
+                            <h4><span class="icon">💭</span> <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                            <div class="empathy-item"><span class="tr">"Bu rota gerçekten kârlı olacak mı?"</span><span class="en">"Will this route really be profitable?"</span></div>
+                            <div class="empathy-item"><span class="tr">"Slot onayları zamanında gelecek mi?"</span><span class="en">"Will slot approvals come on time?"</span></div>
+                            <div class="empathy-item"><span class="tr">"Pazar koşulları değişirse ne yaparız?"</span><span class="en">"What if market conditions change?"</span></div>
+                        </div>
+                        <div class="empathy-quad does">
+                            <h4><span class="icon">🎯</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                            <div class="empathy-item"><span class="tr">Bölgesel workshoplar düzenler</span><span class="en">Organizes regional workshops</span></div>
+                            <div class="empathy-item"><span class="tr">4 farklı raporu analiz eder</span><span class="en">Analyzes 4 different reports</span></div>
+                            <div class="empathy-item"><span class="tr">NetLine'da draft plan oluşturur</span><span class="en">Creates draft plan in NetLine</span></div>
+                            <div class="empathy-item"><span class="tr">Operasyon ekibiyle koordine olur</span><span class="en">Coordinates with Operations team</span></div>
+                        </div>
+                        <div class="empathy-quad feels">
+                            <h4><span class="icon">❤️</span> <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                            <div class="empathy-item"><span class="tr">Sezon başarıyla yayınlandığında gurur</span><span class="en">Pride when season is successfully published</span></div>
+                            <div class="empathy-item"><span class="tr">Manuel süreçlerden dolayı yorgunluk</span><span class="en">Fatigue from manual processes</span></div>
+                            <div class="empathy-item"><span class="tr">Belirsiz pazarlarda endişe</span><span class="en">Concern in uncertain markets</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s6-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Network Planner veri odaklı, stratejik düşünen bir profildir. Fizibilite analizine büyük önem verir, risk almadan karar vermez. Manuel süreçlerden dolayı yorgunluk hisseder ama sezon başarıyla yayınlandığında gurur duyar.</span>
+                        <span class="en">Network Planner is a data-driven, strategic thinking profile. Places great importance on feasibility analysis, doesn't make decisions without risk assessment. Feels fatigue from manual processes but takes pride when season is successfully published.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: STAKEHOLDER MAP -->
+        <section class="card section-7" id="section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="tr">Paydaş Haritası</span><span class="en">Stakeholder Map</span></h2>
+                    <p><span class="tr">İlişkiler, RACI, eğitim ihtiyaçları</span><span class="en">Relations, RACI, training needs</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s7-chart" class="view-pane active">
+                    <div class="stakeholder-map">
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node provider"><span class="tr">GMY (Raporlar)</span><span class="en">GMY (Reports)</span></div>
+                            <div class="stakeholder-node provider"><span class="tr">Bölgesel Müşteriler</span><span class="en">Regional Customers</span></div>
+                        </div>
+                        <span class="stakeholder-arrow">↓</span>
+                        <div class="stakeholder-node persona">Network Planner</div>
+                        <span class="stakeholder-arrow">↓</span>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node consumer"><span class="tr">Schedule Planning</span><span class="en">Schedule Planning</span></div>
+                            <div class="stakeholder-node partner"><span class="tr">Operations Team</span><span class="en">Operations Team</span></div>
+                            <div class="stakeholder-node partner"><span class="tr">Tariff Team</span><span class="en">Tariff Team</span></div>
+                            <div class="stakeholder-node partner"><span class="tr">Capacity Team</span><span class="en">Capacity Team</span></div>
+                            <div class="stakeholder-node partner"><span class="tr">Station Team</span><span class="en">Station Team</span></div>
+                        </div>
+                    </div>
+                    
+                    <table class="raci-table">
+                        <thead>
+                            <tr>
+                                <th><span class="tr">Aktivite</span><span class="en">Activity</span></th>
+                                <th>Network</th>
+                                <th>Schedule</th>
+                                <th>Operations</th>
+                                <th>COCC</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tr">Sezon ağ tasarımı</span><span class="en">Season network design</span></td>
+                                <td><span class="raci-badge r">R</span></td>
+                                <td><span class="raci-badge i">I</span></td>
+                                <td><span class="raci-badge c">C</span></td>
+                                <td><span class="raci-badge i">I</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Fizibilite analizi</span><span class="en">Feasibility analysis</span></td>
+                                <td><span class="raci-badge r">R</span></td>
+                                <td><span class="raci-badge i">I</span></td>
+                                <td><span class="raci-badge c">C</span></td>
+                                <td><span class="raci-badge i">I</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Sezon içi değişiklik</span><span class="en">In-season change</span></td>
+                                <td><span class="raci-badge i">I</span></td>
+                                <td><span class="raci-badge r">R</span></td>
+                                <td><span class="raci-badge c">C</span></td>
+                                <td><span class="raci-badge c">C</span></td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Tail assignment</span><span class="en">Tail assignment</span></td>
+                                <td><span class="raci-badge i">I</span></td>
+                                <td><span class="raci-badge i">I</span></td>
+                                <td><span class="raci-badge c">C</span></td>
+                                <td><span class="raci-badge r">R</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="s7-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Network Planner, sezon ağ tasarımı ve fizibilite analizinde Responsible (R) rolündedir. Schedule team'e devir sonrası sorumluluk Schedule Planning'e geçer. Operations, Tariff, Capacity ve Station ekipleriyle sürekli koordinasyon gerektirir.</span>
+                        <span class="en">Network Planner is Responsible (R) in season network design and feasibility analysis. After handover to Schedule team, responsibility transfers to Schedule Planning. Requires continuous coordination with Operations, Tariff, Capacity and Station teams.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-02:</strong> "The Network Planning team starts by designing the seasonal flight network based on aircraft numbers and market needs, with input from Operation, Tariff, Capacity, and Station teams."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: ROADMAP -->
+        <section class="card section-8" id="section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="tr">Yol Haritası</span><span class="en">Roadmap</span></h2>
+                    <p><span class="tr">MVP, kısa vadeli, uzun vadeli</span><span class="en">MVP, short-term, long-term</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s8-chart" class="view-pane active">
+                    <div class="timeline">
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="tr">NetLine SCHED görünürlüğü</span><span class="en">NetLine SCHED visibility</span></h5>
+                            <p><span class="tr">Mevcut NetLine SCHED kullanımının korunması, SUNGUR ile entegrasyon hazırlığı</span>
+                            <span class="en">Preserving current NetLine SCHED usage, preparing integration with SUNGUR</span></p>
+                            <p style="font-size:10px; color:#dc2626; margin-top:4px;">→ P1 (Manuel süreçler) çözümüne hazırlık</p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                            <h5><span class="tr">Otomatik fizibilite analiz desteği</span><span class="en">Automated feasibility analysis support</span></h5>
+                            <p><span class="tr">Manuel rapor analizlerini destekleyecek otomatik karar destek sistemi</span>
+                            <span class="en">Automated decision support system to assist manual report analyses</span></p>
+                            <p style="font-size:10px; color:#d97706; margin-top:4px;">→ P1 (Manuel süreçler) çözümü</p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
+                            <h5><span class="tr">AI destekli ağ optimizasyonu</span><span class="en">AI-powered network optimization</span></h5>
+                            <p><span class="tr">Pazar trendleri, geçmiş veriler ve tahminleri kullanan AI destekli planlama</span>
+                            <span class="en">AI-powered planning using market trends, historical data and forecasts</span></p>
+                            <p style="font-size:10px; color:#16a34a; margin-top:4px;">→ P2 (Pazar değişiklikleri) proaktif yönetimi</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="s8-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">MVP aşamasında mevcut NetLine SCHED kullanımı korunurken SUNGUR entegrasyonu hazırlanır. Kısa vadede manuel analizleri destekleyecek otomasyon eklenir. Uzun vadede AI destekli ağ optimizasyonu hedeflenir.</span>
+                        <span class="en">In MVP phase, current NetLine SCHED usage is preserved while SUNGUR integration is prepared. In short term, automation to support manual analyses is added. In long term, AI-powered network optimization is targeted.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: AI SUPPORT -->
+        <section class="card section-9" id="section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                    <p><span class="tr">AI potansiyeli, güven seviyeleri</span><span class="en">AI potential, trust levels</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s9-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                    <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                    <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                </p>
+                
+                <!-- Slider Container -->
+                <div style="display:flex; gap:24px; margin-bottom:32px;">
+                    <!-- Left: Scale Labels -->
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:100px; padding:8px 0;">
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 <span class="tr">YASAK</span><span class="en">FORBIDDEN</span></span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI yapmamalı</span><span class="en">AI must not</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ <span class="tr">ONAY GEREKLİ</span><span class="en">APPROVAL NEEDED</span></span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">İnsan onayı şart</span><span class="en">Human approval required</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ <span class="tr">GÜVENLİ</span><span class="en">SAFE</span></span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI serbest</span><span class="en">AI free</span></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Middle: Slider Track -->
+                    <div style="flex:1; position:relative;">
+                        <!-- Gradient Track -->
+                        <div style="height:240px; border-radius:12px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            
+                            <!-- Level Markers -->
+                            <div style="position:absolute; left:12px; top:4%; font-size:10px; color:#dc2626; font-weight:600;">
+                                <span class="tr">6 - 🚫 Final rota kararı, sezon planı onayı, frekans belirleme</span>
+                                <span class="en">6 - 🚫 Final route decision, season plan approval, frequency setting</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:21%; font-size:10px; color:#b45309; font-weight:600;">
+                                <span class="tr">5 - ⚠️ Fizibilite onayı sonrası auto-draft oluşturma</span>
+                                <span class="en">5 - ⚠️ Auto-draft creation after feasibility approval</span>
+                            </div>
+                            
+                            <!-- TRUST LINE -->
+                            <div style="position:absolute; left:0; right:0; top:33%; height:3px; background:#0891b2; z-index:10;"></div>
+                            <div style="position:absolute; right:8px; top:31%; background:#0891b2; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                <span class="tr">⬆️ SINIR: AI burada durmalı</span>
+                                <span class="en">⬆️ LIMIT: AI stops here</span>
+                            </div>
+                            
+                            <div style="position:absolute; left:12px; top:40%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">4 - 💡 Yeni rota önerisi, talep tahmini, slot alternatifi</span>
+                                <span class="en">4 - 💡 New route suggestion, demand forecast, slot alternative</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">3 - ⚙️ Otomatik fizibilite hesaplama (4 rapor birleştirme)</span>
+                                <span class="en">3 - ⚙️ Auto feasibility calculation (4 report consolidation)</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:70%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">2 - 📝 Bölgesel talep özeti raporu</span>
+                                <span class="en">2 - 📝 Regional demand summary report</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:85%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">1 - 📊 WorldACD/POS/ACRM data görüntüleme</span>
+                                <span class="en">1 - 📊 WorldACD/POS/ACRM data display</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Use Cases Grid -->
+                <h4 style="font-size:11px; color:#0891b2; margin:24px 0 12px;"><span class="tr">AI KULLANIM ALANLARI</span><span class="en">AI USE CASES</span></h4>
+                <div class="two-col">
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN (Seviye 1-4)</span><span class="en">✓ AI SUITABLE (Level 1-4)</span></h4>
+                        <div class="list-item"><span class="tr">📋 WorldACD, POS, ACRM rapor birleştirme</span><span class="en">📋 WorldACD, POS, ACRM report consolidation</span></div>
+                        <div class="list-item"><span class="tr">🧮 Otomatik fizibilite hesaplama desteği</span><span class="en">🧮 Auto feasibility calculation support</span></div>
+                        <div class="list-item"><span class="tr">✈️ Pazar trendi tahmini ve erken uyarı</span><span class="en">✈️ Market trend forecast and early warning</span></div>
+                        <div class="list-item"><span class="tr">📊 Bölgesel talep pattern analizi</span><span class="en">📊 Regional demand pattern analysis</span></div>
+                        <div class="list-item"><span class="tr">📝 Sezon karşılaştırma raporu</span><span class="en">📝 Season comparison report</span></div>
+                        <div class="list-item"><span class="tr">⏰ Handover deadline yaklaşım uyarısı</span><span class="en">⏰ Handover deadline approach warning</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #dc2626;">
+                        <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL (İnsan Kararı)</span><span class="en">⛔ AI NOT SUITABLE (Human Decision)</span></h4>
+                        <div class="list-item"><span class="tr">🚫 Final rota açma/kapatma kararı</span><span class="en">🚫 Final route open/close decision</span></div>
+                        <div class="list-item"><span class="tr">🚫 Sezon planı final onayı</span><span class="en">🚫 Season plan final approval</span></div>
+                        <div class="list-item"><span class="tr">🚫 Frekans ve aircraft type belirleme</span><span class="en">🚫 Frequency and aircraft type determination</span></div>
+                        <div class="list-item"><span class="tr">🚫 Bölgesel workshop moderasyonu</span><span class="en">🚫 Regional workshop moderation</span></div>
+                        <div class="list-item"><span class="tr">🚫 Paydaş müzakereleri (Slot, Operasyon)</span><span class="en">🚫 Stakeholder negotiations (Slot, Operations)</span></div>
+                        <div class="list-item"><span class="tr">🚫 Stratejik pazar giriş/çıkış kararları</span><span class="en">🚫 Strategic market entry/exit decisions</span></div>
+                    </div>
+                </div>
+                </div>
+                <div id="s9-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">AI, bilgi sunma (seviye 1-2) ve öneri (seviye 3-4) alanlarında güçlü destek sağlayabilir: rapor birleştirme, fizibilite hesaplama, talep tahmini, pattern analizi. Seviye 5 (onaylı aksiyon) sadece fizibilite onayı sonrası gibi güvenli senaryolarda uygulanabilir. Seviye 6 (yapmamalı): Final rota kararları, sezon onayı ve paydaş müzakereleri kesinlikle insan kontrolünde kalmalı.</span>
+                        <span class="en">AI can provide strong support in information (level 1-2) and recommendation (level 3-4) areas: report consolidation, feasibility calculation, demand forecast, pattern analysis. Level 5 (approved action) applicable only in safe scenarios like post-feasibility approval. Level 6 (must not): Final route decisions, season approval and stakeholder negotiations must absolutely remain under human control.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong><span class="tr">AI Uygunluk Gerekçesi:</span><span class="en">AI Suitability Rationale:</span></strong><br>
+                        <span class="tr">• Fizibilite hesaplama 4 farklı kaynağı birleştirdiği için AI ile otomatize edilebilir</span><span class="en">• Feasibility calculation can be automated with AI as it consolidates 4 different sources</span><br>
+                        <span class="tr">• Final rota kararları stratejik olduğu için insan kararı</span><span class="en">• Final route decisions are strategic, requires human decision</span><br>
+                        <span class="tr">• Bölgesel workshoplar ilişki yönetimi gerektiriyor</span><span class="en">• Regional workshops require relationship management</span><br>
+                        <span class="tr">• Pazar giriş/çıkış kararları uzun vadeli etki yarattığı için AI yetkisinde olmamalı</span><span class="en">• Market entry/exit decisions have long-term impact, shouldn't be in AI authority</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    </div>
+
+    <footer class="footer">
+        <p>FLM - Flight Management Module | Network Planner Persona | Generated from MoM Analysis</p>
+        <p style="margin-top:4px;">Sources: MoM-2025-12-02, MoM-2025-12-09, MoM-2026-01-15</p>
+    </footer>
+
+    <script>
+        function switchLang(lang) {
+            document.body.classList.remove('lang-tr', 'lang-en');
+            document.body.classList.add('lang-' + lang);
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function toggleView(btn, section, view) {
+            const parent = btn.closest('.card');
+            parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            parent.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById(section + '-' + view).classList.add('active');
+        }
+
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

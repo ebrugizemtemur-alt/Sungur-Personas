@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BKR Cross-Persona Analysis | Booking & Reservation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e293b;
+            min-height: 100vh;
+            padding: 40px;
+        }
+        
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ea580c, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header .subtitle {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+        .header .personas-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        .persona-chip {
+            background: rgba(249,115,22,0.1);
+            border: 1px solid rgba(249,115,22,0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #ea580c;
+        }
+        
+        /* MAIN GRID */
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* CARDS */
+        .card {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .card-subtitle {
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+        
+        /* PAIN POINTS */
+        .pain-card .card-icon { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .pain-item {
+            background: rgba(220, 38, 38, 0.06);
+            border-left: 3px solid #dc2626;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 10px;
+        }
+        .pain-item.high { border-color: #dc2626; background: rgba(220, 38, 38, 0.06); }
+        .pain-item.medium { border-color: #f59e0b; background: rgba(245, 158, 11, 0.06); }
+        .pain-item .pain-code {
+            display: inline-block;
+            background: rgba(0,0,0,0.08);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-right: 6px;
+            color: #374151;
+        }
+        .pain-item .pain-title {
+            font-weight: 600;
+            color: #1e293b;
+        }
+        .pain-item .pain-personas {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+        .pain-persona {
+            background: rgba(0,0,0,0.05);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 8px;
+            color: #64748b;
+        }
+        
+        /* EMPATHY MAP */
+        .empathy-card .card-icon { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+        .empathy-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .empathy-quad {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 9px;
+        }
+        .empathy-quad.says { background: rgba(236, 72, 153, 0.08); border-left: 3px solid #ec4899; }
+        .empathy-quad.thinks { background: rgba(99, 102, 241, 0.08); border-left: 3px solid #6366f1; }
+        .empathy-quad.does { background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; }
+        .empathy-quad.feels { background: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; }
+        .empathy-quad h5 {
+            font-size: 9px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .empathy-quad.says h5 { color: #ec4899; }
+        .empathy-quad.thinks h5 { color: #6366f1; }
+        .empathy-quad.does h5 { color: #10b981; }
+        .empathy-quad.feels h5 { color: #f59e0b; }
+        .empathy-quad ul {
+            list-style: none;
+            color: #475569;
+            line-height: 1.5;
+        }
+        .empathy-quad li { margin-bottom: 3px; }
+        
+        /* MENTAL MODEL */
+        .mental-card .card-icon { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+        .mental-model {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .mental-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .mental-label {
+            width: 80px;
+            font-size: 9px;
+            font-weight: 600;
+            color: #64748b;
+            text-align: right;
+        }
+        .mental-bar {
+            flex: 1;
+            height: 24px;
+            background: rgba(14, 165, 233, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .mental-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+        }
+        .mental-fill span {
+            font-size: 9px;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+        }
+        
+        /* DEPENDENCIES - VISUAL NETWORK */
+        .deps-card .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .deps-card { grid-column: span 2; }
+        .deps-network {
+            position: relative;
+            height: 200px;
+            background: rgba(5, 150, 105, 0.03);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(5, 150, 105, 0.1);
+        }
+        .deps-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #ea580c, #f97316);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 11px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 20px rgba(249, 115, 22, 0.3);
+            z-index: 10;
+        }
+        .deps-node {
+            position: absolute;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+            white-space: nowrap;
+            z-index: 5;
+        }
+        .deps-node.system { background: #3b82f6; color: white; }
+        .deps-node.team { background: #10b981; color: white; }
+        .deps-node.external { background: #f59e0b; color: #1e293b; }
+        .deps-line {
+            position: absolute;
+            background: rgba(148, 163, 184, 0.3);
+            z-index: 1;
+        }
+        .deps-legend {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 12px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 9px;
+            color: #64748b;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .legend-dot.system { background: #3b82f6; }
+        .legend-dot.team { background: #10b981; }
+        .legend-dot.external { background: #f59e0b; }
+        
+        /* PRODUCT OPPORTUNITIES */
+        .opps-card .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .opps-card { grid-column: span 2; }
+        .opps-timeline {
+            display: flex;
+            gap: 12px;
+        }
+        .opps-phase {
+            flex: 1;
+            background: rgba(0,0,0,0.02);
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .opps-phase-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .phase-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 700;
+            color: white;
+        }
+        .phase-badge.mvp { background: #dc2626; }
+        .phase-badge.short { background: #f59e0b; color: #1e293b; }
+        .phase-badge.long { background: #10b981; }
+        .phase-count {
+            font-size: 9px;
+            color: #64748b;
+        }
+        .opps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .opp-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            background: rgba(255,255,255,0.8);
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 9px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .opp-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+        .opp-icon.mvp { background: rgba(220, 38, 38, 0.1); }
+        .opp-icon.short { background: rgba(245, 158, 11, 0.1); }
+        .opp-icon.long { background: rgba(16, 185, 129, 0.1); }
+        .opp-text {
+            flex: 1;
+        }
+        .opp-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+        .opp-pain {
+            color: #64748b;
+        }
+        
+        /* AI SUPPORT */
+        .ai-card .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .ai-slider {
+            position: relative;
+            height: 180px;
+            background: linear-gradient(to bottom, 
+                rgba(220, 38, 38, 0.15) 0%, 
+                rgba(220, 38, 38, 0.15) 17%,
+                rgba(245, 158, 11, 0.15) 17%, 
+                rgba(245, 158, 11, 0.15) 33%,
+                rgba(16, 185, 129, 0.15) 33%, 
+                rgba(16, 185, 129, 0.15) 100%
+            );
+            border-radius: 12px;
+            padding: 10px 16px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .trust-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 33%;
+            height: 3px;
+            background: #0891b2;
+            z-index: 5;
+        }
+        .trust-label {
+            position: absolute;
+            right: 8px;
+            top: 31%;
+            font-size: 8px;
+            font-weight: 700;
+            color: #0891b2;
+            text-transform: uppercase;
+        }
+        .ai-level {
+            position: absolute;
+            left: 16px;
+            right: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 9px;
+        }
+        .ai-level-num {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 9px;
+            color: white;
+        }
+        .ai-level.red .ai-level-num { background: #dc2626; }
+        .ai-level.amber .ai-level-num { background: #f59e0b; color: #1e293b; }
+        .ai-level.green .ai-level-num { background: #10b981; }
+        .ai-level-text { color: #374151; }
+        
+        .ai-summary {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .ai-box {
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 9px;
+        }
+        .ai-box.suitable { background: rgba(16, 185, 129, 0.08); border-left: 3px solid #10b981; }
+        .ai-box.unsuitable { background: rgba(220, 38, 38, 0.08); border-left: 3px solid #dc2626; }
+        .ai-box h5 {
+            font-size: 9px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .ai-box.suitable h5 { color: #10b981; }
+        .ai-box.unsuitable h5 { color: #dc2626; }
+        .ai-box ul {
+            list-style: none;
+            color: #475569;
+            line-height: 1.5;
+        }
+        
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(0, 0, 0, 0.06);
+            font-size: 10px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <h1>BKR Cross-Persona Analysis</h1>
+        <div class="subtitle">Booking & Reservation Module | 7 Personas Consolidated View</div>
+        <div class="personas-row">
+            <span class="persona-chip">🎯 General Reservation</span>
+            <span class="persona-chip">📦 Special Cargo</span>
+            <span class="persona-chip">🏠 Domestic</span>
+            <span class="persona-chip">📊 Capacity</span>
+            <span class="persona-chip">⚙️ Operations</span>
+            <span class="persona-chip">🌍 GSA</span>
+            <span class="persona-chip">💻 Technical</span>
+        </div>
+    </div>
+    
+    <!-- MAIN GRID -->
+    <div class="main-grid">
+        
+        <!-- SHARED PAIN POINTS -->
+        <div class="card pain-card" style="grid-column: span 2;">
+            <div class="card-header">
+                <div class="card-icon">🔥</div>
+                <div>
+                    <div class="card-title">Shared Pain Points</div>
+                    <div class="card-subtitle">Critical issues affecting multiple personas</div>
+                </div>
+            </div>
+            <div class="pain-grid">
+                <div class="pain-item high">
+                    <span class="pain-code">P1</span>
+                    <span class="pain-title">Embargo Toggle Affects Entire System</span>
+                    <div class="pain-personas">
+                        <span class="pain-persona">General</span>
+                        <span class="pain-persona">Special</span>
+                        <span class="pain-persona">Capacity</span>
+                    </div>
+                </div>
+                <div class="pain-item high">
+                    <span class="pain-code">P2</span>
+                    <span class="pain-title">Manual Email Approval (CGOAPR)</span>
+                    <div class="pain-personas">
+                        <span class="pain-persona">General</span>
+                        <span class="pain-persona">Special</span>
+                        <span class="pain-persona">GSA</span>
+                    </div>
+                </div>
+                <div class="pain-item high">
+                    <span class="pain-code">P3</span>
+                    <span class="pain-title">Multi-leg Reject Tracking Loss</span>
+                    <div class="pain-personas">
+                        <span class="pain-persona">General</span>
+                        <span class="pain-persona">Capacity</span>
+                        <span class="pain-persona">Operations</span>
+                    </div>
+                </div>
+                <div class="pain-item high">
+                    <span class="pain-code">P4</span>
+                    <span class="pain-title">Set Pallet / ULD Not Visible in COMIS</span>
+                    <div class="pain-personas">
+                        <span class="pain-persona">Capacity</span>
+                        <span class="pain-persona">Operations</span>
+                    </div>
+                </div>
+                <div class="pain-item medium">
+                    <span class="pain-code">P5</span>
+                    <span class="pain-title">CW Manual Email Process</span>
+                    <div class="pain-personas">
+                        <span class="pain-persona">General</span>
+                        <span class="pain-persona">Special</span>
+                    </div>
+                </div>
+                <div class="pain-item medium">
+                    <span class="pain-code">P6</span>
+                    <span class="pain-title">No Pre-Flight Time Control</span>
+                    <div class="pain-personas">
+                        <span class="pain-persona">General</span>
+                        <span class="pain-persona">Capacity</span>
+                    </div>
+                </div>
+                <div class="pain-item medium">
+                    <span class="pain-code">P7</span>
+                    <span class="pain-title">Too Many Clicks / Slow System</span>
+                    <div class="pain-personas">
+                        <span class="pain-persona">Domestic</span>
+                        <span class="pain-persona">General</span>
+                    </div>
+                </div>
+                <div class="pain-item medium">
+                    <span class="pain-code">P8</span>
+                    <span class="pain-title">IST Dependency & Time Zone Delays</span>
+                    <div class="pain-personas">
+                        <span class="pain-persona">GSA</span>
+                        <span class="pain-persona">Domestic</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- EMPATHY MAP -->
+        <div class="card empathy-card">
+            <div class="card-header">
+                <div class="card-icon">💭</div>
+                <div>
+                    <div class="card-title">Shared Empathy Map</div>
+                    <div class="card-subtitle">Common emotional patterns</div>
+                </div>
+            </div>
+            <div class="empathy-grid">
+                <div class="empathy-quad says">
+                    <h5>💬 Says</h5>
+                    <ul>
+                        <li>"Can I get your AWB?"</li>
+                        <li>"Need to check embargo"</li>
+                        <li>"Waiting for email approval"</li>
+                        <li>"System is slow today"</li>
+                    </ul>
+                </div>
+                <div class="empathy-quad thinks">
+                    <h5>🧠 Thinks</h5>
+                    <ul>
+                        <li>"Is embargo open or closed?"</li>
+                        <li>"Will Accuity reject this?"</li>
+                        <li>"When will CGOAPR reply?"</li>
+                        <li>"Did I enter correct SCC?"</li>
+                    </ul>
+                </div>
+                <div class="empathy-quad does">
+                    <h5>⚡ Does</h5>
+                    <ul>
+                        <li>Phone + CAP018 simultaneously</li>
+                        <li>Checks CW email archive</li>
+                        <li>Manual OPR344 entry</li>
+                        <li>Monitors embargo status</li>
+                    </ul>
+                </div>
+                <div class="empathy-quad feels">
+                    <h5>❤️ Feels</h5>
+                    <ul>
+                        <li>Stress: 1000+ daily calls</li>
+                        <li>Anxiety: embargo toggle</li>
+                        <li>Frustration: manual emails</li>
+                        <li>Relief: booking confirmed</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- MENTAL MODEL -->
+        <div class="card mental-card">
+            <div class="card-header">
+                <div class="card-icon">🧩</div>
+                <div>
+                    <div class="card-title">Mental Model</div>
+                    <div class="card-subtitle">Cognitive load distribution</div>
+                </div>
+            </div>
+            <div class="mental-model">
+                <div class="mental-row">
+                    <div class="mental-label">Manual Tasks</div>
+                    <div class="mental-bar">
+                        <div class="mental-fill" style="width: 85%;">
+                            <span>Email, Forms, OPR344</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mental-row">
+                    <div class="mental-label">System Checks</div>
+                    <div class="mental-bar">
+                        <div class="mental-fill" style="width: 70%;">
+                            <span>Embargo, Accuity, ACRM</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mental-row">
+                    <div class="mental-label">Coordination</div>
+                    <div class="mental-bar">
+                        <div class="mental-fill" style="width: 75%;">
+                            <span>Teams, Stations, CW</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mental-row">
+                    <div class="mental-label">Decision</div>
+                    <div class="mental-bar">
+                        <div class="mental-fill" style="width: 60%;">
+                            <span>Capacity, Routing</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mental-row">
+                    <div class="mental-label">Compliance</div>
+                    <div class="mental-bar">
+                        <div class="mental-fill" style="width: 65%;">
+                            <span>HS Code, SCI, Legal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DEPENDENCIES NETWORK -->
+        <div class="card deps-card">
+            <div class="card-header">
+                <div class="card-icon">🔗</div>
+                <div>
+                    <div class="card-title">Dependencies & Collaboration Network</div>
+                    <div class="card-subtitle">System and team interconnections across all personas</div>
+                </div>
+            </div>
+            <div class="deps-network">
+                <!-- Center Node -->
+                <div class="deps-center">
+                    <span>BKR</span>
+                    <span style="font-size:9px; font-weight:400;">Reservation</span>
+                </div>
+                
+                <!-- System Nodes -->
+                <div class="deps-node system" style="top: 10%; left: 10%;">📊 COMIS</div>
+                <div class="deps-node system" style="top: 10%; left: 40%;">💰 ACRM</div>
+                <div class="deps-node system" style="top: 10%; right: 10%;">✅ Accuity</div>
+                <div class="deps-node system" style="bottom: 10%; left: 5%;">📝 CAP018</div>
+                <div class="deps-node system" style="bottom: 10%; left: 30%;">📋 OPR344</div>
+                
+                <!-- Team Nodes -->
+                <div class="deps-node team" style="top: 40%; left: 2%;">👥 Capacity Team</div>
+                <div class="deps-node team" style="bottom: 25%; right: 5%;">📦 Special Cargo</div>
+                <div class="deps-node team" style="top: 40%; right: 2%;">✈️ Operations</div>
+                
+                <!-- External Nodes -->
+                <div class="deps-node external" style="bottom: 10%; right: 20%;">📧 CGOAPR</div>
+                <div class="deps-node external" style="bottom: 10%; right: 45%;">📧 CW Team</div>
+                <div class="deps-node external" style="top: 45%; left: 25%;">🌍 GSA Stations</div>
+            </div>
+            <div class="deps-legend">
+                <div class="legend-item"><div class="legend-dot system"></div>Core Systems</div>
+                <div class="legend-item"><div class="legend-dot team"></div>Internal Teams</div>
+                <div class="legend-item"><div class="legend-dot external"></div>External/Email</div>
+            </div>
+        </div>
+        
+        <!-- AI SUPPORT -->
+        <div class="card ai-card">
+            <div class="card-header">
+                <div class="card-icon">🤖</div>
+                <div>
+                    <div class="card-title">AI Support Potential</div>
+                    <div class="card-subtitle">6-level autonomy scale</div>
+                </div>
+            </div>
+            <div class="ai-slider">
+                <div class="trust-line"></div>
+                <div class="trust-label">← TRUST LINE</div>
+                
+                <div class="ai-level red" style="top: 6%;">
+                    <span class="ai-level-num">6</span>
+                    <span class="ai-level-text">🚫 Embargo removal, Price override</span>
+                </div>
+                <div class="ai-level amber" style="top: 22%;">
+                    <span class="ai-level-num">5</span>
+                    <span class="ai-level-text">⚠️ Cancel after Execute (approval)</span>
+                </div>
+                <div class="ai-level green" style="top: 42%;">
+                    <span class="ai-level-num">4</span>
+                    <span class="ai-level-text">💡 Alternative flight suggestions</span>
+                </div>
+                <div class="ai-level green" style="top: 55%;">
+                    <span class="ai-level-num">3</span>
+                    <span class="ai-level-text">⚙️ CW estimation, Form pre-fill</span>
+                </div>
+                <div class="ai-level green" style="top: 68%;">
+                    <span class="ai-level-num">2</span>
+                    <span class="ai-level-text">📝 Embargo status summary</span>
+                </div>
+                <div class="ai-level green" style="top: 81%;">
+                    <span class="ai-level-num">1</span>
+                    <span class="ai-level-text">📊 Flight/capacity info display</span>
+                </div>
+            </div>
+            <div class="ai-summary">
+                <div class="ai-box suitable">
+                    <h5>✓ AI SUITABLE</h5>
+                    <ul>
+                        <li>• Embargo alerts</li>
+                        <li>• CW estimation</li>
+                        <li>• Alt. flight suggestions</li>
+                        <li>• Form auto-complete</li>
+                        <li>• Status notifications</li>
+                    </ul>
+                </div>
+                <div class="ai-box unsuitable">
+                    <h5>✗ HUMAN ONLY</h5>
+                    <ul>
+                        <li>• Embargo toggle</li>
+                        <li>• Price approval</li>
+                        <li>• Accuity override</li>
+                        <li>• Cancel decisions</li>
+                        <li>• Compliance bypass</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PRODUCT OPPORTUNITIES -->
+        <div class="card opps-card">
+            <div class="card-header">
+                <div class="card-icon">🚀</div>
+                <div>
+                    <div class="card-title">Product Opportunities Roadmap</div>
+                    <div class="card-subtitle">Consolidated from all personas</div>
+                </div>
+            </div>
+            <div class="opps-timeline">
+                <div class="opps-phase">
+                    <div class="opps-phase-header">
+                        <span class="phase-badge mvp">MVP</span>
+                        <span class="phase-count">4 items</span>
+                    </div>
+                    <div class="opps-list">
+                        <div class="opp-item">
+                            <div class="opp-icon mvp">🎯</div>
+                            <div class="opp-text">
+                                <div class="opp-title">AWB-Based Embargo Toggle</div>
+                                <div class="opp-pain">← P1 System-wide toggle</div>
+                            </div>
+                        </div>
+                        <div class="opp-item">
+                            <div class="opp-icon mvp">🎯</div>
+                            <div class="opp-text">
+                                <div class="opp-title">Multi-leg Segment Tracking</div>
+                                <div class="opp-pain">← P3 Reject visibility</div>
+                            </div>
+                        </div>
+                        <div class="opp-item">
+                            <div class="opp-icon mvp">🎯</div>
+                            <div class="opp-text">
+                                <div class="opp-title">Set Pallet Visibility</div>
+                                <div class="opp-pain">← P4 COMIS blind spot</div>
+                            </div>
+                        </div>
+                        <div class="opp-item">
+                            <div class="opp-icon mvp">🎯</div>
+                            <div class="opp-text">
+                                <div class="opp-title">In-System Approval Workflow</div>
+                                <div class="opp-pain">← P2 Email dependency</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="opps-phase">
+                    <div class="opps-phase-header">
+                        <span class="phase-badge short">SHORT</span>
+                        <span class="phase-count">3 items</span>
+                    </div>
+                    <div class="opps-list">
+                        <div class="opp-item">
+                            <div class="opp-icon short">⏱️</div>
+                            <div class="opp-text">
+                                <div class="opp-title">Auto CW Calculation</div>
+                                <div class="opp-pain">← P5 Manual email</div>
+                            </div>
+                        </div>
+                        <div class="opp-item">
+                            <div class="opp-icon short">⏱️</div>
+                            <div class="opp-text">
+                                <div class="opp-title">Role-Based Time Control</div>
+                                <div class="opp-pain">← P6 No pre-flight check</div>
+                            </div>
+                        </div>
+                        <div class="opp-item">
+                            <div class="opp-icon short">⏱️</div>
+                            <div class="opp-text">
+                                <div class="opp-title">TKgo Domestic Integration</div>
+                                <div class="opp-pain">← P7 Speed issues</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="opps-phase">
+                    <div class="opps-phase-header">
+                        <span class="phase-badge long">LONG</span>
+                        <span class="phase-count">3 items</span>
+                    </div>
+                    <div class="opps-list">
+                        <div class="opp-item">
+                            <div class="opp-icon long">🔮</div>
+                            <div class="opp-text">
+                                <div class="opp-title">ULD Reservation System</div>
+                                <div class="opp-pain">← Out-of-system process</div>
+                            </div>
+                        </div>
+                        <div class="opp-item">
+                            <div class="opp-icon long">🔮</div>
+                            <div class="opp-text">
+                                <div class="opp-title">HS Code Auto-Integration</div>
+                                <div class="opp-pain">← Queue fallback</div>
+                            </div>
+                        </div>
+                        <div class="opp-item">
+                            <div class="opp-icon long">🔮</div>
+                            <div class="opp-text">
+                                <div class="opp-title">Digital Legal Form Storage</div>
+                                <div class="opp-pain">← P8 Manual forms</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>BKR Module Cross-Persona Analysis | Generated from 10+ Key User & Solution Team MoMs | May 2026</p>
+        <p style="margin-top:4px;">7 Personas: General Reservation • Special Cargo • Domestic • Capacity • Operations • GSA • Technical</p>
+    </div>
+</body>
+</html>

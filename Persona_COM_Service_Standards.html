@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Standards Specialist | Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #0d9488, #14b8a6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 11px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
+        .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+        .nav-item[data-theme="purple"].active { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .nav-item[data-theme="blue"].active { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .nav-item[data-theme="red"].active { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .nav-item[data-theme="teal"].active { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .nav-item[data-theme="orange"].active { background: linear-gradient(135deg, #ea580c, #f97316); }
+
+        .nav-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 12px 10px; }
+        .module-links { display: flex; flex-direction: column; gap: 4px; padding: 0 10px 16px; }
+        .module-link { width: 52px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.05); transition: all 0.3s; }
+        .module-link:hover { background: rgba(255,255,255,0.15); color: white; }
+
+        
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.trm { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #f59e0b; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+
+        .hero {
+            background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 50%, #99f6e4 100%);
+            padding: 48px 40px;
+            position: relative;
+            border-bottom: 4px solid #0d9488;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(13,148,136,0.15); color: #0d9488; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #0d9488; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; color: #1f2937; }
+        .hero h1 span { color: #0d9488; }
+        .hero-subtitle { font-size: 16px; color: #6b7280; max-width: 600px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #0d9488; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; background: rgba(255,255,255,0.5); padding: 16px; border-radius: 0 8px 8px 0; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title { flex: 1; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #0d9488; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-1 { border-left: 4px solid #0d9488; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-4 { border-left: 4px solid #059669; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(13,148,136,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(13,148,136,0.1); }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo { background: #f0fdfa; border: 1px solid #5eead4; }
+        .segment-col.demo h4 { color: #0d9488; border-color: #0d9488; }
+        .segment-col.behav { background: #fffbeb; border: 1px solid #fde68a; }
+        .segment-col.behav h4 { color: #b45309; border-color: #b45309; }
+        .segment-col.psycho { background: #f0fdf4; border: 1px solid #86efac; }
+        .segment-col.psycho h4 { color: #16a34a; border-color: #16a34a; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 8px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 90px; font-weight: 500; }
+        
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px; background: #f0fdfa; border-radius: 12px; margin-bottom: 12px; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; border: 2px solid #fcd34d; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; border: 2px solid #93c5fd; }
+        .flow-step.decision { background: #fce7f3; color: #be185d; border: 2px solid #f9a8d4; }
+        .flow-step.critical { background: #0d9488; color: white; border: 2px solid #0f766e; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.08); border-left: 4px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.08); border-left: 4px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.08); border-left: 4px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #0d9488, #14b8a6); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; background: linear-gradient(135deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%); }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #d1fae5; color: #047857; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #0d9488, #14b8a6); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #e0e7ff; color: #4338ca; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { display: flex; flex-direction: column; gap: 12px; }
+        .timeline-item { padding: 16px; border-radius: 12px; border-left: 4px solid; }
+        .timeline-item.mvp { background: #dcfce7; border-color: #16a34a; }
+        .timeline-item.short { background: #e0e7ff; border-color: #4f46e5; }
+        .timeline-item.long { background: #f1f5f9; border-color: #64748b; }
+        .timeline-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .timeline-badge.mvp { background: #16a34a; color: white; }
+        .timeline-badge.short { background: #4f46e5; color: white; }
+        .timeline-badge.long { background: #64748b; color: white; }
+        .timeline-item h5 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 12px; color: #6b7280; }
+        
+        .summary-box { background: #f9fafb; padding: 16px; border-radius: 10px; font-size: 13px; line-height: 1.7; margin-bottom: 12px; border: 1px solid #e5e7eb; }
+        .summary-box h4 { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px; }
+        
+        .evidence { margin-top: 16px; padding: 16px; background: #f0fdfa; border-left: 4px solid #0d9488; border-radius: 0 8px 8px 0; font-size: 12px; color: #0f766e; }
+        .evidence strong { display: block; margin-bottom: 8px; color: #115e59; }
+        
+        /* CRUD Matrix Styles */
+        .crud-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .crud-table th, .crud-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .crud-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .crud-badge { display: inline-block; width: 24px; height: 24px; border-radius: 4px; text-align: center; line-height: 24px; font-size: 11px; font-weight: 700; }
+        .crud-badge.yes { background: #d1fae5; color: #047857; }
+        .crud-badge.no { background: #f3f4f6; color: #9ca3af; }
+        
+        .intent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .intent-item { background: rgba(0,0,0,0.02); padding: 14px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); }
+        .intent-item h5 { font-size: 12px; font-weight: 700; color: #0d9488; margin-bottom: 6px; }
+        .intent-item p { font-size: 11px; color: #6b7280; line-height: 1.5; }
+        .intent-badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 9px; font-weight: 700; margin-top: 8px; text-transform: uppercase; }
+        .intent-badge.high { background: #fef2f2; color: #dc2626; }
+        .intent-badge.medium { background: #fefce8; color: #b45309; }
+        .intent-badge.low { background: #f0fdf4; color: #16a34a; }
+        
+        .scc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 16px; }
+        .scc-card { padding: 14px; border-radius: 10px; border: 2px solid; }
+        .scc-card h5 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+        .scc-card p { font-size: 11px; color: #6b7280; }
+        .scc-card.dg { background: #fef2f2; border-color: #fecaca; }
+        .scc-card.dg h5 { color: #dc2626; }
+        .scc-card.per { background: #eff6ff; border-color: #bfdbfe; }
+        .scc-card.per h5 { color: #2563eb; }
+        .scc-card.hum { background: #f0fdf4; border-color: #86efac; }
+        .scc-card.hum h5 { color: #16a34a; }
+        .scc-card.avi { background: #fefce8; border-color: #fde68a; }
+        .scc-card.avi h5 { color: #ca8a04; }
+        .scc-card.val { background: #fdf4ff; border-color: #e9d5ff; }
+        .scc-card.val h5 { color: #9333ea; }
+        .scc-card.wpn { background: #fef3c7; border-color: #fcd34d; }
+        .scc-card.wpn h5 { color: #b45309; }
+        
+        .footer { margin-top: 32px; padding: 24px; text-align: center; background: linear-gradient(135deg, #1e293b, #334155); color: rgba(255,255,255,0.8); border-radius: 16px; font-size: 13px; }
+        .footer p { margin-bottom: 8px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.trm { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #f59e0b; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 60px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()" title="Tüm Modüller">COM</div>
+        <div class="nav-items">
+            <a href="Persona_COM_Embargo_Specialist.html" class="nav-item" data-theme="purple">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Embargo</span>
+            </a>
+            <a href="Persona_COM_Restriction_Specialist.html" class="nav-item" data-theme="blue">
+                <span class="nav-num">2</span>
+                <span class="nav-label">Restriction</span>
+            </a>
+            <a href="Persona_COM_Sanctions_Officer.html" class="nav-item" data-theme="red">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Sanctions</span>
+            </a>
+            <a href="Persona_COM_Service_Standards.html" class="nav-item active" data-theme="teal">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Servis Std</span>
+            </a>
+            <a href="Persona_COM_Hub_Operations.html" class="nav-item" data-theme="orange">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Hub Ops</span>
+            </a>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="module-links">
+            <a href="Persona_FLM_Network_Planner.html" class="module-link" title="FLM Module">FLM</a>
+            <a href="Persona_ASM_Stock_Management_Specialist.html" class="module-link" title="ASM Module">ASM</a>
+            <a href="BKR_Persona_Hub.html" class="module-link" title="BKR Module">BKR</a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header"><span class="mega-menu-title">📦 Tüm Modüller</span><button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button></div>
+        
+        <!-- PCM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span>Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span>RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span>Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span>Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span>Station User</a>
+            </div>
+        </div>
+        
+        <!-- FLM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span>Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span>Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span>COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span>Revenue Capacity Analyst</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span>Solution Specialist</a>
+            </div>
+        </div>
+        
+        <!-- BKR -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div>
+            <div class="persona-list">
+                <a href="Persona_BKR_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span>IST General Reservation</a>
+                <a href="Persona_BKR_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span>IST Special Cargo</a>
+                <a href="Persona_BKR_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span>Domestic Reservation</a>
+                <a href="Persona_BKR_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span>GSA International Station</a>
+                <a href="Persona_BKR_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span>Capacity Planning</a>
+                <a href="Persona_BKR_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span>Operations Cargo Acceptance</a>
+                <a href="Persona_BKR_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span>Solution Technical Team</a>
+            </div>
+        </div>
+        
+        <!-- CAM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span>Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span>Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span>Sales User</a>
+            </div>
+        </div>
+        
+        <!-- COM -->
+        <div class="module-section">
+            <div class="module-header active"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span>Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span>Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span>Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span>Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link current"><span class="persona-num">5</span>Service Standards</a>
+            </div>
+        </div>
+        
+        <!-- ASM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Controller.html" class="persona-link"><span class="persona-num">1</span>Stock Controller</a>
+                <a href="Persona_ASM_Station_Agent.html" class="persona-link"><span class="persona-num">2</span>Station Agent</a>
+            </div>
+        </div>
+        
+        <!-- TRM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div>
+            <div class="persona-list">
+                <a href="Persona_TRM_Trucking_Coordinator.html" class="persona-link"><span class="persona-num">1</span>Trucking Coordinator</a>
+            </div>
+
+        <!-- SCM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span>Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    <div class="main-content">
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-header">
+            <span class="badge">COM · SERVICE STANDARDS · PERSONA #4</span>
+            <div class="lang-toggle">
+                <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                <button class="lang-btn" onclick="switchLang('en')">EN</button>
+            </div>
+        </div>
+        <h1>
+            <span class="tr">Service Standards <span>Specialist</span></span>
+            <span class="en">Service Standards <span>Specialist</span></span>
+        </h1>
+        <p class="hero-subtitle">
+            <span class="tr">servisstandart@thy.com mail kutusunu yöneten, DG/PER/AVI/HUM/VAL sorularını Word şablonlarıyla cevaplayan, özel kargo kabul kurallarını belirleyen uzman.</span>
+            <span class="en">Expert managing servisstandart@thy.com mailbox, answering DG/PER/AVI/HUM/VAL queries with Word templates, determining special cargo acceptance rules.</span>
+        </p>
+        <div class="hero-quote">
+            <span class="tr">"Some products have +2/+8 degrees, all stations don't have refrigerating conditions. Even if they accept, it will melt or spoil." — MoM 2025-12-08</span>
+            <span class="en">"Some products have +2/+8 degrees, all stations don't have refrigerating conditions. Even if they accept, it will melt or spoil." — MoM 2025-12-08</span>
+        </div>
+        <div class="hero-meta">
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#0d9488;"></span>
+                <span><strong>Email:</strong> servisstandart@thy.com</span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#f59e0b;"></span>
+                <span><strong>Criticality:</strong> <span style="color:#f59e0b;">★★★★☆</span> <span class="tr">Yüksek</span><span class="en">High</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#3b82f6;"></span>
+                <span><strong>Process:</strong> <span class="tr">Email → Word → Manuel Cevap</span><span class="en">Email → Word → Manual Reply</span></span>
+            </div>
+            <div class="hero-meta-item source-card">
+                <span class="dot" style="background:#10b981;"></span>
+                <span><strong>Source:</strong> 3 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                <div class="source-tooltip">
+                    <div style="font-weight:700; margin-bottom:10px; color:#5eead4;">📄 Source MoM Documents</div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-08</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-25 Embargo</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-2025-12-30</span><span style="color:#93c5fd;">Solution Team</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="board">
+
+    <!-- SECTION 1: PERSONA PROFILE -->
+    <section class="card section-1">
+        <div class="card-header">
+            <div class="card-icon">1</div>
+            <div class="card-title">
+                <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                <p><span class="tr">Kim, ne yapar, temel özellikler</span><span class="en">Who, what they do, key attributes</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s1-chart" class="view-pane active">
+                <div class="profile-grid">
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Rol</span><span class="en">Role</span></div>
+                        <div class="pf-value"><span class="tr">Servis Standartları Uzmanı</span><span class="en">Service Standards Specialist</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div>
+                        <div class="pf-value"><span class="tr">Özel Kargo Operasyonları</span><span class="en">Special Cargo Operations</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kullanıcı Tipi</span><span class="en">User Type</span></div>
+                        <div class="pf-value"><span class="tr">İç kullanıcı / Uzman + Danışman</span><span class="en">Internal / Expert + Advisor</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kullanım Sıklığı</span><span class="en">Usage Frequency</span></div>
+                        <div class="pf-value"><span class="tr">Günde 20-50 sorgu (email)</span><span class="en">20-50 queries/day (email)</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Email</span><span class="en">Email</span></div>
+                        <div class="pf-value">servisstandart@thy.com</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Sistem</span><span class="en">System</span></div>
+                        <div class="pf-value">Word Templates + REC002</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Bağlı Olduğu</span><span class="en">Reports To</span></div>
+                        <div class="pf-value"><span class="tr">Özel Kargo Müdürü</span><span class="en">Special Cargo Manager</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Karar Yetkisi</span><span class="en">Decision Authority</span></div>
+                        <div class="pf-value"><span class="tr">Kabul/Red tavsiyeleri</span><span class="en">Accept/Reject recommendations</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">SCC Türleri</span><span class="en">SCC Types</span></div>
+                        <div class="pf-value">DG, PER, AVI, HUM, VAL, WPN</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Çalışma Ortamı</span><span class="en">Work Environment</span></div>
+                        <div class="pf-value"><span class="tr">IST Merkez, mesai saatleri</span><span class="en">IST Central, business hours</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Süreç</span><span class="en">Process</span></div>
+                        <div class="pf-value"><span class="tr">Manuel Email (%100)</span><span class="en">Manual Email (100%)</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kritiklik</span><span class="en">Criticality</span></div>
+                        <div class="pf-value"><span class="tr">Yüksek (Güvenlik)</span><span class="en">High (Safety)</span></div>
+                    </div>
+                </div>
+                
+                <div class="segment-card">
+                    <div class="segment-col demo">
+                        <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Deneyim:</span><span class="en">Experience:</span></strong> <span class="tr">Özel kargo uzmanlığı (yüksek)</span><span class="en">Special cargo expertise (high)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Bilgi:</span><span class="en">Knowledge:</span></strong> <span class="tr">DG, PER, AVI kuralları, IATA</span><span class="en">DG, PER, AVI rules, IATA</span></div>
+                        <div class="segment-item"><strong><span class="tr">Dil:</span><span class="en">Language:</span></strong> <span class="tr">TR + EN (IATA standartları)</span><span class="en">TR + EN (IATA standards)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Sertifika:</span><span class="en">Certification:</span></strong> <span class="tr">IATA DGR, CEIV, LiveAnimals</span><span class="en">IATA DGR, CEIV, LiveAnimals</span></div>
+                    </div>
+                    <div class="segment-col behav">
+                        <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Giriş:</span><span class="en">Input:</span></strong> <span class="tr">Email sorgusu (GHA/Acente)</span><span class="en">Email query (GHA/Agent)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Kontrol:</span><span class="en">Check:</span></strong> <span class="tr">REC002 + MSDS + IATA</span><span class="en">REC002 + MSDS + IATA</span></div>
+                        <div class="segment-item"><strong><span class="tr">Çıkış:</span><span class="en">Output:</span></strong> <span class="tr">Word cevabı (template)</span><span class="en">Word reply (template)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Yoğunluk:</span><span class="en">Volume:</span></strong> <span class="tr">20-50 email/gün</span><span class="en">20-50 emails/day</span></div>
+                    </div>
+                    <div class="segment-col psycho">
+                        <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Motivasyon:</span><span class="en">Motivation:</span></strong> <span class="tr">Doğru ve güvenli kabul</span><span class="en">Correct and safe acceptance</span></div>
+                        <div class="segment-item"><strong><span class="tr">Stres:</span><span class="en">Stress:</span></strong> <span class="tr">Manuel süreç, tekrar</span><span class="en">Manual process, repetition</span></div>
+                        <div class="segment-item"><strong><span class="tr">Değer:</span><span class="en">Value:</span></strong> <span class="tr">Güvenlik > Hız</span><span class="en">Safety > Speed</span></div>
+                        <div class="segment-item"><strong><span class="tr">Hedef:</span><span class="en">Goal:</span></strong> <span class="tr">Sıfır güvenlik olayı</span><span class="en">Zero safety incidents</span></div>
+                    </div>
+                </div>
+                
+                <!-- Kapsam Dışı -->
+                <div style="margin-top:16px; padding:12px; background:#fef3c7; border-radius:8px; border-left:3px solid #f59e0b;">
+                    <h4 style="font-size:11px; color:#b45309; margin-bottom:6px;"><span class="tr">⚠️ BU PERSONA KAPSAMI DIŞINDA</span><span class="en">⚠️ OUT OF SCOPE FOR THIS PERSONA</span></h4>
+                    <p style="font-size:11px; color:#92400e; margin:0;">
+                        <span class="tr">Embargo tanımları (Mustafa), Restriction tanımları (Kemal), Yaptırım taraması (Gizem/Nurseli), Hub operasyonları (saha ekibi), Booking işlemleri (Rez ekibi)</span>
+                        <span class="en">Embargo definitions (Mustafa), Restriction definitions (Kemal), Sanctions screening (Gizem/Nurseli), Hub operations (field team), Booking operations (Res team)</span>
+                    </p>
+                </div>
+            </div>
+            <div id="s1-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Service Standards Specialist, servisstandart@thy.com mail kutusuna gelen özel kargo sorularını yanıtlar. DG (Tehlikeli Madde), PER (Bozulabilir), AVI (Canlı Hayvan), HUM (İnsan Kalıntısı), VAL (Değerli), WPN (Silah) gibi SCC'ler için kabul kurallarını belirler. Word şablonları kullanır, MSDS kontrol eder, REC002'den embargo/restriction bilgisi alır.</span>
+                    <span class="en">Service Standards Specialist answers special cargo questions coming to servisstandart@thy.com mailbox. Determines acceptance rules for SCCs like DG (Dangerous Goods), PER (Perishable), AVI (Live Animals), HUM (Human Remains), VAL (Valuable), WPN (Weapons). Uses Word templates, checks MSDS, gets embargo/restriction info from REC002.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: SCC TYPES -->
+    <section class="card section-2">
+        <div class="card-header">
+            <div class="card-icon">2</div>
+            <div class="card-title">
+                <h2><span class="tr">SCC Türleri & Kurallar</span><span class="en">SCC Types & Rules</span></h2>
+                <p><span class="tr">Özel kargo kategorileri</span><span class="en">Special cargo categories</span></p>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="scc-grid">
+                <div class="scc-card dg">
+                    <h5>🔴 DG - Dangerous Goods</h5>
+                    <p><span class="tr">Tehlikeli maddeler. MSDS (Material Safety Data Sheet) kontrolü zorunlu. IATA DGR kuralları uygulanır.</span>
+                    <span class="en">Dangerous goods. MSDS (Material Safety Data Sheet) check mandatory. IATA DGR rules apply.</span></p>
+                </div>
+                <div class="scc-card per">
+                    <h5>🔵 PER - Perishable</h5>
+                    <p><span class="tr">Bozulabilir ürünler. +2/+8°C soğutma koşulu. Tüm istasyonlarda soğutma yok!</span>
+                    <span class="en">Perishable products. +2/+8°C refrigeration condition. Not all stations have refrigeration!</span></p>
+                </div>
+                <div class="scc-card hum">
+                    <h5>🟢 HUM - Human Remains</h5>
+                    <p><span class="tr">İnsan kalıntıları. Hafta sonu kabul edilmez (cenaze işlemleri).</span>
+                    <span class="en">Human remains. Not accepted on weekends (funeral procedures).</span></p>
+                </div>
+                <div class="scc-card avi">
+                    <h5>🟡 AVI - Live Animals</h5>
+                    <p><span class="tr">Canlı hayvanlar. APR (Prior Approval) gerekli. Varış havalimanı CITES kontrolü.</span>
+                    <span class="en">Live animals. APR (Prior Approval) required. Destination airport CITES check.</span></p>
+                </div>
+                <div class="scc-card val">
+                    <h5>🟣 VAL - Valuable</h5>
+                    <p><span class="tr">Değerli kargo. Özel güvenlik prosedürleri uygulanır.</span>
+                    <span class="en">Valuable cargo. Special security procedures apply.</span></p>
+                </div>
+                <div class="scc-card wpn">
+                    <h5>🟠 WPN - Weapons</h5>
+                    <p><span class="tr">Silah taşıması. Ülke bazlı yasal izinler, transit kuralları.</span>
+                    <span class="en">Weapon transport. Country-specific legal permits, transit rules.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: WORKFLOW -->
+    <section class="card section-3">
+        <div class="card-header">
+            <div class="card-icon">3</div>
+            <div class="card-title">
+                <h2><span class="tr">İş Akışı</span><span class="en">Workflow</span></h2>
+                <p><span class="tr">Email işleme süreci</span><span class="en">Email processing flow</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s3-chart" class="view-pane active">
+                <!-- Tetikleyiciler ve Çıktılar -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                    <div style="background:#fef3c7; padding:12px; border-radius:8px; border-left:3px solid #f59e0b;">
+                        <h4 style="font-size:11px; color:#b45309; margin-bottom:8px;"><span class="tr">🔔 TETİKLEYİCİLER (TRIGGERS)</span><span class="en">🔔 TRIGGERS</span></h4>
+                        <ul style="font-size:11px; color:#92400e; margin:0; padding-left:16px;">
+                            <li><span class="tr">servisstandart@thy.com'a email geldiğinde</span><span class="en">When email arrives at servisstandart@thy.com</span></li>
+                            <li><span class="tr">GHA/Acente özel kargo kabul sorgusu</span><span class="en">GHA/Agent special cargo acceptance query</span></li>
+                            <li><span class="tr">DG/PER/AVI/HUM/VAL/WPN SCC talebi</span><span class="en">DG/PER/AVI/HUM/VAL/WPN SCC request</span></li>
+                            <li><span class="tr">MSDS belgesi değerlendirme talebi</span><span class="en">MSDS document evaluation request</span></li>
+                            <li><span class="tr">APR (Prior Approval) sorgulama</span><span class="en">APR (Prior Approval) inquiry</span></li>
+                        </ul>
+                    </div>
+                    <div style="background:#dbeafe; padding:12px; border-radius:8px; border-left:3px solid #3b82f6;">
+                        <h4 style="font-size:11px; color:#1e40af; margin-bottom:8px;"><span class="tr">📤 ÇIKTILAR (OUTPUTS)</span><span class="en">📤 OUTPUTS</span></h4>
+                        <ul style="font-size:11px; color:#1e3a8a; margin:0; padding-left:16px;">
+                            <li><span class="tr">Kabul/Red kararı (Word email)</span><span class="en">Accept/Reject decision (Word email)</span></li>
+                            <li><span class="tr">SCC koşulları ve gereksinimleri</span><span class="en">SCC conditions and requirements</span></li>
+                            <li><span class="tr">APR onayı/reddi (canlı hayvan)</span><span class="en">APR approval/rejection (live animals)</span></li>
+                            <li><span class="tr">İstasyon kısıtlama bilgisi (PER)</span><span class="en">Station restriction info (PER)</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Sorumluluklar ve KPIs -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                    <div style="background:#eff6ff; padding:12px; border-radius:8px; border-left:3px solid #3b82f6;">
+                        <h4 style="font-size:11px; color:#1e40af; margin-bottom:8px;"><span class="tr">📋 ANA SORUMLULUKLAR</span><span class="en">📋 PRIMARY RESPONSIBILITIES</span></h4>
+                        <ul style="font-size:11px; color:#1e3a8a; margin:0; padding-left:16px;">
+                            <li><span class="tr">Özel kargo kabul kurallarının belirlenmesi</span><span class="en">Determining special cargo acceptance rules</span></li>
+                            <li><span class="tr">MSDS belgesi değerlendirmesi (DG)</span><span class="en">MSDS document evaluation (DG)</span></li>
+                            <li><span class="tr">Sıcaklık koşulları kontrolü (PER)</span><span class="en">Temperature conditions check (PER)</span></li>
+                            <li><span class="tr">APR işlemleri (AVI/CITES)</span><span class="en">APR operations (AVI/CITES)</span></li>
+                            <li><span class="tr">REC002'den embargo/restriction sorgusu</span><span class="en">Embargo/restriction query from REC002</span></li>
+                        </ul>
+                    </div>
+                    <div style="background:#ecfdf5; padding:12px; border-radius:8px; border-left:3px solid #10b981;">
+                        <h4 style="font-size:11px; color:#047857; margin-bottom:8px;"><span class="tr">📊 KPI'LAR & BAŞARI KRİTERLERİ</span><span class="en">📊 KPIs & SUCCESS CRITERIA</span></h4>
+                        <ul style="font-size:11px; color:#065f46; margin:0; padding-left:16px;">
+                            <li><span class="tr">Güvenlik olayı: 0</span><span class="en">Safety incident: 0</span></li>
+                            <li><span class="tr">Email yanıt süresi &lt;4 saat</span><span class="en">Email response time &lt;4 hours</span></li>
+                            <li><span class="tr">Doğru kabul/red oranı: %100</span><span class="en">Correct accept/reject rate: 100%</span></li>
+                            <li><span class="tr">IATA uyum denetim puanı: A</span><span class="en">IATA compliance audit score: A</span></li>
+                            <li><span class="tr">Müşteri şikayet oranı: %0</span><span class="en">Customer complaint rate: 0%</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#0284c7; margin-bottom:12px;"><span class="tr">DG (TEHLİKELİ MADDE) AKIŞI</span><span class="en">DG (DANGEROUS GOODS) FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="tr">Email Gelir</span><span class="en">Email Arrives</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">MSDS Kontrol</span><span class="en">MSDS Check</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">REC002 Kontrol</span><span class="en">REC002 Check</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">Embargo Var mı?</span><span class="en">Embargo Exists?</span></div>
+                </div>
+                <div class="flow-h">
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">Word Şablonu Aç</span><span class="en">Open Word Template</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">Cevabı Yaz</span><span class="en">Write Response</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step critical"><span class="tr">📧 Email Gönder</span><span class="en">📧 Send Email</span></div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#16a34a; margin:24px 0 12px;"><span class="tr">PER (BOZULABİLİR) AKIŞI</span><span class="en">PER (PERISHABLE) FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="tr">Sıcaklık Gereksinimi</span><span class="en">Temperature Requirement</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">+2/+8°C?</span><span class="en">+2/+8°C?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">İstasyon Soğutma Kontrolü</span><span class="en">Station Refrigeration Check</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">Soğutma Var mı?</span><span class="en">Refrigeration?</span></div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#f59e0b; margin:24px 0 12px;"><span class="tr">AVI (CANLI HAYVAN) AKIŞI</span><span class="en">AVI (LIVE ANIMAL) FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="tr">AVI Talebi</span><span class="en">AVI Request</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">APR Gerekli mi?</span><span class="en">APR Required?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">CITES Kontrolü</span><span class="en">CITES Check</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step critical"><span class="tr">APR Onayı</span><span class="en">APR Approval</span></div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#9333ea; margin:24px 0 12px;"><span class="tr">HUM (İNSAN KALINTISI) AKIŞI</span><span class="en">HUM (HUMAN REMAINS) FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="tr">HUM Talebi</span><span class="en">HUM Request</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">Hafta Sonu mu?</span><span class="en">Weekend?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background:#fecaca; color:#991b1b; border:2px solid #f87171;"><span class="tr">❌ Hafta Sonu RED</span><span class="en">❌ Weekend REJECT</span></div>
+                </div>
+            </div>
+            <div id="s3-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Her SCC türü için farklı kontrol akışı var. DG için MSDS kontrolü, PER için istasyon soğutma koşulu, AVI için APR ve CITES, HUM için hafta içi kontrolü yapılır. Tüm süreç manuel: Email → REC002 kontrol → Word şablonu → Manuel cevap.</span>
+                    <span class="en">Different check flow for each SCC type. MSDS check for DG, station refrigeration for PER, APR and CITES for AVI, weekday check for HUM. Entire process is manual: Email → REC002 check → Word template → Manual reply.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: DATA & SYSTEMS -->
+    <section class="card section-4">
+        <div class="card-header">
+            <div class="card-icon">4</div>
+            <div class="card-title">
+                <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                <p><span class="tr">CRUD, yetkiler, sistem bağımlılıkları</span><span class="en">CRUD, permissions, system dependencies</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s4-chart" class="view-pane active">
+                <h4 style="font-size:11px; color:#0d9488; margin-bottom:8px;"><span class="tr">CRUD MATRİSİ - VERİ ERİŞİM YETKİLERİ</span><span class="en">CRUD MATRIX - DATA ACCESS PERMISSIONS</span></h4>
+                <p style="font-size:11px; color:#6b7280; margin-bottom:12px; padding:8px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                    <span class="tr"><strong>C</strong>=Create | <strong>R</strong>=Read | <strong>U</strong>=Update | <strong>D</strong>=Delete — <span style="color:#047857;">✓ Yetkili</span> | <span style="color:#9ca3af;">- Yetkisiz</span></span>
+                    <span class="en"><strong>C</strong>=Create | <strong>R</strong>=Read | <strong>U</strong>=Update | <strong>D</strong>=Delete — <span style="color:#047857;">✓ Authorized</span> | <span style="color:#9ca3af;">- Not Authorized</span></span>
+                </p>
+                <table class="crud-table">
+                    <thead>
+                        <tr>
+                            <th><span class="tr">Veri/Sistem</span><span class="en">Data/System</span></th>
+                            <th>C</th>
+                            <th>R</th>
+                            <th>U</th>
+                            <th>D</th>
+                            <th><span class="tr">Not</span><span class="en">Note</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>REC002 (Embargo/Restriction)</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Sadece sorgulama yetkisi</span><span class="en">Query only permission</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email Inbox (servisstandart@)</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Outlook üzerinden işlem</span><span class="en">Operation via Outlook</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Word Templates</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">SCC cevap şablonları</span><span class="en">SCC response templates</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>MSDS Database</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Tehlikeli madde bilgileri</span><span class="en">Dangerous goods info</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CITES List</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Canlı hayvan düzenleme</span><span class="en">Live animal regulation</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Station Capability</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Manuel bilgi (takip edilemiyor)</span><span class="en">Manual info (cannot track)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4 style="font-size:11px; color:#0d9488; margin:24px 0 12px;"><span class="tr">SİSTEM ENTEGRASYONLARI</span><span class="en">SYSTEM INTEGRATIONS</span></h4>
+                <div class="intent-grid">
+                    <div class="intent-item">
+                        <h5>Email Workflow</h5>
+                        <p><span class="tr">Talep email ile gelir → REC002'den kontrol → Word'de cevap hazırla → Email ile gönder.</span><span class="en">Request via email → Check from REC002 → Prepare response in Word → Send via email.</span></p>
+                        <span class="intent-badge medium">MANUAL</span>
+                    </div>
+                    <div class="intent-item">
+                        <h5>REC002 Query</h5>
+                        <p><span class="tr">Embargo/Restriction sorgusu. Origin-Destination-SCC kombinasyonu kontrol edilir.</span><span class="en">Embargo/Restriction query. Origin-Destination-SCC combination checked.</span></p>
+                        <span class="intent-badge low">READ</span>
+                    </div>
+                    <div class="intent-item">
+                        <h5>MSDS Lookup</h5>
+                        <p><span class="tr">Tehlikeli madde içeriği kontrolü. IATA DGR sınıfı ve ambalaj grubu.</span><span class="en">Dangerous goods content check. IATA DGR class and packing group.</span></p>
+                        <span class="intent-badge low">READ</span>
+                    </div>
+                    <div class="intent-item">
+                        <h5>Station Capability</h5>
+                        <p><span class="tr">Hangi istasyonda ne kapabilite var? Manuel takip, entegre değil.</span><span class="en">Which station has what capability? Manual tracking, not integrated.</span></p>
+                        <span class="intent-badge high">GAP</span>
+                    </div>
+                </div>
+            </div>
+            <div id="s4-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Service Standards sadece Read yetkisine sahip (REC002 sorgu, MSDS, CITES). Tüm iş akışı manuel: Email → Word → Email. Kritik eksik: İstasyon kapabilite takibi yapılamıyor (soğuk zincir, canlı hayvan vb.). Entegrasyon yok, tüm sistemler ayrı ayrı kullanılıyor.</span>
+                    <span class="en">Service Standards has only Read permission (REC002 query, MSDS, CITES). All workflow manual: Email → Word → Email. Critical missing: Station capability tracking not possible (cold chain, live animal etc.). No integration, all systems used separately.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: PAIN POINTS -->
+    <section class="card section-5">
+        <div class="card-header">
+            <div class="card-icon">5</div>
+            <div class="card-title">
+                <h2><span class="tr">Pain Points</span><span class="en">Pain Points</span></h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="pain-list">
+                <div class="pain-item high">
+                    <span class="pain-code">P1</span>
+                    <div class="pain-text">
+                        <h5><span class="tr">🔴 Tamamen Manuel Email İş Akışı</span><span class="en">🔴 Fully Manual Email Workflow</span></h5>
+                        <p><span class="tr">Email gelir → Word aç → Cevabı yaz → Email gönder. Hiç otomasyon yok, her talep manuel işlenir.</span>
+                        <span class="en">Email arrives → Open Word → Write response → Send email. No automation, every request processed manually.</span></p>
+                    </div>
+                </div>
+                <div class="pain-item high">
+                    <span class="pain-code">P2</span>
+                    <div class="pain-text">
+                        <h5><span class="tr">🔴 İstasyon Kapabilite Takibi Zor</span><span class="en">🔴 Station Capability Tracking Difficult</span></h5>
+                        <p><span class="tr">"Some products have +2/+8 degrees, all stations don't have refrigerating conditions." Hangi istasyonda ne kapabilite var takip edilemiyor.</span>
+                        <span class="en">"Some products have +2/+8 degrees, all stations don't have refrigerating conditions." Can't track which station has what capability.</span></p>
+                    </div>
+                </div>
+                <div class="pain-item medium">
+                    <span class="pain-code">P3</span>
+                    <div class="pain-text">
+                        <h5><span class="tr">Entegre Olmayan Sistemler</span><span class="en">Non-Integrated Systems</span></h5>
+                        <p><span class="tr">REC002, Word, Outlook ayrı ayrı kullanılıyor. Tek bir arayüzde tüm bilgiler yok.</span>
+                        <span class="en">REC002, Word, Outlook used separately. All information not in single interface.</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: EMPATHY -->
+    <section class="card section-6">
+        <div class="card-header">
+            <div class="card-icon">6</div>
+            <div class="card-title">
+                <h2><span class="tr">Zihinsel Model</span><span class="en">Mental Model</span></h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="empathy-grid">
+                <div class="empathy-quad says">
+                    <h4>💬 <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                    <div class="empathy-item"><span class="tr">"O istasyonda soğutma yok, kabul edemeyiz"</span><span class="en">"That station has no refrigeration, we can't accept"</span></div>
+                    <div class="empathy-item"><span class="tr">"MSDS'i gönderirler mi acaba?"</span><span class="en">"I wonder if they'll send the MSDS?"</span></div>
+                </div>
+                <div class="empathy-avatar">
+                    <div class="empathy-avatar-circle">📋</div>
+                    <div style="margin-top:10px; font-size:12px; font-weight:700; color:#0d9488;">Service Std</div>
+                </div>
+                <div class="empathy-quad thinks">
+                    <h4>💭 <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                    <div class="empathy-item"><span class="tr">"Her emaile ayrı ayrı cevap yazmak çok zaman alıyor"</span><span class="en">"Responding to each email separately takes too much time"</span></div>
+                </div>
+                <div class="empathy-quad does">
+                    <h4>⚡ <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                    <div class="empathy-item"><span class="tr">Word şablonu açar, kopyala-yapıştır</span><span class="en">Opens Word template, copy-paste</span></div>
+                </div>
+                <div class="empathy-quad feels">
+                    <h4>❤️ <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                    <div class="empathy-item"><span class="tr">Tekrarlayan işlerden yorgunluk</span><span class="en">Fatigue from repetitive tasks</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: COLLABORATION & SUPPORT -->
+    <section class="card section-7">
+        <div class="card-header">
+            <div class="card-icon">7</div>
+            <div class="card-title">
+                <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                <p><span class="tr">Paydaşlar, koordinasyon</span><span class="en">Stakeholders, coordination</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s7-chart" class="view-pane active">
+                <div class="stakeholder-map">
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node provider"><span class="tr">🏛️ IATA (DGR/LAR/PER)</span><span class="en">🏛️ IATA (DGR/LAR/PER)</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">📋 MSDS Databases</span><span class="en">📋 MSDS Databases</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">🌍 CITES Authority</span><span class="en">🌍 CITES Authority</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node persona"><span class="tr">📋 SERVİS STANDARTLARI UZMANI</span><span class="en">📋 SERVICE STANDARDS SPECIALIST</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓ ↔️</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node partner"><span class="tr">🛡️ Embargo Uzmanı (Mustafa)</span><span class="en">🛡️ Embargo Specialist (Mustafa)</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">📊 Restriction Uzmanı (Kemal)</span><span class="en">📊 Restriction Specialist (Kemal)</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">🌍 330 İstasyon</span><span class="en">🌍 330 Stations</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node consumer"><span class="tr">📧 GHA / Acenteler</span><span class="en">📧 GHA / Agents</span></div>
+                        <div class="stakeholder-node consumer"><span class="tr">📦 Operations</span><span class="en">📦 Operations</span></div>
+                        <div class="stakeholder-node consumer"><span class="tr">📞 Rezervasyon Ekibi</span><span class="en">📞 Reservation Team</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s7-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Service Standards uzmanı IATA kuralları, MSDS veritabanları ve CITES otoritesinden bilgi alır. REC002'den embargo/restriction bilgisi sorgulanır (Mustafa/Kemal). İstasyonların soğutma/DG handling kapabiliteleri kritik bilgi kaynağı. Çıktılar GHA/Acentelere email ile, operations ve rezervasyon ekibine sistem üzerinden iletilir.</span>
+                    <span class="en">Service Standards specialist receives info from IATA rules, MSDS databases and CITES authority. Embargo/restriction info queried from REC002 (Mustafa/Kemal). Station refrigeration/DG handling capabilities are critical info source. Outputs delivered to GHA/Agents via email, to operations and reservation team through system.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 8: OPPORTUNITIES -->
+    <section class="card section-8">
+        <div class="card-header">
+            <div class="card-icon">8</div>
+            <div class="card-title">
+                <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+                <p><span class="tr">Çözüm önerileri</span><span class="en">Solution proposals</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s8-chart" class="view-pane active">
+            <div class="timeline">
+                <div class="timeline-item mvp">
+                    <span class="timeline-badge mvp">MVP</span>
+                    <h5><span class="tr">Self-Service SCC Sorgu Portali</span><span class="en">Self-Service SCC Query Portal</span></h5>
+                    <p><span class="tr">Acentelerin DG/PER/AVI sorularını otomatik yanıtlayan, REC002 ve istasyon kapabilitelerini birleştiren web portali.</span><span class="en">Web portal that automatically answers agents' DG/PER/AVI queries, combining REC002 and station capabilities.</span></p>
+                </div>
+                <div class="timeline-item mvp">
+                    <span class="timeline-badge mvp">MVP</span>
+                    <h5><span class="tr">Station Capability Matrix</span><span class="en">Station Capability Matrix</span></h5>
+                    <p><span class="tr">Tüm istasyonların soğutma, DG handling, AVI tesisi gibi kapabilitelerini gösteren dinamik matris.</span><span class="en">Dynamic matrix showing all stations' capabilities like refrigeration, DG handling, AVI facility.</span></p>
+                </div>
+                <div class="timeline-item short">
+                    <span class="timeline-badge short">SHORT TERM</span>
+                    <h5><span class="tr">Email Auto-Response Templates</span><span class="en">Email Auto-Response Templates</span></h5>
+                    <p><span class="tr">Sık sorulan SCC sorularına otomatik cevap şablonları. Outlook entegrasyonu.</span><span class="en">Automatic response templates for frequently asked SCC questions. Outlook integration.</span></p>
+                </div>
+            </div>
+            </div>
+            <div id="s8-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">3 ana fırsat tanımlandı: MVP seviyesinde Self-Service SCC Portali ve Station Capability Matrix. Kısa vadede email auto-response şablonları. Bu çözümler manuel email sürecini %60-70 azaltabilir.</span>
+                    <span class="en">3 main opportunities identified: At MVP level Self-Service SCC Portal and Station Capability Matrix. Short term email auto-response templates. These solutions can reduce manual email process by 60-70%.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 9: AI SUPPORT -->
+    <section class="card section-9">
+        <div class="card-header">
+            <div class="card-icon">9</div>
+            <div class="card-title">
+                <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                <p><span class="tr">AI potansiyeli</span><span class="en">AI potential</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s9-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;"><span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span><span class="en">Maximum automation level AI can safely reach for this persona</span></p>
+                
+                <!-- Gradient Slider -->
+                <div style="display:flex; gap:24px; margin-bottom:32px;">
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:100px; padding:8px 0;">
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 FORBIDDEN</span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI yapmamalı</span><span class="en">AI must not do</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ APPROVAL</span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">Onay gerekli</span><span class="en">Needs approval</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ SAFE</span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI devam edebilir</span><span class="en">AI can proceed</span></div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex:1; position:relative;">
+                        <div style="height:240px; border-radius:12px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 33%, #fed7aa 33%, #fed7aa 50%, #dcfce7 50%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            <div style="position:absolute; left:12px; top:4%; font-size:10px; color:#dc2626; font-weight:600;">6 - 🚫 <span class="tr">DG kabul kararı</span><span class="en">DG acceptance decision</span></div>
+                            <div style="position:absolute; left:12px; top:21%; font-size:10px; color:#dc2626; font-weight:600;">5 - 🚫 <span class="tr">IATA DGR kuralı yorumlama</span><span class="en">IATA DGR rule interpretation</span></div>
+                            
+                            <div style="position:absolute; left:0; right:0; top:50%; height:3px; background:#0891b2; z-index:10;"></div>
+                            <div style="position:absolute; right:8px; top:48%; background:#0891b2; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">⬆️ TRUST LINE</div>
+                            
+                            <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">4 - 💡 <span class="tr">Email'den SCC türü çıkarımı</span><span class="en">SCC type extraction from email</span></div>
+                            <div style="position:absolute; left:12px; top:68%; font-size:10px; color:#15803d; font-weight:600;">3 - ⚙️ <span class="tr">MSDS'den DG sınıfı tespiti</span><span class="en">DG class detection from MSDS</span></div>
+                            <div style="position:absolute; left:12px; top:81%; font-size:10px; color:#15803d; font-weight:600;">2 - 📝 <span class="tr">Şablon cevap önerisi</span><span class="en">Template response suggestion</span></div>
+                            <div style="position:absolute; left:12px; top:94%; font-size:10px; color:#15803d; font-weight:600;">1 - 📊 <span class="tr">FAQ analizi ve önerileri</span><span class="en">FAQ analysis and recommendations</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="two-col" style="margin-top:20px;">
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">📋 Email sorgusundan SCC türü ve talebi çıkarımı</span><span class="en">📋 SCC type and request extraction from email query</span></div>
+                        <div class="list-item"><span class="tr">📧 Şablon cevap önerisi oluşturma</span><span class="en">📧 Template response suggestion generation</span></div>
+                        <div class="list-item"><span class="tr">🔍 MSDS dokümanından DG sınıfı tespiti</span><span class="en">🔍 DG class detection from MSDS document</span></div>
+                        <div class="list-item"><span class="tr">🌡️ İstasyon soğutma kapabilitesi sorgulama</span><span class="en">🌡️ Station refrigeration capability query</span></div>
+                        <div class="list-item"><span class="tr">📊 Sık sorulan sorular analizi ve FAQ önerileri</span><span class="en">📊 FAQ analysis and recommendation</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #dc2626;">
+                        <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">🚫 DG kabul kararı verme</span><span class="en">🚫 Making DG acceptance decision</span></div>
+                        <div class="list-item"><span class="tr">🚫 AVI için APR onayı</span><span class="en">🚫 APR approval for AVI</span></div>
+                        <div class="list-item"><span class="tr">🚫 IATA DGR kuralı yorumlama</span><span class="en">🚫 Interpreting IATA DGR rules</span></div>
+                        <div class="list-item"><span class="tr">🚫 Yeni SCC koşulu belirleme</span><span class="en">🚫 Determining new SCC conditions</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s9-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">AI özel kargo sorularında bilgi sunma ve şablon önerisi seviyelerinde destek sağlayabilir: Email'den SCC tespiti, MSDS analizi, cevap taslağı oluşturma. Ancak DG kabul kararı, APR onayı, IATA kuralı yorumlama kesinlikle insan kontrolünde kalmalı - güvenlik riski çok yüksek.</span>
+                    <span class="en">AI can support special cargo queries at information and template suggestion levels: SCC detection from email, MSDS analysis, response draft generation. However, DG acceptance decision, APR approval, IATA rule interpretation must absolutely remain under human control - safety risk too high.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer class="footer">
+    <p><span class="tr">📅 Analiz: 12 Mayıs 2026 | 📄 3 Kaynak MoM | 📋 Service Standards Specialist</span>
+    <span class="en">📅 Analysis: May 12, 2026 | 📄 3 Source MoMs | 📋 Service Standards Specialist</span></p>
+    <p>COM - Compliance Management | THY Cargo | Sungur Product Team</p>
+</footer>
+    </div>
+
+    <script>
+    function switchLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+        });
+    }
+    function toggleView(btn, section, view) {
+        btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(section + '-chart').classList.remove('active');
+        document.getElementById(section + '-text').classList.remove('active');
+        document.getElementById(section + '-' + view).classList.add('active');
+    }
+
+    function toggleMegaMenu() {
+        document.querySelector('.mega-menu').classList.toggle('open');
+        document.querySelector('.mega-overlay').classList.toggle('open');
+    }
+    </script>
+</body>
+</html>

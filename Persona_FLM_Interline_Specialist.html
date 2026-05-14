@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interline Specialist | FLM Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        /* ===== SIDE NAVIGATION ===== */
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+        }
+        .nav-item .nav-num {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .nav-item .nav-label {
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .nav-item.pending {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 12px 10px;
+        }
+        /* Color indicators for nav items */
+        .nav-item[data-theme="indigo"].active { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .nav-item[data-theme="red"].active { background: linear-gradient(135deg, #dc2626, #f97316); }
+        .nav-item[data-theme="green"].active { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .nav-item[data-theme="blue"].active { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .nav-item[data-theme="orange"].active { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .nav-item[data-theme="purple"].active { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .nav-item[data-theme="teal"].active { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+
+        /* Main content wrapper */
+        .main-content {
+            margin-left: 72px;
+        }
+        
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+            padding: 48px 40px;
+            position: relative;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(79,70,229,0.1); color: #4f46e5; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #4f46e5; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #4f46e5; }
+        .hero-subtitle { font-size: 16px; color: #6b7280; max-width: 600px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #4f46e5; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .meta-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6b7280; }
+        .meta-dot { width: 8px; height: 8px; border-radius: 50%; }
+        /* Source Tooltip */
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .source-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 24px;
+            width: 12px;
+            height: 12px;
+            background: #1f2937;
+            transform: rotate(45deg);
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+
+        
+        /* Board */
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        /* Card */
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        /* Toggle */
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #4f46e5; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Section Colors */
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        /* Grids & Lists */
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 100px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 120px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .intent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+        .intent-item { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .intent-item h5 { font-size: 11px; font-weight: 700; color: #4f46e5; margin-bottom: 4px; }
+        .intent-item p { font-size: 11px; color: #6b7280; }
+        .intent-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-top: 6px; }
+        .intent-badge.high { background: #fef2f2; color: #dc2626; }
+        .intent-badge.medium { background: #fefce8; color: #b45309; }
+        .intent-badge.low { background: #f0fdf4; color: #16a34a; }
+        
+        .crud-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .crud-table th, .crud-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .crud-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .crud-badge { display: inline-block; width: 20px; height: 20px; border-radius: 4px; text-align: center; line-height: 20px; font-size: 10px; font-weight: 700; }
+        .crud-badge.yes { background: #d1fae5; color: #047857; }
+        .crud-badge.no { background: #f3f4f6; color: #9ca3af; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+                .empathy-grid { 
+            display: grid; 
+            grid-template-columns: 1fr auto 1fr; 
+            grid-template-rows: auto auto; 
+            gap: 16px; 
+            align-items: stretch; 
+        }
+        .empathy-avatar {
+            grid-row: span 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-width: 130px;
+        }
+        .empathy-avatar-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 4px solid white;
+        }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.does h4 span.icon { background: rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-quad.feels h4 span.icon { background: rgba(225,29,72,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #d1fae5; color: #047857; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #4f46e5, #6366f1); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #e0e7ff; color: #4338ca; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-pyramid { display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 20px 0; }
+        .ai-level { padding: 10px; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 500; color: white; }
+        .ai-level:nth-child(1) { background: #16a34a; width: 40%; }
+        .ai-level:nth-child(2) { background: #22c55e; width: 50%; }
+        .ai-level:nth-child(3) { background: #84cc16; width: 60%; }
+        .ai-level:nth-child(4) { background: #eab308; width: 70%; }
+        .ai-level:nth-child(5) { background: #f97316; width: 80%; }
+        .ai-level:nth-child(6) { background: #dc2626; width: 90%; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        .missing { background: rgba(217,119,6,0.06); border: 1px dashed rgba(217,119,6,0.3); padding: 12px; border-radius: 8px; margin-top: 12px; }
+        .missing h5 { font-size: 11px; font-weight: 600; color: #b45309; margin-bottom: 6px; }
+        .missing p { font-size: 11px; color: #92400e; }
+        
+        .summary-box { background: rgba(79,70,229,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #4f46e5; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .infographic-text { background: rgba(0,0,0,0.03); border-left: 3px solid #4f46e5; padding: 12px 16px; margin-top: 16px; }
+        .infographic-text h5 { font-size: 10px; font-weight: 600; color: #4f46e5; text-transform: uppercase; margin-bottom: 6px; }
+        .infographic-text p { font-size: 14px; font-weight: 600; font-style: italic; color: #111827; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .nav-item { width: 44px; height: 44px; }
+            .nav-item .nav-num { font-size: 14px; }
+            .nav-item .nav-label { font-size: 7px; }
+            .hero { padding: 32px 20px; }
+            .hero h1 { font-size: 28px; }
+            .board { padding: 16px; }
+            .segment-card, .two-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <!-- SIDE NAVIGATION -->
+    <nav class="side-nav">
+        <a href="../THY_Cargo_Persona_Hub.html" class="side-nav-logo" title="Ana Sayfa">FLM</a>
+        <div class="nav-items">
+            <a href="Persona_FLM_Network_Planner.html" class="nav-item" data-theme="indigo" title="Network Planner">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Network</span>
+            </a>
+            <a href="Persona_FLM_Schedule_Planner.html" class="nav-item" data-theme="purple" title="Schedule Planner">
+                <span class="nav-num">2</span>
+                <span class="nav-label">Schedule</span>
+            </a>
+            <a href="Persona_FLM_COCC_Coordinator.html" class="nav-item" data-theme="orange" title="COCC Coordinator">
+                <span class="nav-num">3</span>
+                <span class="nav-label">COCC</span>
+            </a>
+            <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="nav-item" data-theme="green" title="Revenue & Capacity Analyst">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Revenue</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="Persona_FLM_Interline_Specialist.html" class="nav-item active" data-theme="teal" title="Interline Specialist">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Interline</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">FLM · INTERLINE · PERSONA #5</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1>
+                <span class="tr">Interline <span>Specialist</span></span>
+                <span class="en">Interline <span>Specialist</span></span>
+            </h1>
+            <p class="hero-subtitle">
+                <span class="tr">Partner havayolları ile kargo interline anlaşmalarını yöneten uzman. SPA (Special Prorate Agreement) müzakereleri, interline rota planlaması ve partner kapasite koordinasyonu yapar. MAWB/HAWB interline akışlarını takip eder.</span>
+                <span class="en">Specialist managing cargo interline agreements with partner airlines. Handles SPA (Special Prorate Agreement) negotiations, interline route planning and partner capacity coordination. Tracks MAWB/HAWB interline flows.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="tr">"Partner havayolu ile SPA yaparken hem fiyat hem kapasite garantisi önemli. Interline AWB takibi CASS sisteminden geçer. Routing kararları network ile koordineli olmalı."</span>
+                <span class="en">"When making SPA with partner airline, both price and capacity guarantee matter. Interline AWB tracking goes through CASS system. Routing decisions must be coordinated with network."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#0d9488;"></span>
+                    <span><strong>User:</strong> <span class="tr">Interline Uzmanı</span><span class="en">Interline Specialist</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong>Criticality:</strong> <span style="color:#f59e0b;">★★★★☆</span> <span class="tr">Yüksek</span><span class="en">High</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong>Main System:</strong> CASS + SPA Portal + COMMIS</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 3 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#a5f3fc; font-size:12px;">📄 Source MoM Documents</div>
+                        <div style="display:flex; flex-direction:column; gap:4px;">
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2026-02-05</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2026-02-19</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-Sol-5</span><span style="color:#93c5fd;">Solution Team</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1: PERSONA PROFILE -->
+        <section class="card section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                    <p><span class="tr">Demografik, Davranışsal, Psikografik</span><span class="en">Demographic, Behavioral, Psychographic</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s1-chart" class="view-pane active">
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label"><span class="tr">Departman</span><span class="en">Department</span></div><div class="pf-value"><span class="tr">Interline & Alliances</span><span class="en">Interline & Alliances</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Seviye</span><span class="en">Level</span></div><div class="pf-value"><span class="tr">Stratejik / İş Geliştirme</span><span class="en">Strategic / Business Development</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Kullanıcı Tipi</span><span class="en">User Type</span></div><div class="pf-value"><span class="tr">Interline Specialist</span><span class="en">Interline Specialist</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Partner Sayısı</span><span class="en">Partner Count</span></div><div class="pf-value"><span class="tr">50+ havayolu</span><span class="en">50+ airlines</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Temel Amaç</span><span class="en">Primary Purpose</span></div><div class="pf-value"><span class="tr">SPA yönetimi & interline koordinasyon</span><span class="en">SPA management & interline coordination</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Ana Sistem</span><span class="en">Main System</span></div><div class="pf-value">CASS + SPA Portal</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Anlaşma Tipi</span><span class="en">Agreement Type</span></div><div class="pf-value"><span class="tr">SPA, Bilateral, Multilateral</span><span class="en">SPA, Bilateral, Multilateral</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Takip</span><span class="en">Tracking</span></div><div class="pf-value"><span class="tr">MAWB/HAWB interline flow</span><span class="en">MAWB/HAWB interline flow</span></div></div>
+                    </div>
+                    
+                    <div class="segment-card">
+                        <div class="segment-col demo">
+                            <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Lokasyon:</span><span class="en">Location:</span></strong> IST (Agent Station)</div>
+                            <div class="segment-item"><strong><span class="tr">İstasyon Kodu:</span><span class="en">Station Code:</span></strong> THYIST / ADA / ESB</div>
+                            <div class="segment-item"><strong><span class="tr">Teknik:</span><span class="en">Technical:</span></strong> <span class="tr">COMIS Expert</span><span class="en">COMIS Expert</span></div>
+                            <div class="segment-item"><strong><span class="tr">Yetki:</span><span class="en">Authority:</span></strong> <span class="tr">Rez Create/Update/Cancel</span><span class="en">Res Create/Update/Cancel</span></div>
+                            <div class="segment-item"><strong><span class="tr">Kargo Tipi:</span><span class="en">Cargo Type:</span></strong> <span class="tr">Sadece GEN (özel → ayrı ekip)</span><span class="en">GEN only (special → separate team)</span></div>
+                        </div>
+                        <div class="segment-col behav">
+                            <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Çalışma:</span><span class="en">Work Style:</span></strong> <span class="tr">Telefon + CAP018 eşzamanlı</span><span class="en">Phone + CAP018 simultaneous</span></div>
+                            <div class="segment-item"><strong><span class="tr">Doğrulama:</span><span class="en">Verification:</span></strong> <span class="tr">CW email arşivi kontrolü</span><span class="en">CW email archive check</span></div>
+                            <div class="segment-item"><strong><span class="tr">Onay:</span><span class="en">Approval:</span></strong> <span class="tr">CGOAPR email ile</span><span class="en">Via CGOAPR email</span></div>
+                            <div class="segment-item"><strong><span class="tr">Uçuş:</span><span class="en">Flight:</span></strong> <span class="tr">28 gün limit</span><span class="en">28 day limit</span></div>
+                            <div class="segment-item"><strong><span class="tr">Pre-booking:</span><span class="en">Pre-booking:</span></strong> <span class="tr">IST çıkış için yok</span><span class="en">Not for IST departure</span></div>
+                        </div>
+                        <div class="segment-col psycho">
+                            <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Öncelik:</span><span class="en">Priority:</span></strong> <span class="tr">Doğruluk (verbal değil yazılı)</span><span class="en">Accuracy (written not verbal)</span></div>
+                            <div class="segment-item"><strong><span class="tr">Risk:</span><span class="en">Risk:</span></strong> <span class="tr">Email kanıtı olmadan ilerlemez</span><span class="en">Won't proceed w/o email proof</span></div>
+                            <div class="segment-item"><strong><span class="tr">Stres:</span><span class="en">Stress:</span></strong> <span class="tr">Yüksek günlük hacim & CW doğrulama</span><span class="en">High daily volume & CW verification</span></div>
+                            <div class="segment-item"><strong><span class="tr">Güven:</span><span class="en">Trust:</span></strong> <span class="tr">Müşteri beyanına değil sisteme</span><span class="en">System over customer statement</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s1-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">IST çıkışlı uluslararası kargo rezervasyonlarını yöneten TK personeli. Günlük 1000-1500 arama yükü altında çalışır. CAP018 ekranı üzerinden COMIS sistemine rezervasyon girişi yapar. Embargo, ACRM ve Accuity entegrasyonlarıyla sürekli etkileşim halindedir.</span>
+                        <span class="en">TK staff managing international cargo reservations from IST. Works under daily load of 1000-1500 calls. Enters reservations into COMIS via CAP018 screen. Constantly interacts with Embargo, ACRM and Accuity integrations.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-09:</strong> "Team-based work during special cargo intensity: Daily 1000–1500 calls."<br>
+                        <strong>MoM-2025-12-05:</strong> "Reservations are received via the call center. Destination, content, kg, and dimension information is requested from the customer."
+                    </div>
+                    <div class="infographic-text">
+                        <h5><span class="tr">İnfografik Metni</span><span class="en">Infographic Text</span></h5>
+                        <p><span class="tr">"Günlük 1500 arama, her biri bir karar zinciri: Embargo → ACRM → Accuity → Confirmed"</span>
+                        <span class="en">"1500 daily calls, each a decision chain: Embargo → ACRM → Accuity → Confirmed"</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: GOALS & MOTIVATION -->
+        <section class="card section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="tr">Hedef, Motivasyon & Korku</span><span class="en">Goals, Motivation & Fears</span></h2>
+                    <p><span class="tr">Hedef piramidi, motivatörler, korkular</span><span class="en">Goal pyramid, motivators, fears</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s2-chart" class="view-pane active">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="tr">🎯 PRİMER: Rezervasyonu doğru ve zamanında oluşturmak</span><span class="en">🎯 PRIMARY: Create reservation correctly and on time</span></div>
+                        <div class="goal-level secondary"><span class="tr">🥈 SEKONDER: Müşteri/agent memnuniyeti sağlamak</span><span class="en">🥈 SECONDARY: Ensure customer/agent satisfaction</span></div>
+                        <div class="goal-level tertiary"><span class="tr">🥉 TERSİYER: Sistem bilgisini güncel tutmak</span><span class="en">🥉 TERTIARY: Keep system knowledge up to date</span></div>
+                    </div>
+                    
+                    <div class="two-col">
+                        <div class="list-box motivators">
+                            <h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                            <div class="list-item">✓ <span class="tr">Rezervasyonu sorunsuz tamamlama</span><span class="en">Completing reservation without issues</span></div>
+                            <div class="list-item">✓ <span class="tr">Agent'tan olumlu geri bildirim</span><span class="en">Positive feedback from agent</span></div>
+                            <div class="list-item">✓ <span class="tr">Karmaşık kargo sorununu çözme</span><span class="en">Solving complex cargo problem</span></div>
+                            <div class="list-item">✓ <span class="tr">Sistemin hızlı ve stabil çalışması</span><span class="en">System running fast and stable</span></div>
+                        </div>
+                        <div class="list-box demotivators">
+                            <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                            <div class="list-item">✗ <span class="tr">Manuel süreçler ve tekrarlayan işler</span><span class="en">Manual processes and repetitive tasks</span></div>
+                            <div class="list-item">✗ <span class="tr">Belirsiz embargo/restriction durumları</span><span class="en">Unclear embargo/restriction situations</span></div>
+                            <div class="list-item">✗ <span class="tr">Sistem yavaşlığı veya hatası</span><span class="en">System slowness or errors</span></div>
+                            <div class="list-item">✗ <span class="tr">Email ile onay bekleme süreci</span><span class="en">Waiting for email approval</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="list-box fears" style="margin-top:16px;">
+                        <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Embargo durumunu gözden kaçırıp hatalı işlem başlatma</span><span class="en"><strong>High:</strong> Missing embargo status and starting incorrect process</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Accuity'den iptal gelmesi ve müşteri kaybı</span><span class="en"><strong>High:</strong> Cancellation from Accuity and customer loss</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Orta:</strong> Kapasite doluyken müşteriyi bekletmek</span><span class="en"><strong>Medium:</strong> Making customer wait when capacity is full</span></div>
+                    </div>
+                </div>
+                <div id="s2-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Ana hedef rezervasyonu doğru oluşturmak. Embargo/restriction hataları en büyük korku kaynağı. Email tabanlı onay süreçleri motivasyonu düşürüyor.</span>
+                        <span class="en">Main goal is to create reservation correctly. Embargo/restriction errors are the biggest fear. Email-based approval processes reduce motivation.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-12:</strong> "When we encounter embargoes or restrictions at the error level on the system; if there is a situation that requires approval and approval has been obtained; the restriction or embargo there is deactivated; the reservation is taken; then the embargo or restriction is reactivated. (pain point)"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: WORKFLOW & INTENTS -->
+        <section class="card section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="tr">İş Akışı & Niyetler</span><span class="en">Workflow & Intents</span></h2>
+                    <p><span class="tr">Jobs-to-be-Done, kullanıcı niyetleri</span><span class="en">Jobs-to-be-Done, user intents</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s3-chart" class="view-pane active">
+                    <h4 style="font-size:12px; color:#6b7280; margin-bottom:12px;"><span class="tr">CAP018 REZERVASYON OLUŞTURMA AKIŞI</span><span class="en">CAP018 RESERVATION CREATION FLOW</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step manual"><span class="tr">AWB Girişi</span><span class="en">AWB Entry</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">Agent/Customer Otomatik</span><span class="en">Agent/Customer Auto</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">Commodity Code</span><span class="en">Commodity Code</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">SCC Default</span><span class="en">SCC Default</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">Boyut/Kg</span><span class="en">Dimension/Kg</span></div>
+                    </div>
+                    <div class="flow-h">
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision"><span class="tr">CW Gerekli?</span><span class="en">CW Required?</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">Select Flight (28 gün)</span><span class="en">Select Flight (28 days)</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">Embargo Check</span><span class="en">Embargo Check</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision"><span class="tr">CGOAPR Onay?</span><span class="en">CGOAPR Approval?</span></div>
+                    </div>
+                    <div class="flow-h">
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">ACRM</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">Restriction Check</span><span class="en">Restriction Check</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">Accuity</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step" style="background:#d1fae5; color:#047857;"><span class="tr">Confirmed / Queue</span><span class="en">Confirmed / Queue</span></div>
+                    </div>
+                    
+                    <h4 style="font-size:12px; color:#6b7280; margin:24px 0 12px;"><span class="tr">CAP018 TEMEL ALANLAR</span><span class="en">CAP018 KEY FIELDS</span></h4>
+                    <div class="intent-grid">
+                        <div class="intent-item">
+                            <h5>AWB Number</h5>
+                            <p><span class="tr">Zorunlu - IST çıkışlarında AWB'siz rezervasyon kabul edilmez. STK007'den THY havuzundan alınabilir.</span><span class="en">Mandatory - Reservations without AWB not accepted for IST departures. Can be obtained from THY pool via STK007.</span></p>
+                        </div>
+                        <div class="intent-item">
+                            <h5>Origin / Agent Station</h5>
+                            <p><span class="tr">Kullanıcının istasyon bilgisine göre otomatik gelir. IST istasyonu DXB origin seçemez (rol bazlı istisna olabilir).</span><span class="en">Auto-defaults based on user's station info. IST station can't select DXB origin (role-based exception possible).</span></p>
+                        </div>
+                        <div class="intent-item">
+                            <h5>Shipping Date</h5>
+                            <p><span class="tr">Müşterinin kargoyu depoya getireceği tarih. LAT time seçilen uçuşa göre hesaplanır. FWB gönderildiyse düzenlenemez.</span><span class="en">Date customer will bring cargo to warehouse. LAT time calculated based on selected flight. Non-editable if FWB sent.</span></p>
+                        </div>
+                        <div class="intent-item">
+                            <h5>Product Type</h5>
+                            <p><span class="tr">TK Urgent > Premium > Smart. Seçilmezse Smart default. ACRM doluluk oranına göre fiyat pop-up'ı açabilir (60-80-99%).</span><span class="en">TK Urgent > Premium > Smart. Smart default if not selected. ACRM may open price pop-up based on occupancy (60-80-99%).</span></p>
+                        </div>
+                        <div class="intent-item">
+                            <h5>Prevent Re-plan</h5>
+                            <p><span class="tr">İşaretlenirse kapasite ekipleri kolayca değiştiremez. Acil kargolar için kullanılır. Kapasiteciler pop-up alır.</span><span class="en">If checked, capacity teams can't easily change. Used for urgent cargo. Capacity teams get warning pop-up.</span></p>
+                        </div>
+                        <div class="intent-item">
+                            <h5>Service Class</h5>
+                            <p><span class="tr">COMAT (şirket içi), Free of Charge (sponsorluk), Quote (ACRM fiyat beklemede). IST çıkış ekipleri Quote kullanmıyor.</span><span class="en">COMAT (internal), Free of Charge (sponsorship), Quote (ACRM price pending). IST outbound teams don't use Quote.</span></p>
+                        </div>
+                    </div>
+                    
+                    <h4 style="font-size:12px; color:#6b7280; margin:24px 0 12px;"><span class="tr">KULLANICI NİYETLERİ</span><span class="en">USER INTENTS</span></h4>
+                    <div class="intent-grid">
+                        <div class="intent-item">
+                            <h5>TRANSACTIONAL</h5>
+                            <p><span class="tr">Rezervasyon oluşturma/güncelleme</span><span class="en">Create/update reservation</span></p>
+                            <span class="intent-badge high"><span class="tr">Günlük / Kritik</span><span class="en">Daily / Critical</span></span>
+                        </div>
+                        <div class="intent-item">
+                            <h5>INFORMATIONAL</h5>
+                            <p><span class="tr">Embargo/restriction sorgulama</span><span class="en">Embargo/restriction query</span></p>
+                            <span class="intent-badge high"><span class="tr">Günlük / Yüksek</span><span class="en">Daily / High</span></span>
+                        </div>
+                        <div class="intent-item">
+                            <h5>MONITORING</h5>
+                            <p><span class="tr">Rezervasyon/Accuity durumu takibi</span><span class="en">Reservation/Accuity status tracking</span></p>
+                            <span class="intent-badge medium"><span class="tr">Günlük / Normal</span><span class="en">Daily / Normal</span></span>
+                        </div>
+                        <div class="intent-item">
+                            <h5>CORRECTIVE</h5>
+                            <p><span class="tr">Ağırlık/boyut güncelleme, CW düzeltme</span><span class="en">Weight/dimension update, CW correction</span></p>
+                            <span class="intent-badge medium"><span class="tr">Haftalık / Yüksek</span><span class="en">Weekly / High</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div id="s3-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Ana iş: "Müşteri talebini COMIS'e doğru ve hızlı şekilde girmek." Akış tetikleyicisi agent'ın AWB ile araması. Kritik karar noktaları: embargo onayı, kapasite kontrolü, Accuity.</span>
+                        <span class="en">Main job: "Enter customer request into COMIS correctly and quickly." Flow trigger is agent's call with AWB. Critical decision points: embargo approval, capacity check, Accuity.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-12:</strong> "Sales teams assign AWB stock to relevant agents according to agent volume. Agents start the reservation by calling TK personnel and directly providing the AWB."<br>
+                        <strong>MoM-Solution-2026-01-09:</strong> "All mandatory fields must be filled in → flight and capacity check → embargo check → ACRM → restriction check → Accuity → reservation is created."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: DATA & INTEGRATION -->
+        <section class="card section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                    <p><span class="tr">CRUD, yetkiler, sistem bağımlılıkları</span><span class="en">CRUD, permissions, system dependencies</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s4-chart" class="view-pane active">
+                    <h4 style="font-size:11px; color:#0d9488; margin-bottom:8px;"><span class="tr">CRUD MATRİSİ - VERİ ERİŞİM YETKİLERİ</span><span class="en">CRUD MATRIX - DATA ACCESS PERMISSIONS</span></h4>
+                    <p style="font-size:11px; color:#6b7280; margin-bottom:12px; padding:8px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                        <span class="tr"><strong>C</strong>=Create (Oluştur) | <strong>R</strong>=Read (Görüntüle) | <strong>U</strong>=Update (Güncelle) | <strong>D</strong>=Delete (Sil) — <span style="color:#047857;">✓ Yetkili</span> | <span style="color:#9ca3af;">- Yetkisiz</span></span>
+                        <span class="en"><strong>C</strong>=Create | <strong>R</strong>=Read | <strong>U</strong>=Update | <strong>D</strong>=Delete — <span style="color:#047857;">✓ Authorized</span> | <span style="color:#9ca3af;">- Not Authorized</span></span>
+                    </p>
+                    <table class="crud-table">
+                        <thead>
+                            <tr>
+                                <th><span class="tr">Veri/Sistem</span><span class="en">Data/System</span></th>
+                                <th title="Create - Oluştur">C</th>
+                                <th title="Read - Görüntüle">R</th>
+                                <th title="Update - Güncelle">U</th>
+                                <th title="Delete - Sil">D</th>
+                                <th><span class="tr">Not</span><span class="en">Note</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Reservation (CAP018)</strong></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">Cancel/reject var, silme yok. Status: Planned→Booked→Confirmed</span><span class="en">Cancel/reject yes, delete no. Status: Planned→Booked→Confirmed</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>AWB (STK007)</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">Agent'ın AWB stoku sorgulanır. THY havuzundan da verilebilir.</span><span class="en">Agent AWB stock queried. Can also be given from THY pool.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Embargo/Restriction List</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">COMIS list embargo ekranı. Country/City/Station seviyesinde.</span><span class="en">COMIS list embargo screen. Country/City/Station level.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Flight Schedule</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">28 gün limit IST çıkış. O/D pre-booking var.</span><span class="en">28 day limit IST departure. O/D pre-booking exists.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>CW Email Archive</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">cw@thy.com yazışmaları. Sözel bilgiye güvenilmez.</span><span class="en">cw@thy.com correspondence. Verbal info not trusted.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>ACRM (Pricing)</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">Otomatik fiyat. %60-80-99 dolulukta pop-up.</span><span class="en">Auto price. Pop-up at 60-80-99% occupancy.</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Accuity (Compliance)</strong></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="tr">Shipper/Consignee kontrol. HS Code eksikse Queue.</span><span class="en">Shipper/Consignee check. Queue if HS Code missing.</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <h4 style="font-size:11px; color:#0d9488; margin:24px 0 12px;"><span class="tr">SİSTEM ENTEGRASYONLARI</span><span class="en">SYSTEM INTEGRATIONS</span></h4>
+                    <div class="intent-grid">
+                        <div class="intent-item">
+                            <h5>COMIS → ACRM</h5>
+                            <p><span class="tr">Save sonrası otomatik tetiklenir. Fiyat döner veya spot quote beklenir.</span><span class="en">Auto-triggered after Save. Price returns or spot quote pending.</span></p>
+                            <span class="intent-badge high">AUTO</span>
+                        </div>
+                        <div class="intent-item">
+                            <h5>COMIS → Accuity</h5>
+                            <p><span class="tr">Shipper/Consignee bilgisi yaptırım listesine karşı kontrol edilir. NP/Confirmed/Rejected.</span><span class="en">Shipper/Consignee checked against sanctions list. NP/Confirmed/Rejected.</span></p>
+                            <span class="intent-badge high">AUTO</span>
+                        </div>
+                        <div class="intent-item">
+                            <h5>CGOAPR Email</h5>
+                            <p><span class="tr">Embargo onayları için manuel email grubu. İstasyonlarla yazışma.</span><span class="en">Manual email group for embargo approvals. Correspondence with stations.</span></p>
+                            <span class="intent-badge medium">MANUAL</span>
+                        </div>
+                        <div class="intent-item">
+                            <h5>CW Team (cw@thy.com)</h5>
+                            <p><span class="tr">Büyük palet CW hesabı için email yazışması. Adjusted Weight'e manuel giriş.</span><span class="en">Email correspondence for large pallet CW. Manual entry to Adjusted Weight.</span></p>
+                            <span class="intent-badge medium">MANUAL</span>
+                        </div>
+                        <div class="intent-item">
+                            <h5>Monitor Flight (Capacity)</h5>
+                            <p><span class="tr">Kapasite ekiplerinin doluluk takip ekranı. Rezervasyonlar burada görünür.</span><span class="en">Capacity teams' occupancy tracking screen. Reservations visible here.</span></p>
+                            <span class="intent-badge low">READ</span>
+                        </div>
+                        <div class="intent-item">
+                            <h5>FWB/FHL Messages</h5>
+                            <p><span class="tr">Gümrük için mesaj gönderimi. FWB sonrası Shipping Date düzenlenemez.</span><span class="en">Message sending for customs. Shipping Date non-editable after FWB.</span></p>
+                            <span class="intent-badge low">OUT</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="s4-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Persona ağırlıklı olarak Create ve Read işlemleri yapar. Kritik veriler: Rezervasyon (C/R/U), AWB stok (R), Embargo listesi (R), Uçuş programı (R-28gün). ACRM ve Accuity otomatik tetiklenir. CW ve embargo onayları manuel email süreçleriyle yönetilir.</span>
+                        <span class="en">Persona mainly performs Create and Read operations. Critical data: Reservation (C/R/U), AWB stock (R), Embargo list (R), Flight schedule (R-28days). ACRM and Accuity auto-triggered. CW and embargo approvals managed via manual email processes.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-05:</strong> "It is checked from the list embargo screen in COMIS; all city and country embargoes are available there."<br>
+                        <strong>MoM-Solution-2025-12-15:</strong> "After Save, Embargo check is repeated. If successful, ACRM is triggered automatically."<br>
+                        <strong>MoM-2025-12-23:</strong> "The rez team does not proceed based on agent's verbal statements or without seeing the CW. The CW email archive is always checked."<br>
+                        <strong>MoM-2025-12-12:</strong> "Sales teams assign AWB stock to relevant agents according to agent volume. Agents start the reservation by calling TK personnel and directly providing the AWB."
+                    </div>
+                    <div class="infographic-text">
+                        <strong><span class="tr">Görsel Açıklama:</span><span class="en">Visual Description:</span></strong>
+                        <span class="tr">CRUD matrisi 7 veri kaynağını gösterir: Rezervasyon tam CRUD (silme hariç), diğerleri salt okunur. Entegrasyon şeması 6 sistem bağlantısı gösterir: 2 otomatik (ACRM, Accuity), 2 manuel (CGOAPR, CW email), 2 read-only (Monitor Flight, FWB).</span>
+                        <span class="en">CRUD matrix shows 7 data sources: Reservation full CRUD (except delete), others read-only. Integration diagram shows 6 system connections: 2 automatic (ACRM, Accuity), 2 manual (CGOAPR, CW email), 2 read-only (Monitor Flight, FWB).</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: PAIN POINTS & RISK -->
+        <section class="card section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2>
+                    <p><span class="tr">Sorunlar, riskler, edge case'ler</span><span class="en">Issues, risks, edge cases</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s5-chart" class="view-pane active">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Multi-leg Uçuşlarda Reject Sonrası Takip Kaybı</span><span class="en">Multi-leg Flight Reject Tracking Loss</span></h5>
+                                <p><span class="tr">"Multi-leg uçuşlarda; hangi segment reject edilmeli ise edilebilmeli ama reject edildiğinde; kapasite ekipleri monitor flight ekranında takibi kaybediyor. Bu yüzden reject yerine doğrudan cancel yapıyorlar." Örnek: HKG-IST-JFK rezervasyonunda IST-JFK bacağı reject edilince diğer istasyonlar bunu göremediği için tüm rezervasyon iptal ediliyor.</span>
+                                <span class="en">"In multi-leg flights; whichever segment should be rejected can be, but when rejected; capacity teams lose track on monitor flight screen. So they cancel instead of reject." Example: In HKG-IST-JFK, when IST-JFK leg is rejected, other stations can't see this, so entire reservation is cancelled.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">CW Manuel Email Süreci</span><span class="en">CW Manual Email Process</span></h5>
+                                <p><span class="tr">"Büyük palet kargolar için CW değeri COMIS'te otomatik yansımıyor. Müşteri cw@thy.com adresine email gönderir, CW ekibi ile hangi boyutun hangi uçak tipinde kaç kg CW uygulanacağı yazışmayla belirlenir. Agent '8 ton ekstra CW verildi' der, bu Adjusted Weight alanına manuel yazılır." Sistemde ayrı CW alanı yok.</span>
+                                <span class="en">"CW value doesn't auto-reflect in COMIS for large pallet cargo. Customer emails cw@thy.com, correspondence determines what CW kg applies to which dimension on which aircraft type. Agent says '8 tons extra CW given', this is manually entered in Adjusted Weight field." No separate CW field in system.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Kapasite Onayı Manuel (5-10 Ton Üzeri)</span><span class="en">Capacity Approval Manual (5-10+ Tons)</span></h5>
+                                <p><span class="tr">"Rezervasyon fazında, rezervasyon confirm olmadan önce, belli bir limitin üzerindeki tonajlar için kapasite ekiplerine manuel olarak danışılıyor. Hataya göre değişebilmekle birlikte genellikle 5-10 ton aralığında rezervasyon almadan önce kapasite ekiplerine danışılması öneriliyor."</span>
+                                <span class="en">"During reservation phase, before confirm, capacity teams are manually consulted for tonnage above a certain limit. May vary by error but generally recommended to consult capacity teams before making reservation in 5-10 ton range."</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Uçuş Öncesi Zaman Kontrolü Yok</span><span class="en">No Pre-Flight Time Control</span></h5>
+                                <p><span class="tr">"Yolcu uçağı için dar gövde 30-45 dk, geniş gövde 75-120 dk önce kapasite ekipleri tarafından rezervasyon üzerinde işlem yapılamıyor. Acil rezervasyonlar için planlanan kalkıştan 1.30 saat öncesine kadar işlem yapılabiliyor. Bu sürelerle ilgili error/warning kapsamında sistem tarafından bir kontrol yok." Role bazlı bir hata yapısı tasarlanabilir.</span>
+                                <span class="en">"For passenger aircraft, no operations on reservations by capacity teams 30-45 min before departure for narrow body, 75-120 min for wide body. For urgent reservations, operations possible until 1.30 hrs before planned departure. No system control under error/warning scope for these times." Role-based error structure could be designed.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P5</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">HS Code Eksikliğinde Queue'da Bekleme</span><span class="en">Queue Wait When HS Code Missing</span></h5>
+                                <p><span class="tr">"HS Code zorunlu alan değil ama rezervasyon Accuity'ye gitmesi gereken bir destinasyonsa ve HS Code girilmemişse; rezervasyon tamamlanabilir ama Queue (backup) durumuna düşer. Accuity süreci beklemede kalır ve manuel raporlama gerekir."</span>
+                                <span class="en">"HS Code is not mandatory field but if reservation must go to Accuity destination and HS Code not entered; reservation can be completed but falls to Queue (backup). Accuity process remains pending and manual reporting required."</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item low">
+                            <span class="pain-code">P6</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">28 Gün Pre-booking Limiti</span><span class="en">28 Day Pre-booking Limit</span></h5>
+                                <p><span class="tr">"28 günden fazla ileri tarihli rezervasyona pre-booking diyoruz. IST çıkışları için pre-booking alınmıyor, süreç sona eriyor. Ancak O/D kapsamında pre-booking alınan rezervasyonlar mevcut."</span>
+                                <span class="en">"For more than 28 days ahead we call it pre-booking. Pre-booking is not taken for IST departures, process ends. But there are reservations with pre-booking taken within O/D scope."</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s5-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">En kritik sorunlar: embargo yönetimi ve multi-leg tracking. Manuel süreçler (email onay, CW hesaplama) operasyonel yükü artırıyor.</span>
+                        <span class="en">Most critical issues: embargo management and multi-leg tracking. Manual processes (email approval, CW calculation) increase operational burden.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-12:</strong> "Pain point: In multi-leg flights; whichever segment is rejected should be rejectable but when rejected; capacity teams lose track of it on the monitor flight screen."<br>
+                        <strong>MoM-2025-12-12:</strong> "The restriction or embargo there is deactivated; the reservation is taken; then the embargo or restriction is reactivated. (pain point)"
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: MENTAL MODEL -->
+        <section class="card section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="tr">Zihinsel Model & Davranış</span><span class="en">Mental Model & Behavior</span></h2>
+                    <p><span class="tr">Empathy Map, düşünme profili</span><span class="en">Empathy Map, thinking profile</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s6-chart" class="view-pane active">
+                    <div class="empathy-grid">
+                        <!-- SAYS - Top Left -->
+                        <div class="empathy-quad says">
+                            <h4><span class="icon">💬</span> <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                            <div class="empathy-item"><span class="tr">"SPA anlaşmasını kontrol ediyorum"</span><span class="en">"I'm checking the SPA agreement"</span></div>
+                            <div class="empathy-item"><span class="tr">"Partner havayolu ile rate'leri doğrulamam lazım"</span><span class="en">"I need to verify rates with partner airline"</span></div>
+                            <div class="empathy-item"><span class="tr">"CASS billing'de uyuşmazlık var"</span><span class="en">"There's a discrepancy in CASS billing"</span></div>
+                            <div class="empathy-item"><span class="tr">"Interline routing'i değiştirmem gerekiyor"</span><span class="en">"I need to change the interline routing"</span></div>
+                        </div>
+                        
+                        <!-- Center Persona Avatar -->
+                        <div class="empathy-avatar">
+                            <div class="empathy-avatar-circle">🤝</div>
+                            <div style="margin-top:10px; font-size:12px; font-weight:700; color:#4f46e5; text-align:center;">Interline Specialist</div>
+                            <div style="font-size:10px; color:#9ca3af; text-align:center;">Partner Relations</div>
+                            <div style="margin-top:8px; padding:4px 10px; background:rgba(79,70,229,0.1); border-radius:12px; font-size:9px; color:#4f46e5; font-weight:600;">CASS/SPA</div>
+                        </div>
+                        
+                        <!-- THINKS - Top Right -->
+                        <div class="empathy-quad thinks">
+                            <h4><span class="icon">💭</span> <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                            <div class="empathy-item"><span class="tr">"Bu partner ile multilateral mı bilateral anlaşmamız var?"</span><span class="en">"Do we have multilateral or bilateral agreement with this partner?"</span></div>
+                            <div class="empathy-item"><span class="tr">"Proration formula doğru hesaplanmış mı?"</span><span class="en">"Is the proration formula calculated correctly?"</span></div>
+                            <div class="empathy-item"><span class="tr">"Yeni SPA şartları ne zaman yürürlüğe giriyor?"</span><span class="en">"When do the new SPA terms become effective?"</span></div>
+                            <div class="empathy-item"><span class="tr">"IATA settlement dönemine yetişir miyiz?"</span><span class="en">"Will we make it to IATA settlement period?"</span></div>
+                        </div>
+                        
+                        <!-- DOES - Bottom Left -->
+                        <div class="empathy-quad does">
+                            <h4><span class="icon">⚡</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                            <div class="empathy-item"><span class="tr">SPA Portal'da anlaşma detaylarını günceller</span><span class="en">Updates agreement details in SPA Portal</span></div>
+                            <div class="empathy-item"><span class="tr">CASS'ta billing reconciliation yapar</span><span class="en">Performs billing reconciliation in CASS</span></div>
+                            <div class="empathy-item"><span class="tr">Partner ile interline rate'leri müzakere eder</span><span class="en">Negotiates interline rates with partner</span></div>
+                            <div class="empathy-item"><span class="tr">Prorate Factors tablosunu günceller</span><span class="en">Updates Prorate Factors table</span></div>
+                        </div>
+                        
+                        <!-- FEELS - Bottom Right -->
+                        <div class="empathy-quad feels">
+                            <h4><span class="icon">❤️</span> <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                            <div class="empathy-item"><span class="tr">Billing dispute'larında frustrasyon</span><span class="en">Frustration with billing disputes</span></div>
+                            <div class="empathy-item"><span class="tr">Partner iletişiminde zaman baskısı</span><span class="en">Time pressure in partner communication</span></div>
+                            <div class="empathy-item"><span class="tr">Başarılı SPA yenilemelerinde tatmin</span><span class="en">Satisfaction with successful SPA renewals</span></div>
+                            <div class="empathy-item"><span class="tr">Karmaşık settlement süreçlerinde yorgunluk</span><span class="en">Fatigue with complex settlement processes</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s6-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Interline Specialist, partner havayolları ile SPA anlaşmaları, CASS billing ve proration hesaplamalarından sorumlu. İç ve dış paydaşlar arası köprü görevi görür. IATA standartlarına uygunluk kritik.</span>
+                        <span class="en">Interline Specialist is responsible for SPA agreements with partner airlines, CASS billing and proration calculations. Acts as bridge between internal and external stakeholders. IATA standards compliance is critical.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2026-02-17:</strong> "Interline team manages SPA agreements and CASS settlement processes. Proration formula and partner rates need regular verification and updates."
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: COLLABORATION -->
+        <section class="card section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                    <p><span class="tr">Paydaşlar, bağımlılıklar</span><span class="en">Stakeholders, dependencies</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s7-chart" class="view-pane active">
+                    <h4 style="font-size:11px; color:#059669; margin-bottom:16px; text-align:center;"><span class="tr">PAYDAŞ HARİTASI</span><span class="en">STAKEHOLDER MAP</span></h4>
+                    <div class="stakeholder-map">
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node provider"><span class="tr">📞 Agent (Telefon)</span><span class="en">📞 Agent (Phone)</span></div>
+                            <div class="stakeholder-node provider"><span class="tr">📧 CW Team (cw@thy.com)</span><span class="en">📧 CW Team (cw@thy.com)</span></div>
+                            <div class="stakeholder-node provider"><span class="tr">📦 Özel Kargo Ekibi</span><span class="en">📦 Special Cargo Team</span></div>
+                        </div>
+                        <div class="stakeholder-arrow">↓ <span style="font-size:10px; color:#6b7280;"><span class="tr">Bilgi/Talep Akışı</span><span class="en">Info/Request Flow</span></span> ↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node persona"><span class="tr">🎯 IST Çıkış Rez. Personeli (THYIST)</span><span class="en">🎯 IST Outbound Res. Agent (THYIST)</span></div>
+                        </div>
+                        <div class="stakeholder-arrow">↓ <span style="font-size:10px; color:#6b7280;"><span class="tr">Onay/Koordinasyon</span><span class="en">Approval/Coordination</span></span> ↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node partner"><span class="tr">📊 Kapasite Ekibi (5-10T+)</span><span class="en">📊 Capacity Team (5-10T+)</span></div>
+                            <div class="stakeholder-node partner"><span class="tr">📧 CGOAPR (Embargo)</span><span class="en">📧 CGOAPR (Embargo)</span></div>
+                            <div class="stakeholder-node partner"><span class="tr">✈️ Varış İstasyonları</span><span class="en">✈️ Destination Stations</span></div>
+                        </div>
+                        <div class="stakeholder-arrow">↓ <span style="font-size:10px; color:#6b7280;"><span class="tr">Devir/Bildirim</span><span class="en">Handoff/Notification</span></span> ↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node consumer"><span class="tr">📥 Mal Kabul</span><span class="en">📥 Goods Acceptance</span></div>
+                            <div class="stakeholder-node consumer"><span class="tr">🚛 Operasyon</span><span class="en">🚛 Operations</span></div>
+                            <div class="stakeholder-node consumer"><span class="tr">📊 Monitor Flight</span><span class="en">📊 Monitor Flight</span></div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="font-size:11px; color:#059669; margin:24px 0 12px;"><span class="tr">KOORDİNASYON DETAYLARI</span><span class="en">COORDINATION DETAILS</span></h4>
+                    <div class="intent-grid">
+                        <div class="intent-item">
+                            <h5><span class="tr">Agent İletişimi</span><span class="en">Agent Communication</span></h5>
+                            <p><span class="tr">Agent telefonda AWB numarası, destinasyon, içerik, kg, boyut bilgilerini verir. Rezervasyon ekibi bu bilgileri CAP018'e girer.</span><span class="en">Agent provides AWB number, destination, content, kg, dimensions on phone. Reservation team enters this into CAP018.</span></p>
+                        </div>
+                        <div class="intent-item">
+                            <h5><span class="tr">CW Koordinasyonu</span><span class="en">CW Coordination</span></h5>
+                            <p><span class="tr">Müşteri cw@thy.com'a email gönderir. Hangi boyutun hangi uçak tipinde kaç kg CW uygulanacağı yazışmayla belirlenir.</span><span class="en">Customer emails cw@thy.com. Which dimension gets what CW kg on which aircraft type determined via correspondence.</span></p>
+                        </div>
+                        <div class="intent-item">
+                            <h5><span class="tr">Kapasite Danışma</span><span class="en">Capacity Consultation</span></h5>
+                            <p><span class="tr">5-10 ton üzeri rezervasyonlarda confirm öncesi kapasite ekiplerine danışılır. Hatta göre değişebilir.</span><span class="en">For 5-10+ ton reservations, capacity teams consulted before confirm. May vary by route.</span></p>
+                        </div>
+                        <div class="intent-item">
+                            <h5><span class="tr">Embargo Onayı (CGOAPR)</span><span class="en">Embargo Approval (CGOAPR)</span></h5>
+                            <p><span class="tr">Varış istasyonuyla doğrudan iletişimi agent değil rezervasyon ekibi kurar. CGOAPR email adresi üzerinden onay alınır.</span><span class="en">Direct communication with destination station established by reservation team, not agents. Approvals via CGOAPR email address.</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="s7-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Persona, agent ile telefon üzerinden bilgi alır, CW ekibiyle email yazışması yapar, 5-10T+ kargolarda kapasite ekibine danışır, embargo onaylarını CGOAPR üzerinden alır. Bilgi, rezervasyon ekibinden operasyon ve mal kabulü ekiplerine akar.</span>
+                        <span class="en">Persona receives info from agent via phone, corresponds with CW team via email, consults capacity team for 5-10T+ cargo, obtains embargo approvals via CGOAPR. Information flows from reservation team to operations and goods acceptance teams.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-23:</strong> "Direct communication with the relevant destination is established not by agents but by the reservation team. Approvals are obtained via the CGOAPR email address."<br>
+                        <strong>MoM-2025-12-23:</strong> "Customer emails cw@thy.com, correspondence determines what CW kg applies to which dimension on which aircraft type."<br>
+                        <strong>MoM-2025-12-12:</strong> "During reservation phase, before confirm, capacity teams are manually consulted for tonnage above 5-10 tons."
+                    </div>
+                    <div class="infographic-text">
+                        <strong><span class="tr">Görsel Açıklama:</span><span class="en">Visual Description:</span></strong>
+                        <span class="tr">Paydaş haritası 4 katman gösterir: Üst (veri sağlayıcılar: Agent, CW, Özel Kargo), Orta (IST Rez. Personeli - merkez), Alt-orta (koordinasyon: Kapasite, CGOAPR, İstasyonlar), Alt (tþketiciler: Mal Kabul, Operasyon, Monitor).</span>
+                        <span class="en">Stakeholder map shows 4 layers: Top (data providers: Agent, CW, Special Cargo), Middle (IST Res. Agent - center), Lower-middle (coordination: Capacity, CGOAPR, Stations), Bottom (consumers: Goods Acceptance, Operations, Monitor).</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: PRODUCT OPPORTUNITIES -->
+        <section class="card section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+                    <p><span class="tr">MVP, kısa/uzun vade</span><span class="en">MVP, short/long term</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s8-chart" class="view-pane active">
+                    <h4 style="font-size:11px; color:#ea580c; margin-bottom:12px;"><span class="tr">FIRSATLAR ZAMAN ÇİZELGESİ</span><span class="en">OPPORTUNITIES TIMELINE</span></h4>
+                    <div class="timeline">
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="tr">P1 → AWB Bazlı Embargo Açma</span><span class="en">P1 → AWB-Based Embargo Opening</span></h5>
+                            <p><span class="tr">"Tüm sistemi değil, sadece ilgili AWB için embargo/restriction geçici olarak kaldırılsın." Böylece onaysız diğer rezervasyonlar alınamaz hale gelir.</span>
+                            <span class="en">"Temporarily lift embargo/restriction only for relevant AWB, not entire system." This prevents other unauthorized reservations.</span></p>
+                        </div>
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="tr">P2 → Multi-leg Segment Bazlı Reject</span><span class="en">P2 → Multi-leg Segment-Based Reject</span></h5>
+                            <p><span class="tr">"Reject edilen segment'in takibi kaybolmasın, monitor ekranında görünsün." HKG-IST-JFK örneğinde IST-JFK reject edildiğinde diğer istasyonlar görebilmeli.</span>
+                            <span class="en">"Tracking of rejected segment shouldn't be lost, should appear on monitor screen." In HKG-IST-JFK example, other stations should see when IST-JFK is rejected.</span></p>
+                        </div>
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="tr">P3 → Palet İçi AWB Görünürlüğü</span><span class="en">P3 → Pallet Inner AWB Visibility</span></h5>
+                            <p><span class="tr">"Hazırlanan birleşik paletlerin monitor flight ekranında görülebilmesi ve uçağa alındığında reassign veya loaded olarak işaretlenebilmesi."</span>
+                            <span class="en">"Combined pallets should be visible on monitor flight screen and markable as reassign or loaded when taken on aircraft."</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                            <h5><span class="tr">P4 → Sistem İçi Onay Workflow</span><span class="en">P4 → In-System Approval Workflow</span></h5>
+                            <p><span class="tr">CGOAPR ve CW email süreçleri yerine sistem içi onay mekanizması. Onay geçmişi takip edilebilir, audit trail oluşur.</span>
+                            <span class="en">In-system approval mechanism instead of CGOAPR and CW email processes. Approval history trackable, audit trail created.</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                            <h5><span class="tr">P5 → Otomatik CW Hesaplama</span><span class="en">P5 → Automatic CW Calculation</span></h5>
+                            <p><span class="tr">Büyük palet kargolar için de otomatik CW. "8 ton ekstra CW verildi" gibi manuel girişler yerine sistem hesaplayıp Adjusted Weight'e yazsın.</span>
+                            <span class="en">Auto CW for large pallet cargo too. Instead of manual entries like "8 tons extra CW given", system calculates and writes to Adjusted Weight.</span></p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
+                            <h5><span class="tr">P6 → Rol Bazlı Zaman Kısıtlaması</span><span class="en">P6 → Role-Based Time Restriction</span></h5>
+                            <p><span class="tr">"Dar gövde 30-45dk, geniş gövde 75-120dk önce işlem yapılamaması" kurallarının rol grubuna göre sistem kontrolü. Warning/error seviyeleri tanımlanabilir.</span>
+                            <span class="en">System control of "no operations 30-45min before narrow body, 75-120min before wide body" rules by role group. Warning/error levels definable.</span></p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
+                            <h5><span class="tr">P7 → HS Code Entegrasyonu</span><span class="en">P7 → HS Code Integration</span></h5>
+                            <p><span class="tr">HS Code girilmezse Accuity destinasyonları için Queue'ya düşme sorunu. Ötomatik HS Code önerisi veya zorunluluk kontrolü.</span>
+                            <span class="en">Queue fallback issue for Accuity destinations when HS Code not entered. Auto HS Code suggestion or mandatory control.</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="s8-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">MVP önceliği: AWB bazlı embargo yönetimi (P1), multi-leg tracking (P2), palet görünürlüğü (P3). Kısa vadede manuel email süreçlerinin otomasyonu. Uzun vadede rol bazlı zaman kontrolleri ve HS Code entegrasyonu.</span>
+                        <span class="en">MVP priority: AWB-based embargo management (P1), multi-leg tracking (P2), pallet visibility (P3). Short-term: automation of manual email processes. Long-term: role-based time controls and HS Code integration.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong>MoM-2025-12-12:</strong> "The restriction or embargo is deactivated; the reservation is taken; then the embargo is reactivated. (pain point)"<br>
+                        <strong>MoM-2025-12-12:</strong> "In multi-leg flights; capacity teams lose track of rejected segment on monitor flight screen."<br>
+                        <strong>MoM-2025-12-23:</strong> "Combined pallets should be visible on monitor flight screen and markable as reassign or loaded."<br>
+                        <strong>MoM-2025-12-05:</strong> "For passenger aircraft, no operations 30-45 min before departure for narrow body, 75-120 min for wide body." - Role-based error structure could be designed.
+                    </div>
+                    <div class="infographic-text">
+                        <strong><span class="tr">Görsel Açıklama:</span><span class="en">Visual Description:</span></strong>
+                        <span class="tr">Zaman çizelgesi 7 fırsatı 3 kategoride gösterir: MVP (3 yeşil - acil), Kısa Vade (2 mavi - 3-6 ay), Uzun Vade (2 gri - 6-12 ay). Her fırsat bir pain point'e (P1-P7) bağlı.</span>
+                        <span class="en">Timeline shows 7 opportunities in 3 categories: MVP (3 green - urgent), Short Term (2 blue - 3-6 months), Long Term (2 gray - 6-12 months). Each opportunity linked to a pain point (P1-P7).</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: AI SUPPORT -->
+        <section class="card section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                    <p><span class="tr">AI potansiyeli, güven seviyeleri</span><span class="en">AI potential, trust levels</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s9-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                    <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                    <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                </p>
+                
+                <!-- Slider Container -->
+                <div style="display:flex; gap:24px; margin-bottom:32px;">
+                    <!-- Left: Scale Labels -->
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:100px; padding:8px 0;">
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 YASAK</span>
+                            <div style="font-size:8px; color:#9ca3af;">AI yapmamalı</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ ONAY GEREKLİ</span>
+                            <div style="font-size:8px; color:#9ca3af;">İnsan onayı şart</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ GÜVENLİ</span>
+                            <div style="font-size:8px; color:#9ca3af;">AI serbest</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Middle: Slider Track -->
+                    <div style="flex:1; position:relative;">
+                        <!-- Gradient Track -->
+                        <div style="height:240px; border-radius:12px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            
+                            <!-- Level Markers -->
+                            <div style="position:absolute; left:12px; top:4%; font-size:10px; color:#dc2626; font-weight:600;">
+                                <span class="tr">6 - 🚫 Embargo kaldırma, Accuity override, fiyat değiştirme</span>
+                                <span class="en">6 - 🚫 Embargo removal, Accuity override, price change</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:21%; font-size:10px; color:#b45309; font-weight:600;">
+                                <span class="tr">5 - ⚠️ Kapasite onayı sonrası auto-confirm</span>
+                                <span class="en">5 - ⚠️ Auto-confirm after capacity approval</span>
+                            </div>
+                            
+                            <!-- TRUST LINE - Güven Sınırı -->
+                            <div style="position:absolute; left:0; right:0; top:33%; height:3px; background:#0891b2; z-index:10;"></div>
+                            <div style="position:absolute; right:8px; top:31%; background:#0891b2; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                <span class="tr">⬆️ SINIR: AI burada durmalı</span>
+                                <span class="en">⬆️ LIMIT: AI stops here</span>
+                            </div>
+                            
+                            <div style="position:absolute; left:12px; top:40%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">4 - 💡 Alternatif uçuş önerisi, CW tahmini</span>
+                                <span class="en">4 - 💡 Alternative flight suggestion, CW estimate</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">3 - ⚙️ AWB ile form ön doldurma</span>
+                                <span class="en">3 - ⚙️ Form pre-fill with AWB</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:70%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">2 - 📝 Günlük rezervasyon özeti</span>
+                                <span class="en">2 - 📝 Daily reservation summary</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:85%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">1 - 📊 Embargo listesi gösterimi</span>
+                                <span class="en">1 - 📊 Embargo list display</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Use Cases Grid -->
+                <h4 style="font-size:11px; color:#0891b2; margin:24px 0 12px;"><span class="tr">AI KULLANIM ALANLARI</span><span class="en">AI USE CASES</span></h4>
+                <div class="two-col">
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN (Seviye 1-4)</span><span class="en">✓ AI SUITABLE (Level 1-4)</span></h4>
+                        <div class="list-item"><span class="tr">📋 Embargo/restriction listesi özeti ve proaktif uyarı</span><span class="en">📋 Embargo/restriction list summary and proactive alert</span></div>
+                        <div class="list-item"><span class="tr">🧮 CW hesaplama önerisi (email arşivinden öğrenme)</span><span class="en">🧮 CW calculation suggestion (learning from email archive)</span></div>
+                        <div class="list-item"><span class="tr">✈️ Alternatif uçuş önerisi (kapasite durumuna göre)</span><span class="en">✈️ Alternative flight suggestion (based on capacity status)</span></div>
+                        <div class="list-item"><span class="tr">📊 Geçmiş rezervasyon pattern analizi (agent bazlı)</span><span class="en">📊 Past reservation pattern analysis (agent-based)</span></div>
+                        <div class="list-item"><span class="tr">📝 AWB ile arama yapıldığında müşteri bilgilerini önceden doldurma</span><span class="en">📝 Pre-fill customer info when searched by AWB</span></div>
+                        <div class="list-item"><span class="tr">⏰ Uçuş öncesi zaman limitine yaklaşıldığında uyarı</span><span class="en">⏰ Alert when approaching pre-flight time limit</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #dc2626;">
+                        <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL (İnsan Kararı)</span><span class="en">⛔ AI NOT SUITABLE (Human Decision)</span></h4>
+                        <div class="list-item"><span class="tr">🚫 Otomatik embargo/restriction kaldırma (tüm sistemi etkiler)</span><span class="en">🚫 Auto embargo/restriction removal (affects entire system)</span></div>
+                        <div class="list-item"><span class="tr">🚫 Otomatik rezervasyon iptali/reject (müşteri ilişkisi)</span><span class="en">🚫 Auto reservation cancel/reject (customer relationship)</span></div>
+                        <div class="list-item"><span class="tr">🚫 ACRM fiyat değişikliği onayı (ticari karar)</span><span class="en">🚫 ACRM price change approval (commercial decision)</span></div>
+                        <div class="list-item"><span class="tr">🚫 Accuity kararını override etme (compliance riski)</span><span class="en">🚫 Override Accuity decision (compliance risk)</span></div>
+                        <div class="list-item"><span class="tr">🚫 Kapasite onayı olmadan 5-10T+ rezervasyon confirm</span><span class="en">🚫 Confirm 5-10T+ reservation without capacity approval</span></div>
+                        <div class="list-item"><span class="tr">🚫 Multi-leg uçuşta segment bazlı cancel kararı</span><span class="en">🚫 Segment-based cancel decision in multi-leg flight</span></div>
+                    </div>
+                </div>
+                </div>
+                <div id="s9-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">AI, bilgi sunma (seviye 1-2) ve öneri (seviye 3-4) alanlarında güçlü destek sağlayabilir: embargo uyarıları, CW tahmini, alternatif uçuş önerisi, form ön doldurma. Seviye 5 (onaylı aksiyon) sadece kapasite onayı sonrası gibi güvenli senaryolarda uygulanabilir. Seviye 6 (yapmamalı): Embargo kaldırma, fiyat onayı, Accuity override ve cancel kararları kesinlikle insan kontrolünde kalmalı.</span>
+                        <span class="en">AI can provide strong support in information (level 1-2) and recommendation (level 3-4) areas: embargo alerts, CW estimation, alternative flight suggestions, form pre-filling. Level 5 (approved action) applicable only in safe scenarios like post-capacity approval. Level 6 (must not): Embargo removal, price approval, Accuity override and cancel decisions must absolutely remain under human control.</span></p>
+                    </div>
+                    <div class="evidence">
+                        <strong><span class="tr">AI Uygunluk Gerekçesi:</span><span class="en">AI Suitability Rationale:</span></strong><br>
+                        <span class="tr">• Embargo toggle tüm sistemi etkilediği için AI tarafından kaldırılmamalı (P1 - yüksek risk)</span><span class="en">• Embargo toggle affects entire system, shouldn't be removed by AI (P1 - high risk)</span><br>
+                        <span class="tr">• CW hesaplama email arşivine dayandığı için AI pattern öğrenebilir ancak onay insan tarafından verilmeli</span><span class="en">• CW calculation based on email archive, AI can learn patterns but approval must be human</span><br>
+                        <span class="tr">• Accuity compliance riski nedeniyle override kesinlikle insan kararı</span><span class="en">• Accuity override definitely human decision due to compliance risk</span><br>
+                        <span class="tr">• Multi-leg segment cancel kararı diğer istasyonları etkilediği için AI yetkisinde olmamalı</span><span class="en">• Multi-leg segment cancel decision shouldn't be in AI authority as it affects other stations</span>
+                    </div>
+                    <div class="infographic-text">
+                        <strong><span class="tr">Görsel Açıklama:</span><span class="en">Visual Description:</span></strong>
+                        <span class="tr">Piramit 6 seviyeli, renk geçişli (koyu cyan → açık cyan → kırmızı). Üstten alta artan risk. İki sütunlu liste AI uygun (6 madde, yeşil) ve AI uygun değil (6 madde, kırmızı) alanları gösterir.</span>
+                        <span class="en">Pyramid has 6 levels, color gradient (dark cyan → light cyan → red). Increasing risk from top to bottom. Two-column list shows AI suitable (6 items, green) and AI not suitable (6 items, red) areas.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p><span class="tr">📅 Analiz: 8 Mayıs 2026 | 📄 7 Kaynak MoM | 🎯 IST Outbound Reservation Agent</span>
+        <span class="en">📅 Analysis: May 8, 2026 | 📄 7 Source MoMs | 🎯 IST Outbound Reservation Agent</span></p>
+        <p><span class="tr">⚠️ Yalnızca doküman kanıtlarına dayalıdır</span>
+        <span class="en">⚠️ Based on document evidence only</span></p>
+        <p style="margin-top:12px;">BKR - Booking & Reservation | THY Cargo | Sungur Product Team</p>
+    </footer>
+    </div><!-- /main-content -->
+
+    <script>
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+            });
+        }
+        
+        function toggleView(btn, section, view) {
+            btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(section + '-chart').classList.remove('active');
+            document.getElementById(section + '-text').classList.remove('active');
+            document.getElementById(section + '-' + view).classList.add('active');
+        }
+    </script>
+</body>
+</html>

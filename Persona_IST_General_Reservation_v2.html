@@ -1,0 +1,2638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IST Outbound General Reservation | Persona Analysis</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        /* ===== SIDE NAVIGATION ===== */
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: white;
+            box-shadow: 0 4px 12px rgba(79,70,229,0.4);
+        }
+        .nav-item .nav-num {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .nav-item .nav-label {
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 12px 10px;
+        }
+
+        /* Main content wrapper */
+        .main-content {
+            margin-left: 72px;
+        }
+        
+        /* ===== HERO ===== */
+        .hero {
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%);
+            padding: 48px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(79,70,229,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+        .hero-badge { 
+            display: inline-block;
+            background: rgba(79,70,229,0.1); 
+            color: #4f46e5; 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            letter-spacing: 2px; 
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .hero h1 { 
+            font-size: 36px; 
+            font-weight: 800; 
+            margin-bottom: 12px; 
+            color: #1f2937;
+        }
+        .hero h1 span { color: #4f46e5; }
+        .hero-subtitle { 
+            font-size: 16px; 
+            color: #6b7280; 
+            max-width: 700px; 
+            margin-bottom: 20px; 
+            line-height: 1.7;
+        }
+        .hero-quote { 
+            border-left: 3px solid #4f46e5; 
+            padding-left: 16px; 
+            font-style: italic; 
+            color: #374151; 
+            margin-bottom: 24px;
+            max-width: 800px;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .hero-meta { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            max-width: 700px; 
+        }
+        .hero-meta-item { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            font-size: 13px; 
+            color: #374151; 
+        }
+        .hero-meta-item strong {
+            color: #6b7280;
+        }
+        .hero-meta-item .dot { 
+            width: 10px; 
+            height: 10px; 
+            border-radius: 50%; 
+            flex-shrink: 0;
+        }
+        
+        /* ===== SOURCE TOOLTIP ===== */
+        .source-card {
+            position: relative;
+            cursor: pointer;
+        }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .source-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 24px;
+            width: 12px;
+            height: 12px;
+            background: #1f2937;
+            transform: rotate(45deg);
+        }
+        .source-card:hover .source-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* ===== BOARD & CARDS ===== */
+        .board { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 40px 32px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 32px; 
+        }
+        
+        .card { 
+            background: #ffffff; 
+            border-radius: 16px; 
+            border: 1px solid rgba(0,0,0,0.08); 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06); 
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        .card.full { width: 100%; }
+        
+        .card-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 20px 24px; 
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+        }
+        .card-icon { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 12px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: white; 
+        }
+        .card-header-text { flex: 1; }
+        .card-header-text h3 { font-size: 18px; font-weight: 700; color: #1f2937; }
+        .card-ref { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+        .card-body { padding: 24px; }
+        
+        /* Section Colors */
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        
+        /* ===== TOGGLE ===== */
+        .toggle-wrap { 
+            display: flex; 
+            background: rgba(0,0,0,0.04); 
+            padding: 3px; 
+            border-radius: 8px; 
+            margin-left: auto; 
+        }
+        .toggle-btn { 
+            padding: 8px 16px; 
+            border: none; 
+            background: transparent; 
+            color: #6b7280; 
+            font-size: 12px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .toggle-btn.active { background: #4f46e5; color: white; }
+        .toggle-btn:hover:not(.active) { background: rgba(0,0,0,0.05); }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* ===== §1 PERSONA PROFILE ===== */
+        .persona-card-vis {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+        .persona-card-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 140px;
+        }
+        .persona-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5 0%, #6366f1 50%, #818cf8 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 24px rgba(79,70,229,0.3);
+        }
+        .persona-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+        }
+        .persona-title {
+            font-size: 12px;
+            color: #6b7280;
+            text-align: center;
+        }
+        .persona-card-right {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .pf {
+            background: rgba(0,0,0,0.025);
+            padding: 12px 14px;
+            border-radius: 10px;
+        }
+        .pf-label {
+            font-size: 9px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .pf-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .pf-full {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(79,70,229,0.08) 0%, rgba(99,102,241,0.05) 100%);
+            border: 1px solid rgba(79,70,229,0.15);
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 8px;
+        }
+        .pf-full h4 {
+            font-size: 10px;
+            font-weight: 700;
+            color: #4f46e5;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .pf-full p {
+            font-size: 15px;
+            font-weight: 600;
+            font-style: italic;
+            color: #1f2937;
+            line-height: 1.5;
+        }
+        .context-strip {
+            display: flex;
+            gap: 16px;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+        .context-cell {
+            flex: 1;
+            background: rgba(0,0,0,0.02);
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .context-cell-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .context-cell-label {
+            font-size: 9px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .context-cell-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        /* ===== §2 RADAR & GAUGE ===== */
+        .radar-gauge-wrap {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+        .radar-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .radar-wrap h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #d97706;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .gauge-wrap {
+            flex: 1;
+        }
+        .gauge-wrap h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #d97706;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .gauge-row {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .gauge {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .gauge-val {
+            font-size: 28px;
+            font-weight: 800;
+            min-width: 80px;
+        }
+        .gauge-val.green { color: #059669; }
+        .gauge-val.amber { color: #d97706; }
+        .gauge-val.red { color: #dc2626; }
+        .gauge-info { flex: 1; }
+        .gauge-label {
+            font-size: 10px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .gauge-bar {
+            height: 8px;
+            background: rgba(0,0,0,0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .gauge-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        .gauge-fill.green { background: linear-gradient(90deg, #059669, #10b981); }
+        .gauge-fill.amber { background: linear-gradient(90deg, #d97706, #f59e0b); }
+        .gauge-fill.red { background: linear-gradient(90deg, #dc2626, #f43f5e); }
+        
+        .goal-boxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .goal-box {
+            padding: 16px;
+            border-radius: 12px;
+            border-left: 4px solid;
+        }
+        .goal-box.primary {
+            background: rgba(217,119,6,0.06);
+            border-color: #d97706;
+        }
+        .goal-box.secondary {
+            background: rgba(5,150,105,0.06);
+            border-color: #059669;
+        }
+        .goal-box h5 {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .goal-box.primary h5 { color: #d97706; }
+        .goal-box.secondary h5 { color: #059669; }
+        .goal-box p {
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        /* ===== §3 FLOWCHART ===== */
+        .flow-section h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0284c7;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .flow-h {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .flow-step {
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 110px;
+            border: 2px solid;
+        }
+        .flow-step .flow-num {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .flow-step .flow-label {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .flow-step .flow-desc {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+        .flow-step.auto {
+            background: rgba(2,132,199,0.08);
+            border-color: rgba(2,132,199,0.3);
+            color: #0369a1;
+        }
+        .flow-step.manual {
+            background: rgba(217,119,6,0.08);
+            border-color: rgba(217,119,6,0.3);
+            color: #b45309;
+        }
+        .flow-step.decision {
+            background: rgba(147,51,234,0.08);
+            border-color: rgba(147,51,234,0.3);
+            color: #7c3aed;
+        }
+        .flow-arrow {
+            color: #cbd5e1;
+            font-size: 20px;
+            font-weight: 300;
+        }
+        .flow-legend {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed rgba(0,0,0,0.1);
+        }
+        .flow-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: #6b7280;
+        }
+        .dot-auto {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #0284c7;
+        }
+        .dot-manual {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #d97706;
+        }
+        .dot-decision {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #9333ea;
+        }
+        
+        .jtbd-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+            font-size: 12px;
+        }
+        .jtbd-table th {
+            background: rgba(147,51,234,0.1);
+            color: #7c3aed;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 1px;
+            padding: 12px 16px;
+            text-align: left;
+        }
+        .jtbd-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            color: #374151;
+        }
+        .jtbd-table tr:nth-child(even) td {
+            background: rgba(0,0,0,0.02);
+        }
+        
+        .dependency-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+        .dep-card {
+            padding: 14px;
+            border-radius: 10px;
+            border-left: 3px solid;
+        }
+        .dep-card.blocked {
+            background: rgba(220,38,38,0.05);
+            border-color: #dc2626;
+        }
+        .dep-card.delay {
+            background: rgba(217,119,6,0.05);
+            border-color: #d97706;
+        }
+        .dep-card.gap {
+            background: rgba(147,51,234,0.05);
+            border-color: #9333ea;
+        }
+        .dep-card-icon {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+        .dep-card h5 {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .dep-card.blocked h5 { color: #dc2626; }
+        .dep-card.delay h5 { color: #d97706; }
+        .dep-card.gap h5 { color: #9333ea; }
+        .dep-card p {
+            font-size: 11px;
+            color: #6b7280;
+        }
+        
+        /* ===== §4 INTEGRATION ===== */
+        .int-layout {
+            display: flex;
+            gap: 32px;
+        }
+        .int-map {
+            flex: 1.2;
+        }
+        .int-map h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0d9488;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .spoke-nodes {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .spoke-node {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px;
+            border-radius: 10px;
+            border-left: 3px solid;
+            background: rgba(0,0,0,0.02);
+        }
+        .spoke-node.primary { border-color: #0d9488; background: rgba(13,148,136,0.05); }
+        .spoke-node.secondary { border-color: #6366f1; }
+        .spoke-node.external { border-color: #f59e0b; }
+        .spoke-node.readonly { border-color: #9ca3af; }
+        .spoke-icon {
+            font-size: 20px;
+        }
+        .spoke-info { flex: 1; }
+        .spoke-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 2px;
+        }
+        .spoke-detail {
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+        .spoke-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .spoke-badge {
+            font-size: 9px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .spoke-badge.owner { background: #d1fae5; color: #047857; }
+        .spoke-badge.main { background: #dbeafe; color: #1d4ed8; }
+        .spoke-badge.receiver { background: #fef3c7; color: #b45309; }
+        .spoke-badge.readonly { background: #f3f4f6; color: #6b7280; }
+        .spoke-badge.stopped { background: #fee2e2; color: #dc2626; }
+        .spoke-line {
+            font-size: 10px;
+            color: #9ca3af;
+            font-family: monospace;
+            margin-top: 6px;
+        }
+        
+        .crud-section {
+            flex: 0.8;
+        }
+        .crud-section h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0d9488;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .crud-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        .crud-table th {
+            background: rgba(13,148,136,0.08);
+            color: #0d9488;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            padding: 10px 8px;
+            text-align: center;
+        }
+        .crud-table th:first-child { text-align: left; padding-left: 12px; }
+        .crud-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .crud-table td:first-child { text-align: left; padding-left: 12px; font-weight: 500; }
+        .crud-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .crud-badge.c { background: #d1fae5; color: #047857; }
+        .crud-badge.r { background: #dbeafe; color: #1d4ed8; }
+        .crud-badge.u { background: #ede9fe; color: #7c3aed; }
+        .crud-badge.d { background: #fee2e2; color: #dc2626; }
+        .crud-badge.no { background: #f3f4f6; color: #9ca3af; }
+        
+        .msg-flow {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.06);
+        }
+        .msg-flow h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0d9488;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .msg-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px dashed rgba(0,0,0,0.06);
+            font-size: 12px;
+        }
+        .msg-source, .msg-target {
+            font-weight: 500;
+            color: #374151;
+            min-width: 100px;
+        }
+        .msg-type {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(13,148,136,0.1);
+            color: #0d9488;
+        }
+        .msg-freq {
+            font-size: 10px;
+            color: #9ca3af;
+            margin-left: auto;
+        }
+        
+        /* ===== §5 PAIN POINTS ===== */
+        .pain-layout {
+            display: flex;
+            gap: 32px;
+        }
+        .pain-bars {
+            flex: 1.2;
+        }
+        .pain-bars h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #e11d48;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .sev-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .sev-label {
+            min-width: 200px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
+        }
+        .sev-label .pain-code {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(0,0,0,0.08);
+            margin-right: 8px;
+        }
+        .sev-bar-bg {
+            flex: 1;
+            height: 12px;
+            background: rgba(0,0,0,0.06);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .sev-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+        }
+        .sev-bar-fill.high { background: linear-gradient(90deg, #dc2626, #f43f5e); }
+        .sev-bar-fill.medium { background: linear-gradient(90deg, #d97706, #f59e0b); }
+        .sev-bar-fill.low { background: linear-gradient(90deg, #059669, #10b981); }
+        .sev-tag {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            min-width: 60px;
+            text-align: center;
+        }
+        .sev-tag.high { background: #fee2e2; color: #dc2626; }
+        .sev-tag.medium { background: #fef3c7; color: #b45309; }
+        .sev-tag.low { background: #d1fae5; color: #047857; }
+        
+        .risk-matrix-wrap {
+            flex: 0.8;
+        }
+        .risk-matrix-wrap h4 {
+            font-size: 11px;
+            font-weight: 700;
+            color: #e11d48;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+        .risk-matrix {
+            display: grid;
+            grid-template-columns: 40px repeat(3, 1fr);
+            grid-template-rows: repeat(4, 50px);
+            gap: 4px;
+        }
+        .risk-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+        .risk-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 600;
+            color: #6b7280;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+        .risk-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+        .risk-high-high { background: #dc2626; }
+        .risk-high-med { background: #f97316; }
+        .risk-med-med { background: #fbbf24; color: #92400e; }
+        .risk-low { background: #a3e635; color: #3f6212; }
+        
+        .root-cause {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(225,29,72,0.04);
+            border-left: 3px solid #e11d48;
+            border-radius: 0 10px 10px 0;
+        }
+        .root-cause h5 {
+            font-size: 10px;
+            font-weight: 700;
+            color: #e11d48;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .root-cause p {
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        /* ===== TEXT VIEW COMPONENTS ===== */
+        .summary-box {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .section-1 .summary-box { background: rgba(79,70,229,0.04); }
+        .section-2 .summary-box { background: rgba(217,119,6,0.04); }
+        .section-3 .summary-box { background: rgba(2,132,199,0.04); }
+        .section-4 .summary-box { background: rgba(13,148,136,0.04); }
+        .section-5 .summary-box { background: rgba(225,29,72,0.04); }
+        .section-6 .summary-box { background: rgba(147,51,234,0.04); }
+        .section-7 .summary-box { background: rgba(5,150,105,0.04); }
+        .section-8 .summary-box { background: rgba(234,88,12,0.04); }
+        .section-9 .summary-box { background: rgba(8,145,178,0.04); }
+        .summary-box h4 {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        .section-1 .summary-box h4 { color: #4f46e5; }
+        .section-2 .summary-box h4 { color: #d97706; }
+        .section-3 .summary-box h4 { color: #0284c7; }
+        .section-4 .summary-box h4 { color: #0d9488; }
+        .section-5 .summary-box h4 { color: #e11d48; }
+        .section-6 .summary-box h4 { color: #9333ea; }
+        .section-7 .summary-box h4 { color: #059669; }
+        .section-8 .summary-box h4 { color: #ea580c; }
+        .section-9 .summary-box h4 { color: #0891b2; }
+        .summary-box p {
+            font-size: 14px;
+            color: #374151;
+            line-height: 1.8;
+        }
+        
+        .item-list {
+            margin: 16px 0;
+        }
+        .item {
+            display: flex;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .item:last-child { border-bottom: none; }
+        .item-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: #9ca3af;
+            min-width: 24px;
+        }
+        .item-text {
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.6;
+        }
+        
+        .evidence {
+            font-size: 11px;
+            color: #6b7280;
+            font-style: italic;
+            padding: 12px 14px;
+            background: rgba(0,0,0,0.02);
+            border-radius: 8px;
+            border-left: 2px solid #d1d5db;
+            margin: 12px 0;
+        }
+        .evidence strong {
+            color: #4b5563;
+            font-style: normal;
+        }
+        
+        .infographic-text {
+            border-left: 3px solid;
+            padding: 14px 18px;
+            margin-top: 16px;
+            border-radius: 0 10px 10px 0;
+        }
+        .section-1 .infographic-text { border-color: #4f46e5; background: rgba(79,70,229,0.03); }
+        .section-2 .infographic-text { border-color: #d97706; background: rgba(217,119,6,0.03); }
+        .section-3 .infographic-text { border-color: #0284c7; background: rgba(2,132,199,0.03); }
+        .section-4 .infographic-text { border-color: #0d9488; background: rgba(13,148,136,0.03); }
+        .section-5 .infographic-text { border-color: #e11d48; background: rgba(225,29,72,0.03); }
+        .infographic-text h5 {
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .section-1 .infographic-text h5 { color: #4f46e5; }
+        .section-2 .infographic-text h5 { color: #d97706; }
+        .section-3 .infographic-text h5 { color: #0284c7; }
+        .section-4 .infographic-text h5 { color: #0d9488; }
+        .section-5 .infographic-text h5 { color: #e11d48; }
+        .infographic-text p {
+            font-size: 15px;
+            font-weight: 600;
+            font-style: italic;
+            color: #111827;
+        }
+        
+        .missing {
+            background: rgba(217,119,6,0.06);
+            border: 1px dashed rgba(217,119,6,0.3);
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-top: 16px;
+        }
+        .missing-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #b45309;
+            margin-bottom: 8px;
+        }
+        .missing-list {
+            font-size: 12px;
+            color: #92400e;
+        }
+        .missing-list li {
+            margin-bottom: 4px;
+            list-style: none;
+        }
+        
+        .discovery-needed {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: rgba(217,119,6,0.06);
+            border: 1px dashed rgba(217,119,6,0.3);
+            border-radius: 10px;
+            margin-top: 16px;
+        }
+        .discovery-icon {
+            font-size: 20px;
+        }
+        .discovery-needed span:last-child {
+            font-size: 12px;
+            color: #92400e;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .persona-card-right { grid-template-columns: repeat(2, 1fr); }
+            .radar-gauge-wrap { flex-direction: column; }
+            .int-layout { flex-direction: column; }
+            .pain-layout { flex-direction: column; }
+            .dependency-cards { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .hero { padding: 32px 20px; }
+            .hero h1 { font-size: 28px; }
+            .board { padding: 20px 16px; }
+            .persona-card-vis { flex-direction: column; }
+            .persona-card-right { grid-template-columns: 1fr; }
+            .context-strip { flex-direction: column; }
+            .goal-boxes { grid-template-columns: 1fr; }
+            .flow-h { flex-direction: column; align-items: stretch; }
+            .flow-arrow { transform: rotate(90deg); align-self: center; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SIDE NAVIGATION                                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <nav class="side-nav">
+        <a href="BKR_Persona_Hub.html" class="side-nav-logo" title="Hub">BKR</a>
+        <div class="nav-items">
+            <a href="Persona_IST_General_Reservation_v2.html" class="nav-item active" title="General Reservation">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Gen Res</span>
+            </a>
+            <a href="Persona_IST_Special_Cargo.html" class="nav-item" title="Special Cargo">
+                <span class="nav-num">2</span>
+                <span class="nav-label">Special</span>
+            </a>
+            <a href="Persona_Domestic_Reservation.html" class="nav-item" title="Domestic">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Domestic</span>
+            </a>
+            <a href="Persona_Capacity_Planning.html" class="nav-item" title="Capacity">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Capacity</span>
+            </a>
+            <a href="Persona_Operations_CargoAcceptance.html" class="nav-item" title="Operations">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Ops</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="Persona_GSA_International_Station.html" class="nav-item" title="GSA">
+                <span class="nav-num">6</span>
+                <span class="nav-label">GSA</span>
+            </a>
+            <a href="Persona_Solution_Technical_Team.html" class="nav-item" title="Technical">
+                <span class="nav-num">7</span>
+                <span class="nav-label">Tech</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- MAIN CONTENT                                                    -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <div class="main-content">
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- HERO SECTION                                                    -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="hero-badge">BKR · General Reservation · Persona #1</span>
+            <h1>IST Outbound <span>General Reservation</span></h1>
+            <p class="hero-subtitle">
+                TK staff managing international GEN (general) cargo reservations from Istanbul hub. 
+                Special cargo requests (DG, PER, AVI, HUM) are directed to Special Cargo Team. 
+                Works via CAP018 screen with NO embargo toggle authority.
+            </p>
+            <blockquote class="hero-quote">
+                "Agent calls with AWB number, first commodity code is entered, SCC defaults. 
+                Standard flow for GEN cargo. For embargo or special cargo (DG/PER), Special Cargo Team takes over — 
+                we don't have toggle authority."
+            </blockquote>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#dc2626;"></span>
+                    <span><strong>User:</strong> Operational Expert</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong>Criticality:</strong> <span style="color:#f59e0b;">★★★★★</span> Very High</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong>Main Screen:</strong> CAP018 + CGOAPR Email</span>
+                </div>
+                <div class="source-card hero-meta-item">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 7 MoM <span style="font-size:10px; color:#9ca3af; margin-left:4px;">ⓘ hover</span></span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#a5f3fc; font-size:12px;">📄 Source MoM Documents</div>
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span>MoM-2025-12-05</span>
+                                <span style="color:#86efac;">Key User</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span>MoM-2025-12-09</span>
+                                <span style="color:#86efac;">Key User</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span>MoM-2025-12-11</span>
+                                <span style="color:#86efac;">Key User</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span>MoM-2025-12-12</span>
+                                <span style="color:#86efac;">Key User</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span>MoM-2025-12-23</span>
+                                <span style="color:#86efac;">Key User</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);">
+                                <span>MoM-2025-12-15</span>
+                                <span style="color:#93c5fd;">Solution Team</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0;">
+                                <span>MoM-2026-01-09</span>
+                                <span style="color:#93c5fd;">Solution Team</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SECTION 1: PERSONA PROFILE                                      -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="card full section-1">
+        <div class="card-header">
+            <div class="card-icon">1</div>
+            <div class="card-header-text">
+                <h3>Persona Profile</h3>
+                <span class="card-ref">Reference: Persona/User Profile · AEIOU · Context Mapping</span>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s1-chart" class="view-pane active">
+                <div class="persona-card-vis">
+                    <div class="persona-card-left">
+                        <div class="persona-avatar">📞</div>
+                        <div class="persona-name">IST General Reservation Agent</div>
+                        <div class="persona-title">TK Staff · THYIST Station</div>
+                    </div>
+                    <div class="persona-card-right">
+                        <div class="pf">
+                            <div class="pf-label">Department</div>
+                            <div class="pf-value">IST Outbound General Reservation</div>
+                        </div>
+                        <div class="pf">
+                            <div class="pf-label">Level</div>
+                            <div class="pf-value">Operational / Call Center</div>
+                        </div>
+                        <div class="pf">
+                            <div class="pf-label">User Type</div>
+                            <div class="pf-value">TK Staff (from 104 roles)</div>
+                        </div>
+                        <div class="pf">
+                            <div class="pf-label">Usage Frequency</div>
+                            <div class="pf-value">Daily 1000-1500 calls</div>
+                        </div>
+                        <div class="pf">
+                            <div class="pf-label">Primary Purpose</div>
+                            <div class="pf-value">IST → International Booking</div>
+                        </div>
+                        <div class="pf">
+                            <div class="pf-label">Main Screen</div>
+                            <div class="pf-value">CAP018 (Maintain Booking)</div>
+                        </div>
+                        <div class="pf">
+                            <div class="pf-label">Channel</div>
+                            <div class="pf-value">Phone, Email, FFR</div>
+                        </div>
+                        <div class="pf">
+                            <div class="pf-label">AWB Requirement</div>
+                            <div class="pf-value">Mandatory for IST departure</div>
+                        </div>
+                        <div class="pf-full">
+                            <h4>Infographic Summary</h4>
+                            <p>"1500 daily calls, each a decision chain: Embargo → ACRM → Accuity → Confirmed"</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="context-strip">
+                    <div class="context-cell">
+                        <div class="context-cell-icon">🖥️</div>
+                        <div class="context-cell-label">Environment</div>
+                        <div class="context-cell-value">Call Center / Office</div>
+                    </div>
+                    <div class="context-cell">
+                        <div class="context-cell-icon">💻</div>
+                        <div class="context-cell-label">Device</div>
+                        <div class="context-cell-value">Desktop + Phone Headset</div>
+                    </div>
+                    <div class="context-cell">
+                        <div class="context-cell-icon">⚡</div>
+                        <div class="context-cell-label">Attention Mode</div>
+                        <div class="context-cell-value">Divided (Phone + Screen)</div>
+                    </div>
+                    <div class="context-cell">
+                        <div class="context-cell-icon">📍</div>
+                        <div class="context-cell-label">Station Codes</div>
+                        <div class="context-cell-value">THYIST / ADA / ESB</div>
+                    </div>
+                </div>
+            </div>
+            <div id="s1-text" class="view-pane">
+                <div class="summary-box">
+                    <h4>Summary</h4>
+                    <p>TK staff managing international cargo reservations from IST. Works under daily load of 1000-1500 calls. Enters reservations into COMIS via CAP018 screen. Constantly interacts with Embargo, ACRM and Accuity integrations. NO embargo toggle authority — that belongs to Special Cargo Team.</p>
+                </div>
+                <div class="item-list">
+                    <div class="item">
+                        <span class="item-num">01</span>
+                        <span class="item-text"><strong>Demographic:</strong> IST Agent Station, COMIS Expert level, GEN cargo only (special → separate team)</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">02</span>
+                        <span class="item-text"><strong>Behavioral:</strong> Phone + CAP018 simultaneous work, CW email archive verification, 28-day flight limit</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">03</span>
+                        <span class="item-text"><strong>Psychographic:</strong> Accuracy over speed, written proof priority, system trust over verbal statements</span>
+                    </div>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-09:</strong> "Team-based work during special cargo intensity: Daily 1000–1500 calls."<br>
+                    <strong>MoM-2025-12-05:</strong> "Reservations are received via the call center. Destination, content, kg, and dimension information is requested from the customer."
+                </div>
+                <div class="infographic-text">
+                    <h5>Infographic Text</h5>
+                    <p>"1500 daily calls, each a decision chain: Embargo → ACRM → Accuity → Confirmed"</p>
+                </div>
+                <div class="missing">
+                    <div class="missing-title">⚠ Missing / Uncertain Data</div>
+                    <ul class="missing-list">
+                        <li>⚠ Exact age demographics not specified in MoMs</li>
+                        <li>⚠ Shift patterns / working hours not documented</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SECTION 2: GOALS, MOTIVATION & SUCCESS                          -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="card full section-2">
+        <div class="card-header">
+            <div class="card-icon">2</div>
+            <div class="card-header-text">
+                <h3>Goals, Motivation & Success Definition</h3>
+                <span class="card-ref">Reference: JTBD · VPC · Define Success · Ask 5x Why</span>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s2-chart" class="view-pane active">
+                <div class="radar-gauge-wrap">
+                    <div class="radar-wrap">
+                        <h4>Responsibility Radar</h4>
+                        <svg width="280" height="280" viewBox="0 0 280 280">
+                            <!-- Grid circles -->
+                            <polygon points="140,40 220,90 220,190 140,240 60,190 60,90" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                            <polygon points="140,65 195,100 195,180 140,215 85,180 85,100" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                            <polygon points="140,90 170,110 170,170 140,190 110,170 110,110" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+                            <!-- Axes -->
+                            <line x1="140" y1="140" x2="140" y2="40" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="140" y1="140" x2="220" y2="90" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="140" y1="140" x2="220" y2="190" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="140" y1="140" x2="140" y2="240" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="140" y1="140" x2="60" y2="190" stroke="#d1d5db" stroke-width="1"/>
+                            <line x1="140" y1="140" x2="60" y2="90" stroke="#d1d5db" stroke-width="1"/>
+                            <!-- Data polygon -->
+                            <polygon points="140,50 210,95 200,185 140,220 75,175 70,95" fill="rgba(217,119,6,0.2)" stroke="#d97706" stroke-width="2"/>
+                            <!-- Vertices -->
+                            <circle cx="140" cy="50" r="5" fill="#d97706"/>
+                            <circle cx="210" cy="95" r="5" fill="#d97706"/>
+                            <circle cx="200" cy="185" r="5" fill="#d97706"/>
+                            <circle cx="140" cy="220" r="5" fill="#d97706"/>
+                            <circle cx="75" cy="175" r="5" fill="#d97706"/>
+                            <circle cx="70" cy="95" r="5" fill="#d97706"/>
+                            <!-- Labels -->
+                            <text x="140" y="25" text-anchor="middle" font-size="10" fill="#6b7280">Reservation</text>
+                            <text x="235" y="90" text-anchor="start" font-size="10" fill="#6b7280">Embargo Check</text>
+                            <text x="235" y="195" text-anchor="start" font-size="10" fill="#6b7280">CW Verification</text>
+                            <text x="140" y="260" text-anchor="middle" font-size="10" fill="#6b7280">Flight Selection</text>
+                            <text x="45" y="195" text-anchor="end" font-size="10" fill="#6b7280">Accuity</text>
+                            <text x="45" y="90" text-anchor="end" font-size="10" fill="#6b7280">Agent Comm</text>
+                        </svg>
+                    </div>
+                    <div class="gauge-wrap">
+                        <h4>KPI Dashboard</h4>
+                        <div class="gauge-row">
+                            <div class="gauge">
+                                <div class="gauge-val amber">1500</div>
+                                <div class="gauge-info">
+                                    <div class="gauge-label">Daily Calls (Peak)</div>
+                                    <div class="gauge-bar"><div class="gauge-fill amber" style="width:85%"></div></div>
+                                </div>
+                            </div>
+                            <div class="gauge">
+                                <div class="gauge-val green">28</div>
+                                <div class="gauge-info">
+                                    <div class="gauge-label">Days Flight Window</div>
+                                    <div class="gauge-bar"><div class="gauge-fill green" style="width:100%"></div></div>
+                                </div>
+                            </div>
+                            <div class="gauge">
+                                <div class="gauge-val red">5-10T</div>
+                                <div class="gauge-info">
+                                    <div class="gauge-label">Capacity Consult Threshold</div>
+                                    <div class="gauge-bar"><div class="gauge-fill red" style="width:60%"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="goal-boxes">
+                    <div class="goal-box primary">
+                        <h5>🎯 Primary Goal</h5>
+                        <p>Create reservation correctly and on time. Enter customer request into COMIS accurately and quickly while ensuring all compliance checks pass.</p>
+                    </div>
+                    <div class="goal-box secondary">
+                        <h5>💎 Product Value</h5>
+                        <p>Reduce manual email dependencies (CW, CGOAPR). Provide proactive embargo warnings. Automate CW calculation for standard scenarios.</p>
+                    </div>
+                </div>
+            </div>
+            <div id="s2-text" class="view-pane">
+                <div class="summary-box">
+                    <h4>Summary</h4>
+                    <p>Main goal is to create reservation correctly. Embargo/restriction errors are the biggest fear. Email-based approval processes (CW, CGOAPR) reduce motivation. Success = Confirmed status with no compliance flags.</p>
+                </div>
+                <div class="item-list">
+                    <div class="item">
+                        <span class="item-num">✓</span>
+                        <span class="item-text"><strong>Motivator:</strong> Completing reservation without issues, positive agent feedback</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">✓</span>
+                        <span class="item-text"><strong>Motivator:</strong> System running fast and stable</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">✗</span>
+                        <span class="item-text"><strong>Demotivator:</strong> Manual processes, repetitive email workflows</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">⚠</span>
+                        <span class="item-text"><strong>Fear:</strong> Missing embargo status and starting incorrect process</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">⚠</span>
+                        <span class="item-text"><strong>Fear:</strong> Accuity rejection causing customer loss</span>
+                    </div>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-12:</strong> "When we encounter embargoes or restrictions at the error level on the system; if there is a situation that requires approval and approval has been obtained; the restriction or embargo there is deactivated; the reservation is taken; then the embargo or restriction is reactivated. (pain point)"
+                </div>
+                <div class="missing">
+                    <div class="missing-title">⚠ Missing / Uncertain Data</div>
+                    <ul class="missing-list">
+                        <li>⚠ Specific KPI targets (e.g., calls per hour) not documented</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SECTION 3: WORKFLOW, INTENTS & DECISION POINTS                  -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="card full section-3">
+        <div class="card-header">
+            <div class="card-icon">3</div>
+            <div class="card-header-text">
+                <h3>Workflow, Intents & Decision Points</h3>
+                <span class="card-ref">Reference: Customer Journey Map · User Flow · Service Blueprint · JTBD</span>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s3-chart" class="view-pane active">
+                <div class="flow-section">
+                    <h4>CAP018 Reservation Creation Flow</h4>
+                    <div class="flow-h">
+                        <div class="flow-step manual">
+                            <div class="flow-num">Step 1</div>
+                            <div class="flow-label">AWB Entry</div>
+                            <div class="flow-desc">Agent provides number</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">
+                            <div class="flow-num">Step 2</div>
+                            <div class="flow-label">Agent Auto-fill</div>
+                            <div class="flow-desc">Customer data loads</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual">
+                            <div class="flow-num">Step 3</div>
+                            <div class="flow-label">Commodity Code</div>
+                            <div class="flow-desc">SCC defaults</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual">
+                            <div class="flow-num">Step 4</div>
+                            <div class="flow-label">Dimension/Kg</div>
+                            <div class="flow-desc">Weight entry</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision">
+                            <div class="flow-num">Decision</div>
+                            <div class="flow-label">CW Required?</div>
+                            <div class="flow-desc">Check email archive</div>
+                        </div>
+                    </div>
+                    <div class="flow-h">
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual">
+                            <div class="flow-num">Step 5</div>
+                            <div class="flow-label">Select Flight</div>
+                            <div class="flow-desc">28-day window</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">
+                            <div class="flow-num">Step 6</div>
+                            <div class="flow-label">Embargo Check</div>
+                            <div class="flow-desc">System validation</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision">
+                            <div class="flow-num">Decision</div>
+                            <div class="flow-label">CGOAPR Approval?</div>
+                            <div class="flow-desc">If embargo exists</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">
+                            <div class="flow-num">Step 7</div>
+                            <div class="flow-label">ACRM Pricing</div>
+                            <div class="flow-desc">Auto-triggered</div>
+                        </div>
+                    </div>
+                    <div class="flow-h">
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">
+                            <div class="flow-num">Step 8</div>
+                            <div class="flow-label">Restriction Check</div>
+                            <div class="flow-desc">Country/City/Station</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto">
+                            <div class="flow-num">Step 9</div>
+                            <div class="flow-label">Accuity</div>
+                            <div class="flow-desc">Compliance check</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step" style="background:#d1fae5; border-color:#059669; color:#047857;">
+                            <div class="flow-num">End</div>
+                            <div class="flow-label">Confirmed</div>
+                            <div class="flow-desc">Or Queue status</div>
+                        </div>
+                    </div>
+                    <div class="flow-legend">
+                        <div class="flow-legend-item"><span class="dot-auto"></span> Automatic (System)</div>
+                        <div class="flow-legend-item"><span class="dot-manual"></span> Manual (User)</div>
+                        <div class="flow-legend-item"><span class="dot-decision"></span> Decision Point</div>
+                    </div>
+                </div>
+
+                <h4 style="font-size:11px; font-weight:700; color:#0284c7; text-transform:uppercase; letter-spacing:1px; margin:32px 0 16px;">Jobs to be Done</h4>
+                <table class="jtbd-table">
+                    <thead>
+                        <tr>
+                            <th>When…</th>
+                            <th>I want to…</th>
+                            <th>So I can…</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Agent calls with AWB number</td>
+                            <td>Quickly enter reservation data</td>
+                            <td>Complete booking while on phone</td>
+                        </tr>
+                        <tr>
+                            <td>System shows embargo warning</td>
+                            <td>Check if approval exists</td>
+                            <td>Proceed without compliance risk</td>
+                        </tr>
+                        <tr>
+                            <td>Large pallet cargo (5-10T+)</td>
+                            <td>Consult capacity team</td>
+                            <td>Ensure flight can accommodate</td>
+                        </tr>
+                        <tr>
+                            <td>CW value needed</td>
+                            <td>Verify from email archive</td>
+                            <td>Enter accurate adjusted weight</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="font-size:11px; font-weight:700; color:#0284c7; text-transform:uppercase; letter-spacing:1px; margin:32px 0 16px;">Manual Intervention & Dependencies</h4>
+                <div class="dependency-cards">
+                    <div class="dep-card blocked">
+                        <div class="dep-card-icon">⛔</div>
+                        <h5>Embargo Approval Blocked</h5>
+                        <p>CGOAPR email response required. Cannot proceed until station confirms.</p>
+                    </div>
+                    <div class="dep-card delay">
+                        <div class="dep-card-icon">⏳</div>
+                        <h5>CW Calculation Delay</h5>
+                        <p>Email correspondence with cw@thy.com for large pallets.</p>
+                    </div>
+                    <div class="dep-card gap">
+                        <div class="dep-card-icon">🕳️</div>
+                        <h5>HS Code Data Gap</h5>
+                        <p>If not entered, Accuity destinations fall to Queue status.</p>
+                    </div>
+                </div>
+            </div>
+            <div id="s3-text" class="view-pane">
+                <div class="summary-box">
+                    <h4>Summary</h4>
+                    <p>Main job: "Enter customer request into COMIS correctly and quickly." Flow trigger is agent's call with AWB. 9-step process with 2 decision points (CW, CGOAPR). Critical dependencies: embargo approval, CW verification, capacity consultation for 5-10T+.</p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-12:</strong> "Sales teams assign AWB stock to relevant agents according to agent volume. Agents start the reservation by calling TK personnel and directly providing the AWB."<br><br>
+                    <strong>MoM-Solution-2026-01-09:</strong> "All mandatory fields must be filled in → flight and capacity check → embargo check → ACRM → restriction check → Accuity → reservation is created."
+                </div>
+                <div class="infographic-text">
+                    <h5>Infographic Text</h5>
+                    <p>"9 steps, 2 decision gates, 3 blocking dependencies — each call is a compliance gauntlet"</p>
+                </div>
+                <div class="missing">
+                    <div class="missing-title">⚠ Missing / Uncertain Data</div>
+                    <ul class="missing-list">
+                        <li>⚠ Average call duration not specified</li>
+                        <li>⚠ Error recovery flow not fully documented</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SECTION 4: DATA, AUTHORITY & INTEGRATION                        -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="card full section-4">
+        <div class="card-header">
+            <div class="card-icon">4</div>
+            <div class="card-header-text">
+                <h3>Data, Authority & Integration</h3>
+                <span class="card-ref">Reference: Service Blueprint · Stakeholder Map · AEIOU</span>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s4-chart" class="view-pane active">
+                <div class="int-layout">
+                    <div class="int-map">
+                        <h4>System Integration Map</h4>
+                        <div class="spoke-nodes">
+                            <div class="spoke-node primary">
+                                <span class="spoke-icon">🖥️</span>
+                                <div class="spoke-info">
+                                    <div class="spoke-name">COMIS / CAP018</div>
+                                    <div class="spoke-detail">Main reservation screen. Persona's primary workspace.</div>
+                                    <div class="spoke-badges">
+                                        <span class="spoke-badge main">Main System</span>
+                                        <span class="spoke-badge owner">Data Owner</span>
+                                    </div>
+                                    <div class="spoke-line">↔ Full CRUD (except Delete)</div>
+                                </div>
+                            </div>
+                            <div class="spoke-node secondary">
+                                <span class="spoke-icon">💰</span>
+                                <div class="spoke-info">
+                                    <div class="spoke-name">ACRM (Pricing)</div>
+                                    <div class="spoke-detail">Auto-triggered after Save. Price returns or spot quote pending.</div>
+                                    <div class="spoke-badges">
+                                        <span class="spoke-badge receiver">Auto Receiver</span>
+                                    </div>
+                                    <div class="spoke-line">← Auto-trigger after Save</div>
+                                </div>
+                            </div>
+                            <div class="spoke-node secondary">
+                                <span class="spoke-icon">🛡️</span>
+                                <div class="spoke-info">
+                                    <div class="spoke-name">Accuity (Compliance)</div>
+                                    <div class="spoke-detail">Shipper/Consignee checked against sanctions list.</div>
+                                    <div class="spoke-badges">
+                                        <span class="spoke-badge receiver">Auto Receiver</span>
+                                    </div>
+                                    <div class="spoke-line">← NP / Confirmed / Rejected</div>
+                                </div>
+                            </div>
+                            <div class="spoke-node external">
+                                <span class="spoke-icon">📧</span>
+                                <div class="spoke-info">
+                                    <div class="spoke-name">CGOAPR Email</div>
+                                    <div class="spoke-detail">Manual email group for embargo approvals with stations.</div>
+                                    <div class="spoke-badges">
+                                        <span class="spoke-badge receiver">Manual</span>
+                                    </div>
+                                    <div class="spoke-line">↔ Email correspondence</div>
+                                </div>
+                            </div>
+                            <div class="spoke-node external">
+                                <span class="spoke-icon">⚖️</span>
+                                <div class="spoke-info">
+                                    <div class="spoke-name">CW Team (cw@thy.com)</div>
+                                    <div class="spoke-detail">Email correspondence for large pallet CW calculation.</div>
+                                    <div class="spoke-badges">
+                                        <span class="spoke-badge receiver">Manual</span>
+                                    </div>
+                                    <div class="spoke-line">↔ Email → Adjusted Weight</div>
+                                </div>
+                            </div>
+                            <div class="spoke-node readonly">
+                                <span class="spoke-icon">📋</span>
+                                <div class="spoke-info">
+                                    <div class="spoke-name">Embargo/Restriction List</div>
+                                    <div class="spoke-detail">Country/City/Station level embargo lookup.</div>
+                                    <div class="spoke-badges">
+                                        <span class="spoke-badge readonly">Read Only</span>
+                                    </div>
+                                    <div class="spoke-line">→ Query only</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="crud-section">
+                        <h4>CRUD Matrix</h4>
+                        <table class="crud-table">
+                            <thead>
+                                <tr>
+                                    <th>Data / System</th>
+                                    <th>C</th>
+                                    <th>R</th>
+                                    <th>U</th>
+                                    <th>D</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Reservation</td>
+                                    <td><span class="crud-badge c">✓</span></td>
+                                    <td><span class="crud-badge r">✓</span></td>
+                                    <td><span class="crud-badge u">✓</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td>AWB Stock</td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge r">✓</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Embargo List</td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge r">✓</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Flight Schedule</td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge r">✓</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td>ACRM Price</td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge r">✓</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Accuity Status</td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge r">✓</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                    <td><span class="crud-badge no">-</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="font-size:10px; color:#6b7280; margin-top:12px; padding:8px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                            <strong>C</strong>=Create · <strong>R</strong>=Read · <strong>U</strong>=Update · <strong>D</strong>=Delete
+                        </p>
+                    </div>
+                </div>
+                <div class="msg-flow">
+                    <h4>Message Flow</h4>
+                    <div class="msg-row">
+                        <span class="msg-source">COMIS</span>
+                        <span class="flow-arrow">→</span>
+                        <span class="msg-type">Save Event</span>
+                        <span class="flow-arrow">→</span>
+                        <span class="msg-target">ACRM</span>
+                        <span class="msg-freq">Every reservation</span>
+                    </div>
+                    <div class="msg-row">
+                        <span class="msg-source">COMIS</span>
+                        <span class="flow-arrow">→</span>
+                        <span class="msg-type">Compliance Check</span>
+                        <span class="flow-arrow">→</span>
+                        <span class="msg-target">Accuity</span>
+                        <span class="msg-freq">Every reservation</span>
+                    </div>
+                    <div class="msg-row">
+                        <span class="msg-source">Reservation</span>
+                        <span class="flow-arrow">→</span>
+                        <span class="msg-type">FWB / FHL</span>
+                        <span class="flow-arrow">→</span>
+                        <span class="msg-target">Customs</span>
+                        <span class="msg-freq">Post-confirm</span>
+                    </div>
+                </div>
+            </div>
+            <div id="s4-text" class="view-pane">
+                <div class="summary-box">
+                    <h4>Summary</h4>
+                    <p>Persona mainly performs Create and Read operations. Critical data: Reservation (C/R/U), AWB stock (R), Embargo list (R), Flight schedule (R-28days). ACRM and Accuity auto-triggered. CW and embargo approvals managed via manual email processes.</p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-05:</strong> "It is checked from the list embargo screen in COMIS; all city and country embargoes are available there."<br><br>
+                    <strong>MoM-Solution-2025-12-15:</strong> "After Save, Embargo check is repeated. If successful, ACRM is triggered automatically."<br><br>
+                    <strong>MoM-2025-12-23:</strong> "The rez team does not proceed based on agent's verbal statements or without seeing the CW."
+                </div>
+                <div class="infographic-text">
+                    <h5>Infographic Text</h5>
+                    <p>"6 systems, 2 auto-triggers, 2 manual email dependencies — a complex integration web"</p>
+                </div>
+                <div class="missing">
+                    <div class="missing-title">⚠ Missing / Uncertain Data</div>
+                    <ul class="missing-list">
+                        <li>⚠ No fields requiring additional discovery at this time</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SECTION 5: PAIN POINTS & RISK                                   -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="card full section-5">
+        <div class="card-header">
+            <div class="card-icon">5</div>
+            <div class="card-header-text">
+                <h3>Pain Points & Risk</h3>
+                <span class="card-ref">Reference: Journey Map · Empathy Map · 5x Why · VPC</span>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s5-chart" class="view-pane active">
+                <div class="pain-layout">
+                    <div class="pain-bars">
+                        <h4>Severity Ranking</h4>
+                        <div class="sev-item">
+                            <div class="sev-label"><span class="pain-code">P1</span> Multi-leg Reject Tracking</div>
+                            <div class="sev-bar-bg"><div class="sev-bar-fill high" style="width:95%"></div></div>
+                            <span class="sev-tag high">High</span>
+                        </div>
+                        <div class="sev-item">
+                            <div class="sev-label"><span class="pain-code">P2</span> CW Manual Email Process</div>
+                            <div class="sev-bar-bg"><div class="sev-bar-fill high" style="width:88%"></div></div>
+                            <span class="sev-tag high">High</span>
+                        </div>
+                        <div class="sev-item">
+                            <div class="sev-label"><span class="pain-code">P3</span> Capacity Approval Manual</div>
+                            <div class="sev-bar-bg"><div class="sev-bar-fill medium" style="width:70%"></div></div>
+                            <span class="sev-tag medium">Medium</span>
+                        </div>
+                        <div class="sev-item">
+                            <div class="sev-label"><span class="pain-code">P4</span> Pre-Flight Time Control</div>
+                            <div class="sev-bar-bg"><div class="sev-bar-fill medium" style="width:65%"></div></div>
+                            <span class="sev-tag medium">Medium</span>
+                        </div>
+                        <div class="sev-item">
+                            <div class="sev-label"><span class="pain-code">P5</span> HS Code Queue Fallback</div>
+                            <div class="sev-bar-bg"><div class="sev-bar-fill medium" style="width:55%"></div></div>
+                            <span class="sev-tag medium">Medium</span>
+                        </div>
+                        <div class="sev-item">
+                            <div class="sev-label"><span class="pain-code">P6</span> 28-Day Pre-booking Limit</div>
+                            <div class="sev-bar-bg"><div class="sev-bar-fill low" style="width:35%"></div></div>
+                            <span class="sev-tag low">Low</span>
+                        </div>
+                    </div>
+                    <div class="risk-matrix-wrap">
+                        <h4>Risk Matrix (Probability × Impact)</h4>
+                        <div class="risk-matrix">
+                            <div class="risk-header"></div>
+                            <div class="risk-header">Low</div>
+                            <div class="risk-header">Med</div>
+                            <div class="risk-header">High</div>
+                            
+                            <div class="risk-label">High</div>
+                            <div class="risk-cell risk-med-med"></div>
+                            <div class="risk-cell risk-high-med">P3</div>
+                            <div class="risk-cell risk-high-high">P1 P2</div>
+                            
+                            <div class="risk-label">Med</div>
+                            <div class="risk-cell risk-low">P6</div>
+                            <div class="risk-cell risk-med-med">P5</div>
+                            <div class="risk-cell risk-high-med">P4</div>
+                            
+                            <div class="risk-label">Low</div>
+                            <div class="risk-cell risk-low"></div>
+                            <div class="risk-cell risk-low"></div>
+                            <div class="risk-cell risk-med-med"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="root-cause">
+                    <h5>Root Cause Analysis</h5>
+                    <p>Manual email-based workflows (CW, CGOAPR) create bottlenecks and audit gaps. Multi-leg visibility loss stems from monitor screen architecture not supporting segment-level status. No AWB-based embargo granularity forces system-wide toggle affecting all concurrent reservations.</p>
+                </div>
+            </div>
+            <div id="s5-text" class="view-pane">
+                <div class="summary-box">
+                    <h4>Summary</h4>
+                    <p>6 pain points identified. Most critical: multi-leg tracking loss (P1) and CW manual process (P2). Manual processes (email approval, CW calculation) increase operational burden and create compliance risks.</p>
+                </div>
+                <div class="item-list">
+                    <div class="item">
+                        <span class="item-num">P1</span>
+                        <span class="item-text"><strong>Multi-leg Reject:</strong> "When segment rejected, capacity teams lose track on monitor flight screen. They cancel instead of reject."</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">P2</span>
+                        <span class="item-text"><strong>CW Manual:</strong> "CW value doesn't auto-reflect in COMIS. Email correspondence determines CW kg. Manual entry to Adjusted Weight."</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">P3</span>
+                        <span class="item-text"><strong>Capacity Approval:</strong> "5-10 ton threshold, manual consultation required before confirm."</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">P4</span>
+                        <span class="item-text"><strong>Time Control:</strong> "No system control for 30-45min (narrow) / 75-120min (wide) pre-departure cutoff."</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">P5</span>
+                        <span class="item-text"><strong>HS Code:</strong> "If not entered for Accuity destinations, reservation falls to Queue status."</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">P6</span>
+                        <span class="item-text"><strong>28-Day Limit:</strong> "No pre-booking for IST departures beyond 28 days."</span>
+                    </div>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-12:</strong> "Pain point: In multi-leg flights; whichever segment is rejected should be rejectable but when rejected; capacity teams lose track of it on the monitor flight screen."
+                </div>
+                <div class="missing">
+                    <div class="missing-title">⚠ Missing / Uncertain Data</div>
+                    <ul class="missing-list">
+                        <li>⚠ Quantified impact (time lost, error rates) not specified</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SECTION 6: MENTAL MODEL, BEHAVIOR & UX                          -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="card full section-6">
+        <div class="card-header">
+            <div class="card-icon">6</div>
+            <div class="card-header-text">
+                <h3>Mental Model, Behavior & UX</h3>
+                <span class="card-ref">Reference: Mental Model · Empathy Map · Emotional Response Cards</span>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s6-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#9333ea; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">Cognitive Load Points</h4>
+                <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+                    <div style="background:rgba(147,51,234,0.05); padding:14px; border-radius:10px;">
+                        <div style="font-size:28px; margin-bottom:8px;">🔄</div>
+                        <div style="font-size:13px; font-weight:600; color:#7c3aed; margin-bottom:4px;">Multitasking Load</div>
+                        <div style="font-size:11px; color:#6b7280;">Phone conversation + CAP018 data entry simultaneously</div>
+                    </div>
+                    <div style="background:rgba(147,51,234,0.05); padding:14px; border-radius:10px;">
+                        <div style="font-size:28px; margin-bottom:8px;">⚠️</div>
+                        <div style="font-size:13px; font-weight:600; color:#7c3aed; margin-bottom:4px;">Embargo Uncertainty</div>
+                        <div style="font-size:11px; color:#6b7280;">"Is this embargo open or closed now? Did someone else make a reservation?"</div>
+                    </div>
+                    <div style="background:rgba(147,51,234,0.05); padding:14px; border-radius:10px;">
+                        <div style="font-size:28px; margin-bottom:8px;">📧</div>
+                        <div style="font-size:13px; font-weight:600; color:#7c3aed; margin-bottom:4px;">Email Dependency</div>
+                        <div style="font-size:11px; color:#6b7280;">Waiting for CGOAPR / CW response creates anxiety</div>
+                    </div>
+                    <div style="background:rgba(147,51,234,0.05); padding:14px; border-radius:10px;">
+                        <div style="font-size:28px; margin-bottom:8px;">🔍</div>
+                        <div style="font-size:13px; font-weight:600; color:#7c3aed; margin-bottom:4px;">Verification Burden</div>
+                        <div style="font-size:11px; color:#6b7280;">Must check CW email archive; cannot trust verbal info</div>
+                    </div>
+                </div>
+
+                <h4 style="font-size:11px; font-weight:700; color:#9333ea; text-transform:uppercase; letter-spacing:1px; margin:28px 0 16px;">Empathy Map</h4>
+                <div style="display:grid; grid-template-columns:1fr auto 1fr; grid-template-rows:auto auto; gap:16px; align-items:stretch;">
+                    
+                    <!-- SAYS - Top Left -->
+                    <div style="background:rgba(236,72,153,0.06); padding:16px; border-radius:12px; border:2px solid rgba(236,72,153,0.15);">
+                        <h5 style="font-size:12px; font-weight:700; color:#db2777; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                            <span style="width:28px; height:28px; background:rgba(236,72,153,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center;">💬</span>
+                            SAYS
+                        </h5>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(236,72,153,0.4);">"Can I get your AWB number?"</div>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(236,72,153,0.4);">"I need to check embargo, can you wait?"</div>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(236,72,153,0.4);">"I'm checking CW email archive"</div>
+                        <div style="font-size:11px; color:#374151; padding-left:12px; border-left:2px solid rgba(236,72,153,0.4);">"5-10T+ needs capacity consultation"</div>
+                    </div>
+                    
+                    <!-- Center Persona Avatar - spans 2 rows -->
+                    <div style="grid-row: span 2; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; min-width:130px;">
+                        <div style="width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg, #9333ea 0%, #a855f7 50%, #c084fc 100%); display:flex; align-items:center; justify-content:center; font-size:36px; box-shadow:0 8px 32px rgba(147,51,234,0.35); border:4px solid white;">
+                            📞
+                        </div>
+                        <div style="margin-top:10px; font-size:12px; font-weight:700; color:#7c3aed; text-align:center;">IST General</div>
+                        <div style="font-size:10px; color:#9ca3af; text-align:center;">Reservation Agent</div>
+                        <div style="margin-top:8px; padding:4px 10px; background:rgba(147,51,234,0.1); border-radius:12px; font-size:9px; color:#7c3aed; font-weight:600;">THYIST</div>
+                    </div>
+                    
+                    <!-- THINKS - Top Right -->
+                    <div style="background:rgba(79,70,229,0.06); padding:16px; border-radius:12px; border:2px solid rgba(79,70,229,0.15);">
+                        <h5 style="font-size:12px; font-weight:700; color:#4f46e5; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                            <span style="width:28px; height:28px; background:rgba(79,70,229,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center;">💭</span>
+                            THINKS
+                        </h5>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(79,70,229,0.4);">"Is this embargo open or closed now?"</div>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(79,70,229,0.4);">"How will I inform customer if Accuity rejects?"</div>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(79,70,229,0.4);">"When will CGOAPR email reply come?"</div>
+                        <div style="font-size:11px; color:#374151; padding-left:12px; border-left:2px solid rgba(79,70,229,0.4);">"HS Code missing, will it fall to Queue?"</div>
+                    </div>
+                    
+                    <!-- DOES - Bottom Left -->
+                    <div style="background:rgba(5,150,105,0.06); padding:16px; border-radius:12px; border:2px solid rgba(5,150,105,0.15);">
+                        <h5 style="font-size:12px; font-weight:700; color:#059669; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                            <span style="width:28px; height:28px; background:rgba(5,150,105,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center;">⚡</span>
+                            DOES
+                        </h5>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(5,150,105,0.4);">Enters data in CAP018 while on phone</div>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(5,150,105,0.4);">Enters commodity code, SCC defaults</div>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(5,150,105,0.4);">Checks CW email archive constantly</div>
+                        <div style="font-size:11px; color:#374151; padding-left:12px; border-left:2px solid rgba(5,150,105,0.4);">Queries embargo list from COMIS</div>
+                    </div>
+                    
+                    <!-- FEELS - Bottom Right -->
+                    <div style="background:rgba(225,29,72,0.06); padding:16px; border-radius:12px; border:2px solid rgba(225,29,72,0.15);">
+                        <h5 style="font-size:12px; font-weight:700; color:#e11d48; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+                            <span style="width:28px; height:28px; background:rgba(225,29,72,0.15); border-radius:8px; display:flex; align-items:center; justify-content:center;">❤️</span>
+                            FEELS
+                        </h5>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(225,29,72,0.4);">Stress during 1000-1500 daily calls</div>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(225,29,72,0.4);">Anxiety during embargo toggle</div>
+                        <div style="font-size:11px; color:#374151; margin-bottom:8px; padding-left:12px; border-left:2px solid rgba(225,29,72,0.4);">Frustration with manual emails</div>
+                        <div style="font-size:11px; color:#374151; padding-left:12px; border-left:2px solid rgba(225,29,72,0.4);">Satisfaction when Confirmed</div>
+                    </div>
+                </div>
+
+                <h4 style="font-size:11px; font-weight:700; color:#9333ea; text-transform:uppercase; letter-spacing:1px; margin:28px 0 16px;">Terminology Glossary</h4>
+                <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px;">
+                    <div style="display:flex; gap:12px; padding:8px 12px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                        <span style="font-family:monospace; font-size:11px; color:#7c3aed; font-weight:600;">AWB</span>
+                        <span style="font-size:11px; color:#6b7280;">Air Waybill - cargo tracking number</span>
+                    </div>
+                    <div style="display:flex; gap:12px; padding:8px 12px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                        <span style="font-family:monospace; font-size:11px; color:#7c3aed; font-weight:600;">CW</span>
+                        <span style="font-size:11px; color:#6b7280;">Chargeable Weight calculation</span>
+                    </div>
+                    <div style="display:flex; gap:12px; padding:8px 12px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                        <span style="font-family:monospace; font-size:11px; color:#7c3aed; font-weight:600;">SCC</span>
+                        <span style="font-size:11px; color:#6b7280;">Special Cargo Code</span>
+                    </div>
+                    <div style="display:flex; gap:12px; padding:8px 12px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                        <span style="font-family:monospace; font-size:11px; color:#7c3aed; font-weight:600;">CGOAPR</span>
+                        <span style="font-size:11px; color:#6b7280;">Cargo Approval email group</span>
+                    </div>
+                    <div style="display:flex; gap:12px; padding:8px 12px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                        <span style="font-family:monospace; font-size:11px; color:#7c3aed; font-weight:600;">GEN</span>
+                        <span style="font-size:11px; color:#6b7280;">General cargo (non-special)</span>
+                    </div>
+                    <div style="display:flex; gap:12px; padding:8px 12px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                        <span style="font-family:monospace; font-size:11px; color:#7c3aed; font-weight:600;">FFR</span>
+                        <span style="font-size:11px; color:#6b7280;">Freight Forward Request message</span>
+                    </div>
+                </div>
+            </div>
+            <div id="s6-text" class="view-pane">
+                <div class="summary-box">
+                    <h4>Summary</h4>
+                    <p>Persona constantly multitasks: phone + screen. Cognitive load increases with embargo/restriction uncertainty. Accuracy first, speed second. Written proof required; verbal statements not trusted.</p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-23:</strong> "The rez team does not proceed based on agent's verbal statements or without seeing the CW. The CW email archive is always checked."
+                </div>
+                <div class="missing">
+                    <div class="missing-title">⚠ Missing / Uncertain Data</div>
+                    <ul class="missing-list">
+                        <li>⚠ No fields requiring additional discovery at this time</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SECTION 7: COLLABORATION, REPORTING & SUPPORT                   -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="card full section-7">
+        <div class="card-header">
+            <div class="card-icon">7</div>
+            <div class="card-header-text">
+                <h3>Collaboration, Reporting & Support</h3>
+                <span class="card-ref">Reference: Stakeholder Map · Onion Diagram · Service Blueprint</span>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s7-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#059669; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; text-align:center;">Stakeholder Collaboration Map</h4>
+                
+                <!-- Layer 1: Data Providers -->
+                <div style="margin-bottom:16px;">
+                    <div style="font-size:10px; font-weight:600; color:#10b981; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">① Data Providers → Persona</div>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:180px; padding:12px; background:rgba(16,185,129,0.05); border-left:3px solid #10b981; border-radius:0 8px 8px 0;">
+                            <div style="font-size:12px; font-weight:600; color:#047857;">📞 Agent (Phone)</div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">AWB, destination, kg, dimensions</div>
+                            <div style="margin-top:6px;"><span style="font-size:9px; padding:2px 6px; background:#d1fae5; color:#047857; border-radius:4px;">→ One-way input</span></div>
+                        </div>
+                        <div style="flex:1; min-width:180px; padding:12px; background:rgba(16,185,129,0.05); border-left:3px solid #10b981; border-radius:0 8px 8px 0;">
+                            <div style="font-size:12px; font-weight:600; color:#047857;">📧 CW Team</div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">cw@thy.com correspondence</div>
+                            <div style="margin-top:6px;"><span style="font-size:9px; padding:2px 6px; background:#d1fae5; color:#047857; border-radius:4px;">↔ Email exchange</span></div>
+                        </div>
+                        <div style="flex:1; min-width:180px; padding:12px; background:rgba(16,185,129,0.05); border-left:3px solid #10b981; border-radius:0 8px 8px 0;">
+                            <div style="font-size:12px; font-weight:600; color:#047857;">📦 Special Cargo Team</div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">DG/PER/AVI handoff</div>
+                            <div style="margin-top:6px;"><span style="font-size:9px; padding:2px 6px; background:#d1fae5; color:#047857; border-radius:4px;">→ Referral</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer 2: Persona -->
+                <div style="display:flex; justify-content:center; margin:20px 0;">
+                    <div style="padding:20px 40px; background:linear-gradient(135deg, #4f46e5, #6366f1); border-radius:12px; text-align:center; box-shadow:0 4px 16px rgba(79,70,229,0.3);">
+                        <div style="font-size:24px; margin-bottom:4px;">🎯</div>
+                        <div style="font-size:14px; font-weight:700; color:white;">IST General Reservation Agent</div>
+                        <div style="font-size:11px; color:rgba(255,255,255,0.8);">THYIST Station</div>
+                    </div>
+                </div>
+
+                <!-- Layer 3: Technical Partners -->
+                <div style="margin-bottom:16px;">
+                    <div style="font-size:10px; font-weight:600; color:#4f46e5; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">③ Technical Partners ↔ Persona</div>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:180px; padding:12px; background:rgba(79,70,229,0.05); border-left:3px solid #4f46e5; border-radius:0 8px 8px 0;">
+                            <div style="font-size:12px; font-weight:600; color:#4338ca;">📊 Capacity Team</div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">5-10T+ consultation</div>
+                            <div style="margin-top:6px;"><span style="font-size:9px; padding:2px 6px; background:#e0e7ff; color:#4338ca; border-radius:4px;">↔ Bidirectional</span></div>
+                        </div>
+                        <div style="flex:1; min-width:180px; padding:12px; background:rgba(79,70,229,0.05); border-left:3px solid #4f46e5; border-radius:0 8px 8px 0;">
+                            <div style="font-size:12px; font-weight:600; color:#4338ca;">📧 CGOAPR</div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">Embargo approval email</div>
+                            <div style="margin-top:6px;"><span style="font-size:9px; padding:2px 6px; background:#e0e7ff; color:#4338ca; border-radius:4px;">↔ Approval flow</span></div>
+                        </div>
+                        <div style="flex:1; min-width:180px; padding:12px; background:rgba(79,70,229,0.05); border-left:3px solid #4f46e5; border-radius:0 8px 8px 0;">
+                            <div style="font-size:12px; font-weight:600; color:#4338ca;">✈️ Destination Stations</div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">Embargo coordination</div>
+                            <div style="margin-top:6px;"><span style="font-size:9px; padding:2px 6px; background:#e0e7ff; color:#4338ca; border-radius:4px;">↔ Via CGOAPR</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Layer 4: Data Consumers -->
+                <div>
+                    <div style="font-size:10px; font-weight:600; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">④ Data Consumers ← Persona</div>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:180px; padding:12px; background:rgba(8,145,178,0.05); border-left:3px solid #22d3ee; border-radius:0 8px 8px 0;">
+                            <div style="font-size:12px; font-weight:600; color:#0e7490;">📥 Goods Acceptance</div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">Reservation handoff</div>
+                        </div>
+                        <div style="flex:1; min-width:180px; padding:12px; background:rgba(8,145,178,0.05); border-left:3px solid #22d3ee; border-radius:0 8px 8px 0;">
+                            <div style="font-size:12px; font-weight:600; color:#0e7490;">🚛 Operations</div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">Confirmed reservations</div>
+                        </div>
+                        <div style="flex:1; min-width:180px; padding:12px; background:rgba(8,145,178,0.05); border-left:3px solid #22d3ee; border-radius:0 8px 8px 0;">
+                            <div style="font-size:12px; font-weight:600; color:#0e7490;">📊 Monitor Flight</div>
+                            <div style="font-size:10px; color:#6b7280; margin-top:4px;">Capacity visibility</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RACI Matrix -->
+                <h4 style="font-size:11px; font-weight:700; color:#059669; text-transform:uppercase; letter-spacing:1px; margin:28px 0 16px;">RACI Matrix</h4>
+                <table style="width:100%; border-collapse:collapse; font-size:11px;">
+                    <thead>
+                        <tr>
+                            <th style="background:rgba(5,150,105,0.08); color:#059669; padding:10px; text-align:left;">Activity</th>
+                            <th style="background:rgba(5,150,105,0.08); color:#059669; padding:10px; text-align:center;">R</th>
+                            <th style="background:rgba(5,150,105,0.08); color:#059669; padding:10px; text-align:center;">A</th>
+                            <th style="background:rgba(5,150,105,0.08); color:#059669; padding:10px; text-align:center;">C</th>
+                            <th style="background:rgba(5,150,105,0.08); color:#059669; padding:10px; text-align:center;">I</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05);">Create Reservation</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center; background:rgba(79,70,229,0.08); font-weight:600;">👤</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center;">—</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center; font-size:10px; color:#6b7280;">Agent</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center; font-size:10px; color:#6b7280;">Ops</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05);">Embargo Approval</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center; font-size:10px; color:#6b7280;">Station</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center; font-size:10px; color:#6b7280;">CGOAPR</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center; background:rgba(79,70,229,0.08); font-weight:600;">👤</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center;">—</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05);">CW Calculation</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center; font-size:10px; color:#6b7280;">CW Team</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center;">—</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center; background:rgba(79,70,229,0.08); font-weight:600;">👤</td>
+                            <td style="padding:10px; border-bottom:1px solid rgba(0,0,0,0.05); text-align:center; font-size:10px; color:#6b7280;">Agent</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px;">Capacity Approval (5-10T+)</td>
+                            <td style="padding:10px; text-align:center; font-size:10px; color:#6b7280;">Capacity</td>
+                            <td style="padding:10px; text-align:center; font-size:10px; color:#6b7280;">Capacity</td>
+                            <td style="padding:10px; text-align:center; background:rgba(79,70,229,0.08); font-weight:600;">👤</td>
+                            <td style="padding:10px; text-align:center;">—</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="font-size:10px; color:#6b7280; margin-top:8px;">👤 = IST General Reservation Agent (Persona)</p>
+            </div>
+            <div id="s7-text" class="view-pane">
+                <div class="summary-box">
+                    <h4>Summary</h4>
+                    <p>Persona receives info from agent via phone, corresponds with CW team via email, consults capacity team for 5-10T+ cargo, obtains embargo approvals via CGOAPR. Information flows from reservation team to operations and goods acceptance teams.</p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-23:</strong> "Direct communication with the relevant destination is established not by agents but by the reservation team. Approvals are obtained via the CGOAPR email address."
+                </div>
+                <div class="missing">
+                    <div class="missing-title">⚠ Missing / Uncertain Data</div>
+                    <ul class="missing-list">
+                        <li>⚠ Escalation paths not fully documented</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SECTION 8: PRODUCT OPPORTUNITIES & PRIORITIZATION               -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="card full section-8">
+        <div class="card-header">
+            <div class="card-icon">8</div>
+            <div class="card-header-text">
+                <h3>Product Opportunities & Prioritization</h3>
+                <span class="card-ref">Reference: VPC · Lean Canvas · Assumption Mapping · HMW</span>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s8-chart" class="view-pane active">
+                <div style="display:flex; gap:32px;">
+                    <div style="flex:1;">
+                        <h4 style="font-size:11px; font-weight:700; color:#ea580c; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">Roadmap Timeline</h4>
+                        <div style="position:relative; padding-left:24px;">
+                            <div style="position:absolute; left:8px; top:0; bottom:0; width:3px; background:linear-gradient(to bottom, #dc2626 0%, #d97706 50%, #16a34a 100%); border-radius:2px;"></div>
+                            
+                            <!-- MVP Items -->
+                            <div style="position:relative; padding:12px 0 12px 20px;">
+                                <div style="position:absolute; left:-20px; top:16px; width:14px; height:14px; border-radius:50%; background:#dc2626; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>
+                                <span style="display:inline-block; padding:2px 8px; background:#fee2e2; color:#dc2626; border-radius:4px; font-size:9px; font-weight:600; margin-bottom:6px;">MVP</span>
+                                <h5 style="font-size:13px; font-weight:600; margin-bottom:4px;">Multi-leg Segment-Based Reject</h5>
+                                <p style="font-size:11px; color:#6b7280; margin-bottom:4px;">Tracking of rejected segment shouldn't be lost on monitor screen</p>
+                                <span style="font-size:10px; color:#9ca3af; font-style:italic;">← P1 Multi-leg Reject Tracking</span>
+                            </div>
+                            
+                            <div style="position:relative; padding:12px 0 12px 20px;">
+                                <div style="position:absolute; left:-20px; top:16px; width:14px; height:14px; border-radius:50%; background:#dc2626; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>
+                                <span style="display:inline-block; padding:2px 8px; background:#fee2e2; color:#dc2626; border-radius:4px; font-size:9px; font-weight:600; margin-bottom:6px;">MVP</span>
+                                <h5 style="font-size:13px; font-weight:600; margin-bottom:4px;">Automatic CW Calculation</h5>
+                                <p style="font-size:11px; color:#6b7280; margin-bottom:4px;">System calculates CW for large pallets, writes to Adjusted Weight</p>
+                                <span style="font-size:10px; color:#9ca3af; font-style:italic;">← P2 CW Manual Email Process</span>
+                            </div>
+
+                            <!-- Short Term Items -->
+                            <div style="position:relative; padding:12px 0 12px 20px;">
+                                <div style="position:absolute; left:-20px; top:16px; width:14px; height:14px; border-radius:50%; background:#d97706; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>
+                                <span style="display:inline-block; padding:2px 8px; background:#fef3c7; color:#b45309; border-radius:4px; font-size:9px; font-weight:600; margin-bottom:6px;">SHORT TERM</span>
+                                <h5 style="font-size:13px; font-weight:600; margin-bottom:4px;">In-System Approval Workflow</h5>
+                                <p style="font-size:11px; color:#6b7280; margin-bottom:4px;">Replace CGOAPR email with in-system approval mechanism</p>
+                                <span style="font-size:10px; color:#9ca3af; font-style:italic;">← P3 Capacity Approval Manual</span>
+                            </div>
+                            
+                            <div style="position:relative; padding:12px 0 12px 20px;">
+                                <div style="position:absolute; left:-20px; top:16px; width:14px; height:14px; border-radius:50%; background:#d97706; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>
+                                <span style="display:inline-block; padding:2px 8px; background:#fef3c7; color:#b45309; border-radius:4px; font-size:9px; font-weight:600; margin-bottom:6px;">SHORT TERM</span>
+                                <h5 style="font-size:13px; font-weight:600; margin-bottom:4px;">HS Code Auto-Suggestion</h5>
+                                <p style="font-size:11px; color:#6b7280; margin-bottom:4px;">Prevent Queue fallback for Accuity destinations</p>
+                                <span style="font-size:10px; color:#9ca3af; font-style:italic;">← P5 HS Code Queue Fallback</span>
+                            </div>
+
+                            <!-- Long Term Items -->
+                            <div style="position:relative; padding:12px 0 12px 20px;">
+                                <div style="position:absolute; left:-20px; top:16px; width:14px; height:14px; border-radius:50%; background:#16a34a; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>
+                                <span style="display:inline-block; padding:2px 8px; background:#d1fae5; color:#047857; border-radius:4px; font-size:9px; font-weight:600; margin-bottom:6px;">LONG TERM</span>
+                                <h5 style="font-size:13px; font-weight:600; margin-bottom:4px;">Role-Based Time Restriction</h5>
+                                <p style="font-size:11px; color:#6b7280; margin-bottom:4px;">System control for 30-45min / 75-120min pre-departure cutoff</p>
+                                <span style="font-size:10px; color:#9ca3af; font-style:italic;">← P4 Pre-Flight Time Control</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="flex:0.6;">
+                        <h4 style="font-size:11px; font-weight:700; color:#ea580c; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px;">Prioritization Criteria</h4>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(0,0,0,0.02); border-radius:8px;">
+                                <span style="font-size:18px; font-weight:700; color:#ea580c;">①</span>
+                                <div>
+                                    <div style="font-size:12px; font-weight:600;">Compliance Risk Reduction</div>
+                                    <span style="font-size:9px; padding:2px 6px; background:#fee2e2; color:#dc2626; border-radius:4px;">Critical</span>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(0,0,0,0.02); border-radius:8px;">
+                                <span style="font-size:18px; font-weight:700; color:#ea580c;">②</span>
+                                <div>
+                                    <div style="font-size:12px; font-weight:600;">Operational Efficiency</div>
+                                    <span style="font-size:9px; padding:2px 6px; background:#fef3c7; color:#b45309; border-radius:4px;">High</span>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(0,0,0,0.02); border-radius:8px;">
+                                <span style="font-size:18px; font-weight:700; color:#ea580c;">③</span>
+                                <div>
+                                    <div style="font-size:12px; font-weight:600;">Manual Process Elimination</div>
+                                    <span style="font-size:9px; padding:2px 6px; background:#fef3c7; color:#b45309; border-radius:4px;">High</span>
+                                </div>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px; background:rgba(0,0,0,0.02); border-radius:8px;">
+                                <span style="font-size:18px; font-weight:700; color:#ea580c;">④</span>
+                                <div>
+                                    <div style="font-size:12px; font-weight:600;">User Experience</div>
+                                    <span style="font-size:9px; padding:2px 6px; background:#d1fae5; color:#047857; border-radius:4px;">Medium</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="s8-text" class="view-pane">
+                <div class="summary-box">
+                    <h4>Summary</h4>
+                    <p>MVP priority: multi-leg tracking (P1) and automatic CW calculation (P2). Short-term: email workflow automation. Long-term: role-based time controls. Each opportunity directly linked to documented pain points.</p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-12:</strong> "In multi-leg flights; capacity teams lose track of rejected segment on monitor flight screen."<br><br>
+                    <strong>MoM-2025-12-05:</strong> "For passenger aircraft, no operations 30-45 min before departure for narrow body, 75-120 min for wide body." — Role-based error structure could be designed.
+                </div>
+                <div class="missing">
+                    <div class="missing-title">⚠ Missing / Uncertain Data</div>
+                    <ul class="missing-list">
+                        <li>⚠ Implementation effort estimates not available</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- SECTION 9: AI SUPPORT POTENTIAL                                 -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <section class="card full section-9">
+        <div class="card-header">
+            <div class="card-icon">9</div>
+            <div class="card-header-text">
+                <h3>AI Support Potential</h3>
+                <span class="card-ref">Reference: Service Blueprint · JTBD · Mental Model</span>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s9-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:24px; text-align:center;">AI Autonomy Level Scale</h4>
+                
+                <!-- Slider Container -->
+                <div style="display:flex; gap:24px; margin-bottom:32px;">
+                    <!-- Left: Scale Labels -->
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:80px; padding:8px 0;">
+                        <div style="font-size:10px; color:#dc2626; font-weight:700; text-align:right;">🚫 FORBIDDEN</div>
+                        <div style="font-size:10px; color:#f59e0b; font-weight:600; text-align:right;">⚠️ APPROVAL</div>
+                        <div style="font-size:10px; color:#0891b2; font-weight:600; text-align:right;">💡 SUGGEST</div>
+                        <div style="font-size:10px; color:#22c55e; font-weight:600; text-align:right;">✅ SAFE</div>
+                    </div>
+                    
+                    <!-- Middle: Gradient Bar + Items -->
+                    <div style="flex:1; position:relative;">
+                        <!-- Background Gradient Bar -->
+                        <div style="position:absolute; left:0; top:0; bottom:0; width:12px; border-radius:6px; background:linear-gradient(to bottom, #dc2626 0%, #f87171 15%, #fbbf24 30%, #67e8f9 50%, #22d3ee 70%, #0891b2 85%, #22c55e 100%);"></div>
+                        
+                        <!-- Items -->
+                        <div style="margin-left:28px; display:flex; flex-direction:column; gap:8px;">
+                            <!-- Forbidden Zone -->
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:linear-gradient(90deg, rgba(220,38,38,0.15), rgba(220,38,38,0.05)); border-radius:8px; border-left:3px solid #dc2626;">
+                                <span style="font-size:18px;">🚫</span>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:700; color:#dc2626;">Embargo lift, Accuity override, Price change</div>
+                                    <div style="font-size:10px; color:#991b1b;">Human-only decisions - legal/financial risk</div>
+                                </div>
+                                <span style="font-size:9px; padding:4px 10px; background:#fecaca; color:#dc2626; border-radius:12px; font-weight:600;">NO AI</span>
+                            </div>
+                            
+                            <!-- Approval Required -->
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:linear-gradient(90deg, rgba(245,158,11,0.12), rgba(245,158,11,0.03)); border-radius:8px; border-left:3px solid #f59e0b;">
+                                <span style="font-size:18px;">✅</span>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:600; color:#b45309;">Auto-confirm after capacity approval ← P3</div>
+                                    <div style="font-size:10px; color:#92400e;">AI executes, but human approval required first</div>
+                                </div>
+                                <span style="font-size:9px; padding:4px 10px; background:#fef3c7; color:#b45309; border-radius:12px; font-weight:600;">👤 APPROVE</span>
+                            </div>
+                            
+                            <!-- Recommendation -->
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:linear-gradient(90deg, rgba(6,182,212,0.1), rgba(6,182,212,0.02)); border-radius:8px; border-left:3px solid #06b6d4;">
+                                <span style="font-size:18px;">💡</span>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:600; color:#0e7490;">Alternative flight suggestion, CW estimate ← P2</div>
+                                    <div style="font-size:10px; color:#155e75;">AI suggests options, user chooses</div>
+                                </div>
+                                <span style="font-size:9px; padding:4px 10px; background:#cffafe; color:#0891b2; border-radius:12px; font-weight:600;">AI SUGGESTS</span>
+                            </div>
+                            
+                            <!-- Pre-preparation -->
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:linear-gradient(90deg, rgba(34,211,238,0.1), rgba(34,211,238,0.02)); border-radius:8px; border-left:3px solid #22d3ee;">
+                                <span style="font-size:18px;">⚙️</span>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:600; color:#0891b2;">Form pre-fill with AWB info</div>
+                                    <div style="font-size:10px; color:#155e75;">AI prepares, user reviews & submits</div>
+                                </div>
+                                <span style="font-size:9px; padding:4px 10px; background:#a5f3fc; color:#0e7490; border-radius:12px; font-weight:600;">AI PREPARES</span>
+                            </div>
+                            
+                            <!-- Summarize -->
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:linear-gradient(90deg, rgba(34,197,94,0.08), rgba(34,197,94,0.02)); border-radius:8px; border-left:3px solid #22c55e;">
+                                <span style="font-size:18px;">📝</span>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:600; color:#16a34a;">Daily reservation status summary</div>
+                                    <div style="font-size:10px; color:#166534;">AI aggregates data, no decision impact</div>
+                                </div>
+                                <span style="font-size:9px; padding:4px 10px; background:#dcfce7; color:#16a34a; border-radius:12px; font-weight:600;">AI FREE</span>
+                            </div>
+                            
+                            <!-- Information Display -->
+                            <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; background:linear-gradient(90deg, rgba(34,197,94,0.08), rgba(34,197,94,0.02)); border-radius:8px; border-left:3px solid #22c55e;">
+                                <span style="font-size:18px;">📊</span>
+                                <div style="flex:1;">
+                                    <div style="font-size:12px; font-weight:600; color:#16a34a;">Embargo/restriction list display</div>
+                                    <div style="font-size:10px; color:#166534;">Read-only information, zero risk</div>
+                                </div>
+                                <span style="font-size:9px; padding:4px 10px; background:#dcfce7; color:#16a34a; border-radius:12px; font-weight:600;">AI FREE</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Risk Indicator -->
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:60px; padding:8px 0;">
+                        <div style="font-size:9px; color:#dc2626; text-align:left;">HIGH<br/>RISK ⚠️</div>
+                        <div style="font-size:9px; color:#22c55e; text-align:left;">LOW<br/>RISK ✓</div>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;">
+                    <div style="padding:16px; background:rgba(22,163,74,0.05); border-left:3px solid #16a34a; border-radius:0 10px 10px 0;">
+                        <h5 style="font-size:11px; font-weight:700; color:#16a34a; margin-bottom:10px;">✓ AI Success Metrics</h5>
+                        <ul style="font-size:11px; color:#374151; list-style:none; display:flex; flex-direction:column; gap:6px;">
+                            <li>• Embargo alert proactivity rate</li>
+                            <li>• CW estimation accuracy ← P2</li>
+                            <li>• Form pre-fill time savings</li>
+                            <li>• Alternative flight acceptance rate</li>
+                        </ul>
+                    </div>
+                    <div style="padding:16px; background:rgba(220,38,38,0.05); border-left:3px solid #dc2626; border-radius:0 10px 10px 0;">
+                        <h5 style="font-size:11px; font-weight:700; color:#dc2626; margin-bottom:10px;">⛔ AI Error Risks</h5>
+                        <ul style="font-size:11px; color:#374151; list-style:none; display:flex; flex-direction:column; gap:6px;">
+                            <li>• Wrong embargo status display</li>
+                            <li>• CW miscalculation ← P2</li>
+                            <li>• Incorrect flight suggestion</li>
+                            <li>• Compliance data mismatch</li>
+                        </ul>
+                    </div>
+                    <div style="padding:16px; background:rgba(147,51,234,0.05); border-left:3px solid #9333ea; border-radius:0 10px 10px 0;">
+                        <h5 style="font-size:11px; font-weight:700; color:#9333ea; margin-bottom:10px;">🔍 Explainability & Trust</h5>
+                        <ul style="font-size:11px; color:#374151; list-style:none; display:flex; flex-direction:column; gap:6px;">
+                            <li>• CW calculation formula visible</li>
+                            <li>• Embargo source attribution</li>
+                            <li>• Flight suggestion reasoning</li>
+                            <li>• Confidence score display</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="s9-text" class="view-pane">
+                <div class="summary-box">
+                    <h4>Summary</h4>
+                    <p>AI can provide strong support in information (level 1-2) and recommendation (level 3-4) areas: embargo alerts, CW estimation, alternative flight suggestions, form pre-filling. Level 5 (approved action) applicable only in safe scenarios. Level 6 (must not): Embargo removal, price approval, Accuity override must remain under human control.</p>
+                </div>
+                <div class="item-list">
+                    <div class="item">
+                        <span class="item-num">✓</span>
+                        <span class="item-text"><strong>AI Suitable:</strong> Embargo/restriction list summary, CW calculation suggestion (← P2), alternative flight suggestion, AWB form pre-fill</span>
+                    </div>
+                    <div class="item">
+                        <span class="item-num">⛔</span>
+                        <span class="item-text"><strong>AI Not Suitable:</strong> Auto embargo removal, reservation cancel/reject, ACRM price approval, Accuity override, capacity confirmation without approval</span>
+                    </div>
+                </div>
+                <div class="evidence">
+                    <strong>AI Suitability Rationale:</strong><br>
+                    • CW calculation based on email archive — AI can learn patterns but approval must be human<br>
+                    • Accuity override = compliance risk, definitely human decision<br>
+                    • Multi-leg segment cancel affects other stations, shouldn't be in AI authority
+                </div>
+                <div class="missing">
+                    <div class="missing-title">⚠ Missing / Uncertain Data</div>
+                    <ul class="missing-list">
+                        <li>⚠ AI model accuracy baselines not established</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div><!-- /board -->
+</div><!-- /main-content -->
+
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <!-- FOOTER                                                          -->
+    <!-- ═══════════════════════════════════════════════════════════════ -->
+    <footer style="text-align:center; padding:40px 32px; color:#9ca3af; font-size:11px; border-top:1px solid rgba(0,0,0,0.05); margin-left:72px;">
+        <p style="margin-bottom:8px;">📅 Analysis: May 11, 2026 · 📄 7 Source MoMs · 🎯 IST Outbound General Reservation Agent</p>
+        <p style="margin-bottom:12px;">⚠️ Based on document evidence only · No speculative inference · Missing data marked as "additional discovery needed"</p>
+        <p style="color:#cbd5e1;">BKR - Booking & Reservation | THY Cargo | Sungur Product Team</p>
+    </footer>
+
+<script>
+function toggleView(btn, section, view) {
+    btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(section + '-chart').classList.remove('active');
+    document.getElementById(section + '-text').classList.remove('active');
+    document.getElementById(section + '-' + view).classList.add('active');
+}
+</script>
+</body>
+</html>

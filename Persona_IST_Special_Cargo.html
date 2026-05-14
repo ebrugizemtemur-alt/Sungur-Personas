@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IST Özel Kargo Ekibi | Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        /* ===== SIDE NAVIGATION ===== */
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 12px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .nav-item .nav-num {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .nav-item .nav-label {
+            margin-top: 2px;
+            text-align: center;
+            line-height: 1.1;
+        }
+        .nav-item.pending {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 12px 10px;
+        }
+        .nav-item[data-theme="indigo"].active { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .nav-item[data-theme="red"].active { background: linear-gradient(135deg, #dc2626, #f97316); }
+        .nav-item[data-theme="green"].active { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .nav-item[data-theme="blue"].active { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .nav-item[data-theme="orange"].active { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .nav-item[data-theme="purple"].active { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .nav-item[data-theme="teal"].active { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+
+        
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #0ea5e9; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content {
+            margin-left: 72px;
+        }
+
+        
+        /* Hero - Orange/Red theme for Special Cargo */
+        .hero {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 50%, #fecaca 100%);
+            padding: 48px 40px;
+            position: relative;
+            border-bottom: 4px solid #dc2626;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(220,38,38,0.15); color: #dc2626; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #dc2626; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; color: #1f2937; }
+        .hero h1 span { color: #dc2626; }
+        .hero-subtitle { font-size: 16px; color: #6b7280; max-width: 600px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #dc2626; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; background: rgba(255,255,255,0.5); padding: 16px; border-radius: 0 8px 8px 0; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .meta-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6b7280; background: white; padding: 8px 12px; border-radius: 8px; }
+        .meta-dot { width: 8px; height: 8px; border-radius: 50%; }
+        /* Source Tooltip */
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .source-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 24px;
+            width: 12px;
+            height: 12px;
+            background: #1f2937;
+            transform: rotate(45deg);
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+
+        
+        /* Board */
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        /* Card */
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title { flex: 1; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        /* Toggle */
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #dc2626; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* Section Colors */
+        .section-1 .card-icon { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .section-1 { border-left: 4px solid #dc2626; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        /* Components */
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(220,38,38,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(220,38,38,0.1); }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo { background: #fef2f2; border: 1px solid #fecaca; }
+        .segment-col.demo h4 { color: #dc2626; border-color: #dc2626; }
+        .segment-col.behav { background: #fffbeb; border: 1px solid #fde68a; }
+        .segment-col.behav h4 { color: #b45309; border-color: #b45309; }
+        .segment-col.psycho { background: #f0fdf4; border: 1px solid #86efac; }
+        .segment-col.psycho h4 { color: #16a34a; border-color: #16a34a; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 8px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 90px; font-weight: 500; }
+        
+        .cargo-types { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 16px 0; }
+        .cargo-type { background: #fef2f2; border: 2px solid #fecaca; padding: 12px; border-radius: 10px; text-align: center; }
+        .cargo-type.highlight { background: #dc2626; color: white; border-color: #dc2626; }
+        .cargo-type h5 { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+        .cargo-type p { font-size: 10px; opacity: 0.8; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #dc2626, #ef4444); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px; background: #fef2f2; border-radius: 12px; margin-bottom: 12px; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; border: 2px solid #fcd34d; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; border: 2px solid #93c5fd; }
+        .flow-step.decision { background: #fce7f3; color: #be185d; border: 2px solid #f9a8d4; }
+        .flow-step.critical { background: #dc2626; color: white; border: 2px solid #b91c1c; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.08); border-left: 4px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.08); border-left: 4px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.08); border-left: 4px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+                .empathy-grid { 
+            display: grid; 
+            grid-template-columns: 1fr auto 1fr; 
+            grid-template-rows: auto auto; 
+            gap: 16px; 
+            align-items: stretch; 
+        }
+        .empathy-avatar {
+            grid-row: span 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            min-width: 130px;
+        }
+        .empathy-avatar-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border: 4px solid white;
+            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%);
+        }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.does h4 span.icon { background: rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-quad.feels h4 span.icon { background: rgba(225,29,72,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
+        .stakeholder-node.partner { background: #dcfce7; color: #166534; border: 2px solid #86efac; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; font-weight: 700; padding: 14px 24px; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+        .stakeholder-arrow { font-size: 20px; color: #9ca3af; }
+        
+        .timeline { display: flex; flex-direction: column; gap: 12px; }
+        .timeline-item { padding: 16px; border-radius: 12px; border-left: 4px solid; }
+        .timeline-item.mvp { background: #dcfce7; border-color: #16a34a; }
+        .timeline-item.short { background: #e0e7ff; border-color: #4f46e5; }
+        .timeline-item.long { background: #f1f5f9; border-color: #64748b; }
+        .timeline-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .timeline-badge.mvp { background: #16a34a; color: white; }
+        .timeline-badge.short { background: #4f46e5; color: white; }
+        .timeline-badge.long { background: #64748b; color: white; }
+        .timeline-item h5 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 12px; color: #6b7280; }
+        
+        .ai-pyramid { display: flex; flex-direction: column; gap: 6px; align-items: center; margin: 20px 0; }
+        .ai-level { padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; color: white; }
+        
+        .evidence { margin-top: 16px; padding: 16px; background: #f0f9ff; border-left: 4px solid #0284c7; border-radius: 0 8px 8px 0; font-size: 12px; color: #0369a1; }
+        .evidence strong { display: block; margin-bottom: 8px; color: #0c4a6e; }
+        
+        .summary-box { background: #f9fafb; padding: 16px; border-radius: 10px; font-size: 13px; line-height: 1.7; margin-bottom: 12px; border: 1px solid #e5e7eb; }
+        .summary-box h4 { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px; }
+        
+        .warning-box { background: #fef2f2; border: 2px solid #fecaca; padding: 16px; border-radius: 10px; margin: 16px 0; }
+        .warning-box h4 { color: #dc2626; font-size: 12px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .warning-box p { font-size: 12px; color: #991b1b; }
+        
+        .footer { margin-top: 32px; padding: 24px; text-align: center; background: linear-gradient(135deg, #1e293b, #334155); color: rgba(255,255,255,0.8); border-radius: 16px; font-size: 13px; }
+        .footer p { margin-bottom: 8px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #0ea5e9; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 60px; }
+            .nav-item { width: 44px; height: 44px; }
+            .nav-item .nav-num { font-size: 14px; }
+            .nav-item .nav-label { font-size: 7px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 24px; }
+            .flow-h { justify-content: center; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <!-- SIDE NAVIGATION -->
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()" title="Tüm Modüller">BKR</div>
+        <div class="nav-items">
+            <a href="Persona_IST_General_Reservation.html" class="nav-item" data-theme="indigo">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Genel Rez</span>
+            </a>
+            <a href="Persona_IST_Special_Cargo.html" class="nav-item active" data-theme="red">
+                <span class="nav-num">2</span>
+                <span class="nav-label">Özel Kargo</span>
+            </a>
+            <a href="Persona_Domestic_Reservation.html" class="nav-item" data-theme="green">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Yurtiçi</span>
+            </a>
+            <a href="Persona_Capacity_Planning.html" class="nav-item" data-theme="blue">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Kapasite</span>
+            </a>
+            <a href="Persona_Operations_CargoAcceptance.html" class="nav-item" data-theme="orange">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Operasyon</span>
+            </a>
+            <div class="nav-divider"></div>
+            <a href="Persona_GSA_International_Station.html" class="nav-item" data-theme="purple">
+                <span class="nav-num">6</span>
+                <span class="nav-label">GSA</span>
+            </a>
+            <a href="Persona_Solution_Technical_Team.html" class="nav-item" data-theme="teal">
+                <span class="nav-num">7</span>
+                <span class="nav-label">Teknik</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header"><span class="mega-menu-title">📦 Tüm Modüller</span><button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a><a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a><a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a><a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a><a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a><a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a><a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a><a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a><a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a></div></div>
+        <div class="module-section"><div class="module-header active"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div><div class="persona-list"><a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a><a href="Persona_IST_Special_Cargo.html" class="persona-link current"><span class="persona-num">2</span> IST Special Cargo</a><a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a><a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a><a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a><a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a><a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div><div class="persona-list"><a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a><a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a><a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a><a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a><a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a><a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a><a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div><div class="persona-list"><a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a><a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a></div></div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-header">
+            <span class="badge">BKR · ÖZEL KARGO · PERSONA #2</span>
+            <div class="lang-toggle">
+                <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                <button class="lang-btn" onclick="switchLang('en')">EN</button>
+            </div>
+        </div>
+        <h1>
+            <span class="tr">IST Özel Kargo <span>Ekibi</span></span>
+            <span class="en">IST Special Cargo <span>Team</span></span>
+        </h1>
+        <p class="hero-subtitle">
+            <span class="tr">DG, PER, AVI, VAL, HUM gibi özel kargo tiplerinin embargo/restriction onaylarını yöneten, istasyonlarla doğrudan koordinasyon kuran uzman ekip.</span>
+            <span class="en">Expert team managing embargo/restriction approvals for special cargo types like DG, PER, AVI, VAL, HUM, establishing direct coordination with stations.</span>
+        </p>
+        <div class="hero-quote">
+            <span class="tr">"Embargo veya restriction error seviyesinde karşılaşıldığında; onay alınmışsa embargo geçici olarak deaktif edilir, rezervasyon alınır, sonra tekrar aktif edilir. Bu durumda embargo aktifken; onaysız diğer rezervasyonlar da alınabilir hale gelir." — MoM 2025-12-12</span>
+            <span class="en">"When embargo/restriction at error level is encountered; if approval obtained, embargo is temporarily deactivated, reservation taken, then reactivated. In this case when embargo is activated; other reservations without approval can also be taken." — MoM 2025-12-12</span>
+        </div>
+        <div class="hero-meta">
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#dc2626;"></span>
+                <span><strong>User:</strong> <span class="tr">Operasyonel Uzman</span><span class="en">Operational Expert</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#f59e0b;"></span>
+                <span><strong>Criticality:</strong> <span style="color:#f59e0b;">★★★★★</span> <span class="tr">Çok Yüksek</span><span class="en">Very High</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#3b82f6;"></span>
+                <span><strong>Main Screen:</strong> CAP018 + CGOAPR Email</span>
+            </div>
+            <div class="hero-meta-item source-card">
+                <span class="dot" style="background:#10b981;"></span>
+                <span><strong>Source:</strong> 8 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                <div class="source-tooltip">
+                    <div style="font-weight:700; margin-bottom:10px; color:#a5f3fc; font-size:12px;">📄 Source MoM Documents</div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-05</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-09</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-12</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-23</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-2026-01-09</span><span style="color:#93c5fd;">Solution Team</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BOARD -->
+<div class="board">
+
+    <!-- SECTION 1: PERSONA PROFILE -->
+    <section class="card section-1">
+        <div class="card-header">
+            <div class="card-icon">1</div>
+            <div class="card-title">
+                <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                <p><span class="tr">Kim, ne yapar, temel özellikler</span><span class="en">Who, what they do, key attributes</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s1-chart" class="view-pane active">
+                <div class="profile-grid">
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Rol</span><span class="en">Role</span></div>
+                        <div class="pf-value"><span class="tr">Özel Kargo Uzmanı</span><span class="en">Special Cargo Specialist</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div>
+                        <div class="pf-value"><span class="tr">Özel Kargo Ekibi</span><span class="en">Special Cargo Team</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Bilinen Kişiler</span><span class="en">Known Members</span></div>
+                        <div class="pf-value">Ali Çolak, Murat, Rana</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Çalışma Modu</span><span class="en">Work Mode</span></div>
+                        <div class="pf-value"><span class="tr">Email + Telefon + COMIS</span><span class="en">Email + Phone + COMIS</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Ana Yetki</span><span class="en">Main Authority</span></div>
+                        <div class="pf-value"><span class="tr">Embargo Toggle</span><span class="en">Embargo Toggle</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">İstasyon Kodu</span><span class="en">Station Code</span></div>
+                        <div class="pf-value">THYIST</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Koordinasyon</span><span class="en">Coordination</span></div>
+                        <div class="pf-value"><span class="tr">CGOAPR Email Grubu</span><span class="en">CGOAPR Email Group</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kargo Tipleri</span><span class="en">Cargo Types</span></div>
+                        <div class="pf-value">DG, PER, AVI, VAL, HUM...</div>
+                    </div>
+                </div>
+                
+                <h4 style="font-size:12px; color:#dc2626; margin:24px 0 12px; text-transform:uppercase; letter-spacing:1px;">
+                    <span class="tr">ÖZEL KARGO TİPLERİ (SCC)</span><span class="en">SPECIAL CARGO TYPES (SCC)</span>
+                </h4>
+                <div class="cargo-types">
+                    <div class="cargo-type highlight">
+                        <h5>DG / DGR</h5>
+                        <p><span class="tr">Tehlikeli Madde</span><span class="en">Dangerous Goods</span></p>
+                    </div>
+                    <div class="cargo-type highlight">
+                        <h5>PER</h5>
+                        <p><span class="tr">Bozulabilir</span><span class="en">Perishable</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>AVI</h5>
+                        <p><span class="tr">Canlı Hayvan</span><span class="en">Live Animal</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>VAL</h5>
+                        <p><span class="tr">Değerli Kargo</span><span class="en">Valuable Cargo</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>HUM</h5>
+                        <p><span class="tr">Cenaze</span><span class="en">Funeral</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>RAD</h5>
+                        <p><span class="tr">Radyoaktif</span><span class="en">Radioactive</span></p>
+                    </div>
+                </div>
+                
+                <div class="segment-card">
+                    <div class="segment-col demo">
+                        <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Deneyim:</span><span class="en">Experience:</span></strong> <span class="tr">Yüksek (uzman seviye)</span><span class="en">High (expert level)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Eğitim:</span><span class="en">Training:</span></strong> <span class="tr">DG/IATA sertifikalı</span><span class="en">DG/IATA certified</span></div>
+                        <div class="segment-item"><strong><span class="tr">Dil:</span><span class="en">Language:</span></strong> <span class="tr">TR + EN (istasyon koordinasyonu)</span><span class="en">TR + EN (station coordination)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Konum:</span><span class="en">Location:</span></strong> <span class="tr">IST HUB Merkez</span><span class="en">IST HUB Central</span></div>
+                    </div>
+                    <div class="segment-col behav">
+                        <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                        <div class="segment-item"><strong><span class="tr">İletişim:</span><span class="en">Communication:</span></strong> <span class="tr">Email ağırlıklı (%90)</span><span class="en">Email heavy (90%)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Karar:</span><span class="en">Decision:</span></strong> <span class="tr">Onay bazlı, prosedürel</span><span class="en">Approval based, procedural</span></div>
+                        <div class="segment-item"><strong><span class="tr">Takip:</span><span class="en">Tracking:</span></strong> <span class="tr">Proaktif monitoring</span><span class="en">Proactive monitoring</span></div>
+                        <div class="segment-item"><strong><span class="tr">Risk:</span><span class="en">Risk:</span></strong> <span class="tr">Düşük tolerans</span><span class="en">Low tolerance</span></div>
+                    </div>
+                    <div class="segment-col psycho">
+                        <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Motivasyon:</span><span class="en">Motivation:</span></strong> <span class="tr">Güvenlik & uyumluluk</span><span class="en">Safety & compliance</span></div>
+                        <div class="segment-item"><strong><span class="tr">Stres:</span><span class="en">Stress:</span></strong> <span class="tr">Embargo toggle süreci</span><span class="en">Embargo toggle process</span></div>
+                        <div class="segment-item"><strong><span class="tr">Değer:</span><span class="en">Value:</span></strong> <span class="tr">Doğruluk > Hız</span><span class="en">Accuracy > Speed</span></div>
+                        <div class="segment-item"><strong><span class="tr">Hedef:</span><span class="en">Goal:</span></strong> <span class="tr">Sıfır hata operasyon</span><span class="en">Zero error operation</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s1-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Özel Kargo Ekibi, DG/PER/AVI/VAL/HUM gibi hassas kargo tiplerinin rezervasyon onaylarını yönetir. En kritik yetkileri embargo/restriction toggle'ı açıp kapatabilmeleridir. İsimli kişiler: Ali Çolak, Murat, Rana. CGOAPR email grubu üzerinden istasyonlarla koordinasyon kurarlar.</span>
+                    <span class="en">Special Cargo Team manages reservation approvals for sensitive cargo types like DG/PER/AVI/VAL/HUM. Their most critical authority is the ability to toggle embargo/restriction on/off. Named members: Ali Çolak, Murat, Rana. They coordinate with stations via CGOAPR email group.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-11:</strong> "The special cargo team (Ali Çolak, Murat, Rana) manually manages equipment reservations."<br>
+                    <strong>MoM-2025-12-12:</strong> "The active/inactive status is managed by the special cargo personnel."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: GOALS & MOTIVATION -->
+    <section class="card section-2">
+        <div class="card-header">
+            <div class="card-icon">2</div>
+            <div class="card-title">
+                <h2><span class="tr">Hedefler & Motivasyon</span><span class="en">Goals & Motivation</span></h2>
+                <p><span class="tr">Ne istiyor, neden, korkuları</span><span class="en">What they want, why, fears</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s2-chart" class="view-pane active">
+                <div class="goal-pyramid">
+                    <div class="goal-level primary"><span class="tr">🎯 Güvenli & uyumlu özel kargo operasyonu</span><span class="en">🎯 Safe & compliant special cargo operation</span></div>
+                    <div class="goal-level secondary"><span class="tr">📋 Embargo/restriction süreçlerini hatasız yönetmek | İstasyonlarla etkin koordinasyon</span><span class="en">📋 Manage embargo/restriction processes error-free | Effective station coordination</span></div>
+                    <div class="goal-level tertiary"><span class="tr">📧 Onay süreçlerini hızlandırmak | Belge takibini kolaylaştırmak | Manuel iş yükünü azaltmak</span><span class="en">📧 Speed up approval processes | Simplify document tracking | Reduce manual workload</span></div>
+                </div>
+                
+                <div class="three-col">
+                    <div class="list-box motivators">
+                        <h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                        <div class="list-item"><span class="tr">Özel kargo başarıyla taşındığında</span><span class="en">When special cargo transported successfully</span></div>
+                        <div class="list-item"><span class="tr">İstasyondan hızlı onay geldiğinde</span><span class="en">When quick approval from station</span></div>
+                        <div class="list-item"><span class="tr">Belgelerin eksiksiz olması</span><span class="en">Documents being complete</span></div>
+                        <div class="list-item"><span class="tr">Sıfır güvenlik ihlali</span><span class="en">Zero security violations</span></div>
+                        <div class="list-item"><span class="tr">Acil durumlarda çözüm üretebilmek</span><span class="en">Being able to solve urgent cases</span></div>
+                    </div>
+                    <div class="list-box demotivators">
+                        <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                        <div class="list-item"><span class="tr">Embargo toggle'ın tüm sistemi etkilemesi</span><span class="en">Embargo toggle affecting entire system</span></div>
+                        <div class="list-item"><span class="tr">İstasyondan geç cevap gelmesi</span><span class="en">Late response from station</span></div>
+                        <div class="list-item"><span class="tr">Manuel email takibi zorunluluğu</span><span class="en">Mandatory manual email tracking</span></div>
+                        <div class="list-item"><span class="tr">Eksik/yanlış belge gönderilmesi</span><span class="en">Incomplete/wrong documents sent</span></div>
+                        <div class="list-item"><span class="tr">Sürekli monitoring gerekliliği</span><span class="en">Constant monitoring requirement</span></div>
+                    </div>
+                    <div class="list-box fears">
+                        <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item"><span class="tr">Embargo açıkken onaysız rez alınması</span><span class="en">Unauthorized booking when embargo open</span></div>
+                        <div class="list-item"><span class="tr">DG kargoda güvenlik ihlali</span><span class="en">Security violation in DG cargo</span></div>
+                        <div class="list-item"><span class="tr">Yanlış SCC kodu ile taşıma</span><span class="en">Transport with wrong SCC code</span></div>
+                        <div class="list-item"><span class="tr">Cenaze/AVI'de gecikme</span><span class="en">Delay in funeral/AVI cargo</span></div>
+                        <div class="list-item"><span class="tr">Accuity reject sonrası sorumluluk</span><span class="en">Responsibility after Accuity reject</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s2-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Ana hedef güvenli ve uyumlu operasyon. En büyük korku embargo toggle sırasında onaysız rezervasyonların alınması. Motivasyon kaynağı başarılı özel kargo teslimatları.</span>
+                    <span class="en">Main goal is safe and compliant operation. Biggest fear is unauthorized bookings during embargo toggle. Motivation comes from successful special cargo deliveries.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-12:</strong> "In this case, when the embargo is activated; other reservations without approval can be taken. (pain point)"
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: WORKFLOW -->
+    <section class="card section-3">
+        <div class="card-header">
+            <div class="card-icon">3</div>
+            <div class="card-title">
+                <h2><span class="tr">İş Akışı & Niyetler</span><span class="en">Workflow & Intents</span></h2>
+                <p><span class="tr">Özel kargo onay süreci</span><span class="en">Special cargo approval process</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s3-chart" class="view-pane active">
+                <h4 style="font-size:11px; color:#0284c7; margin-bottom:12px;"><span class="tr">ÖZEL KARGO ONAY AKIŞI</span><span class="en">SPECIAL CARGO APPROVAL FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="tr">Agent Talebi (SCC)</span><span class="en">Agent Request (SCC)</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">Embargo/Restriction Check</span><span class="en">Embargo/Restriction Check</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">Error Level?</span><span class="en">Error Level?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">CGOAPR Email</span><span class="en">CGOAPR Email</span></div>
+                </div>
+                <div class="flow-h">
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">İstasyon Onayı Bekle</span><span class="en">Wait Station Approval</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step critical"><span class="tr">⚠️ EMBARGO TOGGLE OFF</span><span class="en">⚠️ EMBARGO TOGGLE OFF</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">Rez Create</span><span class="en">Rez Create</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step critical"><span class="tr">⚠️ EMBARGO TOGGLE ON</span><span class="en">⚠️ EMBARGO TOGGLE ON</span></div>
+                </div>
+                <div class="flow-h">
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">Monitoring (Sürekli)</span><span class="en">Monitoring (Continuous)</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">İstasyonlara Email</span><span class="en">Email to Stations</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background:#dcfce7; color:#166534; border:2px solid #86efac;"><span class="tr">Confirmed</span><span class="en">Confirmed</span></div>
+                </div>
+                
+                <div class="warning-box">
+                    <h4>⚠️ <span class="tr">KRİTİK PAIN POINT</span><span class="en">CRITICAL PAIN POINT</span></h4>
+                    <p><span class="tr">"Embargo toggle sırasında (aktif→pasif→aktif) diğer onaysız rezervasyonlar da alınabilir hale geliyor. Bu yüzden özel kargo ekipleri sürekli monitoring yapıp ilgili istasyonlara email göndermek zorunda."</span>
+                    <span class="en">"During embargo toggle (active→inactive→active) other unauthorized reservations can also be taken. Therefore special cargo teams must continuously monitor and send emails to relevant stations."</span></p>
+                </div>
+                
+                <h4 style="font-size:11px; color:#0284c7; margin:24px 0 12px;"><span class="tr">ÖZEL KARGO TİPLERİNE GÖRE EK KURALLAR</span><span class="en">ADDITIONAL RULES BY CARGO TYPE</span></h4>
+                <div class="cargo-types">
+                    <div class="cargo-type">
+                        <h5>DG/DGR</h5>
+                        <p><span class="tr">UN Number zorunlu, SCC→DG filling zorunlu</span><span class="en">UN Number required, SCC→DG filling required</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>PER</h5>
+                        <p><span class="tr">Kabin girişi seçimi gerekli</span><span class="en">Cabinet entry selection needed</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>HUM (Cenaze)</h5>
+                        <p><span class="tr">"Most urgent" - bazen belgesiz gönderilebilir</span><span class="en">"Most urgent" - sometimes sent without docs</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>RAD</h5>
+                        <p><span class="tr">Ayrı kurallar tanımlanmalı</span><span class="en">Separate rules to be defined</span></p>
+                    </div>
+                </div>
+            </div>
+            <div id="s3-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Özel kargo akışı standart rezervasyondan farklı: Error level embargo/restriction durumunda CGOAPR üzerinden istasyon onayı alınmalı. Onay sonrası embargo geçici olarak kapatılıp rezervasyon alınır, sonra tekrar açılır. Bu süreçte sürekli monitoring şart.</span>
+                    <span class="en">Special cargo flow differs from standard reservation: For error level embargo/restriction, station approval must be obtained via CGOAPR. After approval, embargo temporarily disabled, reservation taken, then re-enabled. Continuous monitoring required during this process.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-05:</strong> "Embargo processes occur for special cargo, not GEN cargo."<br>
+                    <strong>MoM-2025-12-02:</strong> "Funeral shipments are in the 'most urgent' category; they can occasionally be sent without documents."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: DATA & INTEGRATION -->
+    <section class="card section-4">
+        <div class="card-header">
+            <div class="card-icon">4</div>
+            <div class="card-title">
+                <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                <p><span class="tr">Özel yetkiler, sistem erişimi</span><span class="en">Special authorities, system access</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s4-chart" class="view-pane active">
+                <h4 style="font-size:11px; color:#0d9488; margin-bottom:12px;"><span class="tr">ÖZEL YETKİ MATRİSİ (Genel Rez'den Farklar)</span><span class="en">SPECIAL AUTHORITY MATRIX (Differences from General Res)</span></h4>
+                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                    <thead>
+                        <tr style="background:#f0fdfa;">
+                            <th style="padding:12px; text-align:left; border-bottom:2px solid #14b8a6;"><span class="tr">Yetki</span><span class="en">Authority</span></th>
+                            <th style="padding:12px; text-align:center; border-bottom:2px solid #14b8a6;"><span class="tr">Genel Rez</span><span class="en">General Res</span></th>
+                            <th style="padding:12px; text-align:center; border-bottom:2px solid #14b8a6;"><span class="tr">Özel Kargo</span><span class="en">Special Cargo</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><strong>Embargo Toggle (On/Off)</strong></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#dc2626;">❌</span></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#16a34a;">✅</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><strong><span class="tr">İstasyon Doğrudan İletişim</span><span class="en">Direct Station Communication</span></strong></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#f59e0b;">⚠️ Sınırlı</span></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#16a34a;">✅ Tam</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><strong>CGOAPR Email Grubu</strong></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#f59e0b;">⚠️ Read</span></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#16a34a;">✅ Send/Receive</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><strong><span class="tr">Top Management Onay Talebi</span><span class="en">Top Management Approval Request</span></strong></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#dc2626;">❌</span></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#16a34a;">✅</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px; border-bottom:1px solid #e5e7eb;"><strong><span class="tr">ULD Ekipman Rezervasyonu</span><span class="en">ULD Equipment Reservation</span></strong></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#dc2626;">❌</span></td>
+                            <td style="padding:10px; text-align:center; border-bottom:1px solid #e5e7eb;"><span style="color:#16a34a;">✅ Manuel</span></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px;"><strong><span class="tr">DG/SCC Özel Belge Takibi</span><span class="en">DG/SCC Special Doc Tracking</span></strong></td>
+                            <td style="padding:10px; text-align:center;"><span style="color:#dc2626;">❌</span></td>
+                            <td style="padding:10px; text-align:center;"><span style="color:#16a34a;">✅</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4 style="font-size:11px; color:#0d9488; margin:24px 0 12px;"><span class="tr">SİSTEM ENTEGRASYONLARI</span><span class="en">SYSTEM INTEGRATIONS</span></h4>
+                <div class="cargo-types">
+                    <div class="cargo-type">
+                        <h5>CAP018</h5>
+                        <p><span class="tr">Ana rezervasyon ekranı</span><span class="en">Main reservation screen</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>CGOAPR Email</h5>
+                        <p><span class="tr">İstasyon koordinasyonu</span><span class="en">Station coordination</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>Embargo List</h5>
+                        <p><span class="tr">Toggle yetkisi</span><span class="en">Toggle authority</span></p>
+                    </div>
+                    <div class="cargo-type">
+                        <h5>Accuity</h5>
+                        <p><span class="tr">Compliance check</span><span class="en">Compliance check</span></p>
+                    </div>
+                </div>
+            </div>
+            <div id="s4-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Özel Kargo ekibinin en kritik yetkisi embargo toggle'dır. Genel rezervasyon ekibinden farklı olarak: istasyonlarla doğrudan iletişim, top management onay talebi, ULD ekipman rezervasyonu ve DG belge takibi yapabilirler.</span>
+                    <span class="en">Special Cargo team's most critical authority is embargo toggle. Unlike general reservation team: direct station communication, top management approval requests, ULD equipment reservation, and DG document tracking capabilities.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-01:</strong> "Some special cargo can be transported with extra top management approval."<br>
+                    <strong>MoM-2025-12-11:</strong> "The special cargo team manually manages equipment reservations."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: PAIN POINTS -->
+    <section class="card section-5">
+        <div class="card-header">
+            <div class="card-icon">5</div>
+            <div class="card-title">
+                <h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2>
+                <p><span class="tr">Sorunlar, riskler, edge case'ler</span><span class="en">Issues, risks, edge cases</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s5-chart" class="view-pane active">
+                <div class="pain-list">
+                    <div class="pain-item high">
+                        <span class="pain-code">P1</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">🔴 Embargo Toggle Tüm Sistemi Etkiliyor</span><span class="en">🔴 Embargo Toggle Affects Entire System</span></h5>
+                            <p><span class="tr">"Embargo/restriction geçici olarak deaktif edildiğinde; diğer onaysız rezervasyonlar da alınabilir hale geliyor. Özel kargo ekipleri sürekli monitoring yapıp ilgili istasyonlara email göndermek zorunda." Bu en kritik pain point - AWB bazlı toggle yerine tüm sistem etkileniyor.</span>
+                            <span class="en">"When embargo/restriction temporarily deactivated; other unauthorized reservations can also be taken. Special cargo teams must continuously monitor and send emails to stations." Most critical pain point - entire system affected instead of AWB-based toggle.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item high">
+                        <span class="pain-code">P2</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">🔴 Manuel Email Tabanlı Onay Süreci</span><span class="en">🔴 Manual Email-Based Approval Process</span></h5>
+                            <p><span class="tr">"Onay mekanizması CGOAPR email adresi üzerinden yürüyor. %90 onay email ile alınıyor." Sistemde entegre onay workflow'u yok, tüm süreç manuel email takibi gerektiriyor.</span>
+                            <span class="en">"Approval mechanism runs via CGOAPR email address. 90% of approvals received via email." No integrated approval workflow in system, entire process requires manual email tracking.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item high">
+                        <span class="pain-code">P3</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">🔴 Özel Kargo Karar Mekanizması Belirsiz</span><span class="en">🔴 Special Cargo Decision Mechanism Unclear</span></h5>
+                            <p><span class="tr">"Pain Point 8: Özel kargo (PER, cenaze, radyoaktif) için karar mekanizmaları kullanıcıya net olarak sunulmuyor." Hangi kargo tipinin hangi kurallara tabi olduğu sistem tarafından açıkça gösterilmiyor.</span>
+                            <span class="en">"Pain Point 8: Decision mechanisms for special cargo (PER, funeral, radioactive) are not clearly presented to user." Which cargo type is subject to which rules not clearly shown by system.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P4</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">Büyük Palet CW Otomatik Hesaplanmıyor</span><span class="en">Large Pallet CW Not Auto-Calculated</span></h5>
+                            <p><span class="tr">"CW value does not reflect automatically in COMIS for cargo placed on 2-meter pallets." Özel kargo genellikle büyük paletlerde taşınır, CW manuel hesaplanmak zorunda.</span>
+                            <span class="en">"CW value does not reflect automatically in COMIS for cargo placed on 2-meter pallets." Special cargo usually transported on large pallets, CW must be calculated manually.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P5</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">Özel Kargo İçin Kamyon Taşıması Kısıtlı</span><span class="en">Truck Transport Limited for Special Cargo</span></h5>
+                            <p><span class="tr">"Truck transport may not be allowed for special cargo." Alternatif taşıma seçenekleri sınırlı, sistem uyarı vermiyor.</span>
+                            <span class="en">"Truck transport may not be allowed for special cargo." Alternative transport options limited, system doesn't warn.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P6</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">GEN + PER Karışık Yükleme Ayrımı Yok</span><span class="en">No GEN + PER Mixed Loading Distinction</span></h5>
+                            <p><span class="tr">"If GEN cargo and perishable product are together... how is it distinguished which SCC code goes to which plane? There is no automatic system differentiation." Operasyonla email/sözlü koordinasyon gerekiyor.</span>
+                            <span class="en">"If GEN cargo and perishable product are together... how is it distinguished which SCC code goes to which plane? There is no automatic system differentiation." Requires email/verbal coordination with operations.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item high">
+                        <span class="pain-code">P7</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">Embargo Aktif/Pasif Geçişi AWB Bazlı Değil</span><span class="en">Embargo Toggle Not AWB-Based</span></h5>
+                            <p><span class="tr">"Embargo geçici olarak kaldırılıyor... bu sırada onaysız diğer rezervasyonlar da alınabiliyor. (pain point)" Toggle açıldığında tüm sistem etkileniyor, sadece ilgili AWB değil. Manuel monitoring gerekiyor.</span>
+                            <span class="en">"Embargo is temporarily deactivated... during this time other reservations without approval can be taken. (pain point)" When toggle is opened, entire system is affected, not just the relevant AWB. Requires manual monitoring.</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="s5-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">En kritik pain point: Embargo toggle'ın AWB bazlı değil tüm sistemi etkilemesi. Bu durum onaysız rezervasyon riskini artırıyor ve sürekli monitoring gerektiriyor. İkinci büyük sorun: Tüm onay sürecinin manuel email'e bağımlı olması.</span>
+                    <span class="en">Most critical pain point: Embargo toggle affects entire system instead of AWB-based. This increases unauthorized reservation risk and requires constant monitoring. Second major issue: Entire approval process dependent on manual email.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-12:</strong> "The embargo/restriction is temporarily deactivated... other reservations without approval can be taken. (pain point)"<br>
+                    <strong>MoM-2026-01-06:</strong> "Pain Point 8: Decision mechanisms for special cargo (PER, funeral, radioactive) are not clearly presented to the user."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: EMPATHY MAP -->
+    <section class="card section-6">
+        <div class="card-header">
+            <div class="card-icon">6</div>
+            <div class="card-title">
+                <h2><span class="tr">Zihinsel Model & Davranış</span><span class="en">Mental Model & Behavior</span></h2>
+                <p><span class="tr">Empathy Map</span><span class="en">Empathy Map</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s6-chart" class="view-pane active">
+                <div class="empathy-grid">
+                    <div class="empathy-quad says">
+                        <h4><span class="icon">💬</span> <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                        <div class="empathy-item"><span class="tr">"Bu kargo DG mi? UN number'ı ne?"</span><span class="en">"Is this cargo DG? What's the UN number?"</span></div>
+                        <div class="empathy-item"><span class="tr">"İstasyondan onay bekliyoruz, CGOAPR'a mail attım"</span><span class="en">"Waiting for station approval, sent email to CGOAPR"</span></div>
+                        <div class="empathy-item"><span class="tr">"Embargo'yu geçici olarak kapatıyorum, hemen rezervasyonu al"</span><span class="en">"I'm temporarily disabling embargo, take the reservation quickly"</span></div>
+                        <div class="empathy-item"><span class="tr">"Cenaze acil, belgesiz bile gönderebiliriz"</span><span class="en">"Funeral is urgent, we can send even without docs"</span></div>
+                        <div class="empathy-item"><span class="tr">"PER kabin'e mi girecek girmeyecek mi?"</span><span class="en">"Will PER go into cabinet or not?"</span></div>
+                    </div>
+                    
+                    <!-- Center Persona Avatar -->
+                    <div class="empathy-avatar">
+                        <div class="empathy-avatar-circle">⚠️</div>
+                        <div style="margin-top:10px; font-size:12px; font-weight:700; color:#dc2626; text-align:center;"><span class="tr">Özel Kargo</span><span class="en">Special Cargo</span></div>
+                        <div style="font-size:10px; color:#9ca3af; text-align:center;"><span class="tr">DG/PER Ekibi</span><span class="en">DG/PER Team</span></div>
+                        <div style="margin-top:8px; padding:4px 10px; background:rgba(0,0,0,0.05); border-radius:12px; font-size:9px; color:#dc2626; font-weight:600;">THYSPC</div>
+                    </div>
+                    
+                    <!-- THINKS - Top Right -->
+                    <div class="empathy-quad thinks">
+                        <h4><span class="icon">💭</span> <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                        <div class="empathy-item"><span class="tr">"Embargo açıkken başka biri rezervasyon alırsa ne olacak?"</span><span class="en">"What if someone else takes a reservation while embargo is open?"</span></div>
+                        <div class="empathy-item"><span class="tr">"İstasyondan cevap ne zaman gelecek?"</span><span class="en">"When will the response come from station?"</span></div>
+                        <div class="empathy-item"><span class="tr">"Bu DG kargonun tüm belgeleri tamam mı?"</span><span class="en">"Are all documents for this DG cargo complete?"</span></div>
+                        <div class="empathy-item"><span class="tr">"Accuity reject ederse sorumluluk kimde?"</span><span class="en">"If Accuity rejects, who is responsible?"</span></div>
+                        <div class="empathy-item"><span class="tr">"Bu radyoaktif kargo için ayrı prosedür var mı?"</span><span class="en">"Is there a separate procedure for this radioactive cargo?"</span></div>
+                    </div>
+                    <div class="empathy-quad does">
+                        <h4><span class="icon">⚡</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                        <div class="empathy-item"><span class="tr">Sürekli email inbox monitoring</span><span class="en">Continuous email inbox monitoring</span></div>
+                        <div class="empathy-item"><span class="tr">Embargo toggle açıp kapatır (hızlı)</span><span class="en">Toggles embargo on/off (quickly)</span></div>
+                        <div class="empathy-item"><span class="tr">İstasyonlara proaktif bilgilendirme emaili</span><span class="en">Proactive notification emails to stations</span></div>
+                        <div class="empathy-item"><span class="tr">DG belgelerini manuel kontrol eder</span><span class="en">Manually checks DG documents</span></div>
+                        <div class="empathy-item"><span class="tr">Onaysız rezervasyonları monitoring'de takip eder</span><span class="en">Tracks unauthorized reservations in monitoring</span></div>
+                    </div>
+                    <div class="empathy-quad feels">
+                        <h4><span class="icon">❤️</span> <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                        <div class="empathy-item"><span class="tr">Embargo toggle anında stres ve aciliyet</span><span class="en">Stress and urgency during embargo toggle</span></div>
+                        <div class="empathy-item"><span class="tr">Email cevabı gecikmesinde frustrasyon</span><span class="en">Frustration when email response delayed</span></div>
+                        <div class="empathy-item"><span class="tr">DG kargo güvenliği konusunda sorumluluk</span><span class="en">Responsibility for DG cargo safety</span></div>
+                        <div class="empathy-item"><span class="tr">Cenaze başarıyla gönderildiğinde tatmin</span><span class="en">Satisfaction when funeral cargo sent successfully</span></div>
+                        <div class="empathy-item"><span class="tr">Sistemin yetersizliğine karşı çaresizlik</span><span class="en">Helplessness against system inadequacy</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s6-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Özel kargo uzmanı sürekli alert modunda çalışır. Embargo toggle anı en stresli an - hızlı olmak zorunda ama hata yapmamalı. Email'e bağımlılık frustrasyon yaratıyor. En tatmin edici an: acil kargo (cenaze, AVI) başarıyla teslim edildiğinde.</span>
+                    <span class="en">Special cargo expert works in constant alert mode. Embargo toggle moment is most stressful - must be quick but can't make mistakes. Email dependency creates frustration. Most satisfying moment: when urgent cargo (funeral, AVI) delivered successfully.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: COLLABORATION -->
+    <section class="card section-7">
+        <div class="card-header">
+            <div class="card-icon">7</div>
+            <div class="card-title">
+                <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                <p><span class="tr">Paydaşlar, koordinasyon</span><span class="en">Stakeholders, coordination</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s7-chart" class="view-pane active">
+                <div class="stakeholder-map">
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node provider"><span class="tr">🏢 Agent (Özel Kargo Talebi)</span><span class="en">🏢 Agent (Special Cargo Request)</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">📋 Genel Rez Ekibi (Yönlendirme)</span><span class="en">📋 General Res Team (Referral)</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node persona"><span class="tr">🎯 ÖZEL KARGO EKİBİ</span><span class="en">🎯 SPECIAL CARGO TEAM</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓ ↔️</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node partner"><span class="tr">✈️ Varış İstasyonları (CGOAPR)</span><span class="en">✈️ Destination Stations (CGOAPR)</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">👔 Top Management (İstisna Onay)</span><span class="en">👔 Top Management (Exception Approval)</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">🛡️ Interline Ekibi</span><span class="en">🛡️ Interline Team</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node consumer"><span class="tr">📦 Operasyon (Yükleme)</span><span class="en">📦 Operations (Loading)</span></div>
+                        <div class="stakeholder-node consumer"><span class="tr">📊 Kapasite (Planlama)</span><span class="en">📊 Capacity (Planning)</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s7-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Özel kargo ekibi çok taraflı koordinasyon merkezi: Agent'tan talep alır, CGOAPR üzerinden istasyonlarla onay koordinasyonu yapar, gerekirse top management'a çıkar, interline ekibiyle embargo süreçlerinde çalışır, sonucu operasyon ve kapasiteye aktarır.</span>
+                    <span class="en">Special cargo team is multi-party coordination center: receives requests from agents, coordinates approvals with stations via CGOAPR, escalates to top management if needed, works with interline team on embargo processes, transfers results to operations and capacity.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-09:</strong> "Special cargo team and interline team are involved in embargo processes."<br>
+                    <strong>MoM-2025-12-23:</strong> "In approximately 90% of cases, agents contact the reservation (rez) teams or special cargo teams."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 8: PRODUCT OPPORTUNITIES -->
+    <section class="card section-8">
+        <div class="card-header">
+            <div class="card-icon">8</div>
+            <div class="card-title">
+                <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+                <p><span class="tr">Çözüm önerileri</span><span class="en">Solution proposals</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s8-chart" class="view-pane active">
+                <div class="timeline">
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="tr">P1 → AWB Bazlı Embargo Toggle</span><span class="en">P1 → AWB-Based Embargo Toggle</span></h5>
+                        <p><span class="tr">Tüm sistem yerine sadece ilgili AWB için embargo/restriction geçici olarak kaldırılsın. Bu onaysız rezervasyon riskini sıfırlar.</span>
+                        <span class="en">Temporarily lift embargo/restriction only for relevant AWB instead of entire system. This eliminates unauthorized reservation risk.</span></p>
+                    </div>
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="tr">P2 → Sistem İçi Onay Workflow</span><span class="en">P2 → In-System Approval Workflow</span></h5>
+                        <p><span class="tr">CGOAPR email yerine sistem içi onay mekanizması. İstasyon kullanıcıları doğrudan sistemde onay verebilsin, audit trail oluşsun.</span>
+                        <span class="en">In-system approval mechanism instead of CGOAPR email. Station users can approve directly in system, audit trail created.</span></p>
+                    </div>
+                    <div class="timeline-item short">
+                        <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                        <h5><span class="tr">P3 → Özel Kargo Karar Ağacı</span><span class="en">P3 → Special Cargo Decision Tree</span></h5>
+                        <p><span class="tr">PER/DG/HUM/RAD için interaktif karar ağacı. Kullanıcıya hangi belge, onay, kural gerektiğini açıkça göstersin.</span>
+                        <span class="en">Interactive decision tree for PER/DG/HUM/RAD. Clearly show user which documents, approvals, rules are needed.</span></p>
+                    </div>
+                    <div class="timeline-item short">
+                        <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                        <h5><span class="tr">P4 → Büyük Palet Otomatik CW</span><span class="en">P4 → Large Pallet Auto CW</span></h5>
+                        <p><span class="tr">2m+ paletler için de otomatik CW hesaplama. Özel kargo genellikle büyük paletlerde.</span>
+                        <span class="en">Auto CW calculation for 2m+ pallets as well. Special cargo usually on large pallets.</span></p>
+                    </div>
+                    <div class="timeline-item long">
+                        <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
+                        <h5><span class="tr">P6 → Akıllı SCC Yükleme Ayrımı</span><span class="en">P6 → Smart SCC Loading Separation</span></h5>
+                        <p><span class="tr">GEN + PER karışık yüklemelerde otomatik uçuş ayrımı önerisi.</span>
+                        <span class="en">Auto flight separation suggestion for GEN + PER mixed loads.</span></p>
+                    </div>
+                </div>
+            </div>
+            <div id="s8-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">MVP öncelikleri: AWB bazlı embargo toggle (en kritik) ve sistem içi onay workflow. Bu iki özellik özel kargo ekibinin en büyük pain point'lerini çözer. Kısa vadede karar ağacı ve CW otomasyonu.</span>
+                    <span class="en">MVP priorities: AWB-based embargo toggle (most critical) and in-system approval workflow. These two features solve special cargo team's biggest pain points. Short-term: decision tree and CW automation.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 9: AI SUPPORT -->
+    <section class="card section-9">
+        <div class="card-header">
+            <div class="card-icon">9</div>
+            <div class="card-title">
+                <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                <p><span class="tr">AI potansiyeli</span><span class="en">AI potential</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s9-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                    <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                    <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                </p>
+                
+                <!-- Slider Container -->
+                <div style="display:flex; gap:24px; margin-bottom:32px;">
+                    <!-- Left: Scale Labels -->
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:100px; padding:8px 0;">
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 YASAK</span>
+                            <div style="font-size:8px; color:#9ca3af;">AI yapmamalı</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ ONAY GEREKLİ</span>
+                            <div style="font-size:8px; color:#9ca3af;">İnsan onayı şart</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ GÜVENLİ</span>
+                            <div style="font-size:8px; color:#9ca3af;">AI serbest</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Middle: Slider Track -->
+                    <div style="flex:1; position:relative;">
+                        <!-- Gradient Track -->
+                        <div style="height:240px; border-radius:12px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            
+                            <!-- Level Markers -->
+                            <div style="position:absolute; left:12px; top:4%; font-size:10px; color:#dc2626; font-weight:600;">
+                                <span class="tr">6 - 🚫 Embargo toggle, DG onay, güvenlik</span>
+                                <span class="en">6 - 🚫 Embargo toggle, DG approval, safety</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:21%; font-size:10px; color:#b45309; font-weight:600;">
+                                <span class="tr">5 - ⚠️ Onay sonrası otomatik bildirim</span>
+                                <span class="en">5 - ⚠️ Auto notification after approval</span>
+                            </div>
+                            
+                            <!-- TRUST LINE - Güven Sınırı -->
+                            <div style="position:absolute; left:0; right:0; top:33%; height:3px; background:#0891b2; z-index:10;"></div>
+                            <div style="position:absolute; right:8px; top:31%; background:#0891b2; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                <span class="tr">⬆️ SINIR: AI burada durmalı</span>
+                                <span class="en">⬆️ LIMIT: AI stops here</span>
+                            </div>
+                            
+                            <div style="position:absolute; left:12px; top:40%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">4 - 💡 İstasyon onay tahmini, alternatif rota</span>
+                                <span class="en">4 - 💡 Station approval prediction, alt route</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">3 - ⚙️ Özel kargo formu otomatik doldurma</span>
+                                <span class="en">3 - ⚙️ Auto-fill special cargo form</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:70%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">2 - 📝 Onay durumları, embargo listesi özeti</span>
+                                <span class="en">2 - 📝 Approval status, embargo list summary</span>
+                            </div>
+                            <div style="position:absolute; left:12px; top:85%; font-size:10px; color:#15803d; font-weight:600;">
+                                <span class="tr">1 - 📊 DG/SCC kuralları, belge gereksinimleri</span>
+                                <span class="en">1 - 📊 DG/SCC rules, document requirements</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="two-col" style="margin-top:20px;">
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">📋 SCC bazlı belge checklist önerisi</span><span class="en">📋 SCC-based document checklist suggestion</span></div>
+                        <div class="list-item"><span class="tr">📧 Email inbox'tan onay durumu çıkarımı</span><span class="en">📧 Approval status extraction from email inbox</span></div>
+                        <div class="list-item"><span class="tr">⏰ İstasyon yanıt süresi tahmini</span><span class="en">⏰ Station response time prediction</span></div>
+                        <div class="list-item"><span class="tr">🔍 Eksik belge tespiti ve uyarısı</span><span class="en">🔍 Missing document detection and alert</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #dc2626;">
+                        <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">🚫 Embargo toggle açma/kapama</span><span class="en">🚫 Embargo toggle on/off</span></div>
+                        <div class="list-item"><span class="tr">🚫 DG güvenlik onayı verme</span><span class="en">🚫 Giving DG safety approval</span></div>
+                        <div class="list-item"><span class="tr">🚫 İstasyon adına onay simülasyonu</span><span class="en">🚫 Approval simulation on behalf of station</span></div>
+                        <div class="list-item"><span class="tr">🚫 Özel kargo tipi sınıflandırma kararı</span><span class="en">🚫 Special cargo type classification decision</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s9-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">AI özel kargo için bilgi sunma ve öneri seviyelerinde destek sağlayabilir: SCC kuralları, belge checklist, onay durumu takibi. Ancak embargo toggle, DG güvenlik onayı gibi kritik kararlar kesinlikle insan kontrolünde kalmalı - compliance ve güvenlik riski çok yüksek.</span>
+                    <span class="en">AI can support special cargo at information and recommendation levels: SCC rules, document checklist, approval status tracking. However, critical decisions like embargo toggle, DG safety approval must absolutely remain under human control - compliance and safety risk too high.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p><span class="tr">📅 Analiz: 8 Mayıs 2026 | 📄 8 Kaynak MoM | 🎯 IST Özel Kargo Ekibi</span>
+    <span class="en">📅 Analysis: May 8, 2026 | 📄 8 Source MoMs | 🎯 IST Special Cargo Team</span></p>
+    <p><span class="tr">⚠️ Yalnızca doküman kanıtlarına dayalıdır</span>
+    <span class="en">⚠️ Based on document evidence only</span></p>
+    <p style="margin-top:12px;">BKR - Booking & Reservation | THY Cargo | Sungur Product Team</p>
+</footer>
+    </div><!-- /main-content -->
+
+    <script>
+    function switchLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+        });
+    }
+    
+    function toggleView(btn, section, view) {
+        btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(section + '-chart').classList.remove('active');
+        document.getElementById(section + '-text').classList.remove('active');
+        document.getElementById(section + '-' + view).classList.add('active');
+    }
+
+    function toggleMegaMenu() {
+        document.querySelector('.mega-menu').classList.toggle('open');
+        document.querySelector('.mega-overlay').classList.toggle('open');
+    }
+</script>
+</body>
+</html>

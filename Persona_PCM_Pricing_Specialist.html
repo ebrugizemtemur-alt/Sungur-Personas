@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCM - Pricing Specialist Persona</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f7; color: #1f2937; line-height: 1.6; }
+        body.lang-en .tr { display: none !important; }
+        body.lang-tr .en { display: none !important; }
+        
+        .side-nav {
+            position: fixed; top: 0; left: 0; width: 72px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 16px 0; z-index: 1000;
+        }
+        .side-nav-logo {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 11px; color: white;
+            margin-bottom: 24px; cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+        .nav-items { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0 8px; }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 10px 4px; border-radius: 10px; text-decoration: none;
+            color: #64748b; transition: all 0.2s; font-size: 10px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .nav-item.active { background: rgba(124,58,237,0.2); color: #c4b5fd; }
+        .nav-num { width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+        .nav-label { font-size: 9px; text-align: center; }
+
+        .mega-menu {
+            position: fixed; top: 0; left: 72px; width: 320px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            z-index: 999; transform: translateX(-100%); transition: transform 0.3s ease;
+            overflow-y: auto; padding: 20px;
+        }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; transition: all 0.2s; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .module-header:hover { background: rgba(255,255,255,0.05); }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.trm { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; transition: all 0.2s; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #a855f7; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+        
+        .hero {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 50%, #c4b5fd 100%);
+            padding: 48px 40px;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(124,58,237,0.15); color: #6d28d9; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; z-index: 2; position: relative; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #7c3aed; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #6d28d9; }
+        .hero-subtitle { font-size: 16px; color: #581c87; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #7c3aed; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #7c3aed; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 100px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-step.approve { background: #dcfce7; color: #16a34a; }
+        .flow-step.reject { background: #fecaca; color: #dc2626; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; align-items: stretch; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #7c3aed, #a855f7); display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.does h4 span.icon { background: rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-quad.feels h4 span.icon { background: rgba(225,29,72,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #dbeafe; color: #1d4ed8; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #dcfce7; color: #047857; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        
+        .summary-box { background: rgba(124,58,237,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #7c3aed; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip { position: absolute; bottom: calc(100% + 8px); left: 0; min-width: 280px; background: #1f2937; color: white; padding: 14px 16px; border-radius: 10px; font-size: 11px; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        .source-tooltip::after { content: ''; position: absolute; bottom: -6px; left: 24px; width: 12px; height: 12px; background: #1f2937; transform: rotate(45deg); }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+        
+        .crud-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .crud-table th, .crud-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .crud-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .crud-badge { display: inline-block; width: 20px; height: 20px; border-radius: 4px; text-align: center; line-height: 20px; font-size: 10px; font-weight: 700; }
+        .crud-badge.yes { background: #d1fae5; color: #047857; }
+        .crud-badge.no { background: #f3f4f6; color: #9ca3af; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .hero { padding: 32px 20px; }
+            .hero h1 { font-size: 28px; }
+            .board { padding: 16px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-en">
+    <nav class="side-nav">
+        <div class="side-nav-logo" title="All Modules" onclick="toggleMegaMenu()">PCM</div>
+        <div class="nav-items">
+            <a href="Persona_PCM_Pricing_Specialist.html" class="nav-item active" title="Pricing Specialist">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Pricing</span>
+            </a>
+            <a href="Persona_PCM_RM_Analyst.html" class="nav-item" title="Revenue Management Analyst">
+                <span class="nav-num">2</span>
+                <span class="nav-label">RM</span>
+            </a>
+            <a href="Persona_PCM_Interline_Specialist.html" class="nav-item" title="Interline Specialist">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Interline</span>
+            </a>
+            <a href="Persona_PCM_Sales_Manager.html" class="nav-item" title="Sales Manager">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Sales</span>
+            </a>
+            <a href="Persona_PCM_Station_User.html" class="nav-item" title="Station User">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Station</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 All Modules</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header active">
+                <div class="module-icon pcm">PCM</div>
+                <span class="module-name">Pricing Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link current"><span class="persona-num">1</span> Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon flm">FLM</div>
+                <span class="module-name">Flight Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon bkr">BKR</div>
+                <span class="module-name">Booking & Reservation</span>
+                <span class="module-count">7 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a>
+                <a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a>
+                <a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a>
+                <a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a>
+                <a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a>
+                <a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a>
+                <a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cam">CAM</div>
+                <span class="module-name">Capacity Management</span>
+                <span class="module-count">3 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon com">COM</div>
+                <span class="module-name">Compliance Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon asm">ASM</div>
+                <span class="module-name">AWB Stock Management</span>
+                <span class="module-count">2 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a>
+                <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon trm">TRM</div>
+                <span class="module-name">Truck Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a>
+            </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon scm">SCM</div>
+                <span class="module-name">Special Cargo Management</span>
+                <span class="module-count">1</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">PCM · PRICING SPECIALIST · PERSONA #1</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1><span class="en">Pricing</span><span class="tr">Fiyatlandırma</span> <span>Specialist</span></h1>
+            <p class="hero-subtitle">
+                <span class="en">Manages tariff, promo, and contract pricing through Subrates and COMIS. Responsible for rate card creation, Excel-based uploads, currency management, and ensuring price accuracy across all sales channels.</span>
+                <span class="tr">Subrates ve COMIS üzerinden tarife, promo ve sözleşme fiyatlandırmasını yönetir. Rate card oluşturma, Excel tabanlı yüklemeler, döviz yönetimi ve tüm satış kanallarında fiyat doğruluğunun sağlanmasından sorumludur.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="en">"Prices are transferred from Subrates to COMIS via CSV. All tariffs must be loaded through Subrates - there is no direct COMIS update path."</span>
+                <span class="tr">"Fiyatlar Subrates'den COMIS'e CSV ile aktarılır. Tüm tarifeler Subrates üzerinden yüklenmeli - doğrudan COMIS güncellemesi mümkün değil."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#7c3aed;"></span>
+                    <span><strong>Unit:</strong> <span class="en">Pricing Department</span><span class="tr">Fiyatlandırma Birimi</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong><span class="en">Criticality</span><span class="tr">Kritiklik</span>:</strong> <span style="color:#f59e0b;">★★★★★</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong><span class="en">Main Systems</span><span class="tr">Ana Sistemler</span>:</strong> Subrates, COMIS, ACRM, Sabre</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 15 MoM</span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#c4b5fd;">📄 Source Documents</div>
+                        <div>Key User Tariff Workshop 1-14 (12 MoM)</div>
+                        <div>Solution Team Workshop 1, 11, 13 (3 MoM)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1: Persona Profile -->
+        <section class="card section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="en">Persona Profile</span><span class="tr">Persona Profili</span></h2>
+                    <p><span class="en">Who is the Pricing Specialist?</span><span class="tr">Fiyatlandırma Uzmanı Kimdir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="summary-box">
+                        <h4><span class="en">Profile Summary</span><span class="tr">Profil Özeti</span></h4>
+                        <p><span class="en">Core pricing team member managing tariff/promo/contract rate cards via Subrates→COMIS flow. Expert in Excel templates, coefficient logic, and multi-system price synchronization. Works closely with Sales, RM, and Accounting teams.</span>
+                        <span class="tr">Subrates→COMIS akışı üzerinden tarife/promo/sözleşme rate card'larını yöneten ana fiyatlandırma ekibi üyesi. Excel şablonları, katsayı mantığı ve çoklu sistem fiyat senkronizasyonunda uzman. Satış, RM ve Muhasebe ekipleriyle yakın çalışır.</span></p>
+                    </div>
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label">Role</div><div class="pf-value"><span class="en">Pricing Specialist</span><span class="tr">Fiyatlandırma Uzmanı</span></div></div>
+                        <div class="pf"><div class="pf-label">Department</div><div class="pf-value"><span class="en">Pricing Team</span><span class="tr">Fiyatlandırma Ekibi</span></div></div>
+                        <div class="pf"><div class="pf-label">Level</div><div class="pf-value">Mid / Senior</div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Experience</span><span class="tr">Deneyim</span></div><div class="pf-value">5+ <span class="en">years</span><span class="tr">yıl</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Usage Frequency</span><span class="tr">Kullanım Sıklığı</span></div><div class="pf-value"><span class="en">Daily, intensive</span><span class="tr">Günlük, yoğun</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Primary Tools</span><span class="tr">Ana Araçlar</span></div><div class="pf-value">Excel, Subrates, COMIS</div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Technical Level</span><span class="tr">Teknik Seviye</span></div><div class="pf-value"><span class="en">Advanced</span><span class="tr">İleri</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="en">Decision Authority</span><span class="tr">Karar Yetkisi</span></div><div class="pf-value"><span class="en">Tariff Updates</span><span class="tr">Tarife Güncellemeleri</span></div></div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-col demo">
+                            <h4><span class="en">Demographic</span><span class="tr">Demografik</span></h4>
+                            <div class="segment-item"><strong><span class="en">Age Range</span><span class="tr">Yaş Aralığı</span>:</strong> 28-45</div>
+                            <div class="segment-item"><strong><span class="en">Education</span><span class="tr">Eğitim</span>:</strong> <span class="en">Business/Finance</span><span class="tr">İşletme/Finans</span></div>
+                            <div class="segment-item"><strong><span class="en">Location</span><span class="tr">Lokasyon</span>:</strong> Istanbul HQ</div>
+                        </div>
+                        <div class="segment-col behav">
+                            <h4><span class="en">Behavioral</span><span class="tr">Davranışsal</span></h4>
+                            <div class="segment-item"><strong><span class="en">Peak Hours</span><span class="tr">Yoğun Saatler</span>:</strong> 09:00-18:00</div>
+                            <div class="segment-item"><strong><span class="en">Work Style</span><span class="tr">Çalışma Stili</span>:</strong> <span class="en">Excel-heavy</span><span class="tr">Excel yoğun</span></div>
+                            <div class="segment-item"><strong><span class="en">Updates</span><span class="tr">Güncellemeler</span>:</strong> <span class="en">Seasonal peaks</span><span class="tr">Sezonsal yoğunluk</span></div>
+                        </div>
+                        <div class="segment-col psycho">
+                            <h4><span class="en">Psychographic</span><span class="tr">Psikografik</span></h4>
+                            <div class="segment-item"><strong><span class="en">Values</span><span class="tr">Değerler</span>:</strong> <span class="en">Accuracy, Speed</span><span class="tr">Doğruluk, Hız</span></div>
+                            <div class="segment-item"><strong><span class="en">Attitude</span><span class="tr">Tutum</span>:</strong> <span class="en">Process-oriented</span><span class="tr">Süreç odaklı</span></div>
+                            <div class="segment-item"><strong><span class="en">Risk</span><span class="tr">Risk</span>:</strong> <span class="en">Risk-averse</span><span class="tr">Riskten kaçınan</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The Pricing Specialist is a core member of the Pricing Department, responsible for creating, maintaining, and uploading rate cards across tariff, promo, and contract pricing types. They work extensively with Excel templates and the Subrates application to generate pricing files that are then uploaded to COMIS. The role requires deep understanding of rate card structures, coefficient logic (e.g., GEN × 1.2 = DGR), weight break calculations, and currency management. They coordinate closely with Sales teams who submit pricing requests, RM teams who define MCR parameters, and Accounting for revenue recognition.</span>
+                    <span class="tr">Fiyatlandırma Uzmanı, tarife, promo ve sözleşme fiyat tipleri üzerinden rate card oluşturma, sürdürme ve yüklemeden sorumlu Fiyatlandırma Departmanının ana üyesidir. Excel şablonları ve Subrates uygulaması ile yoğun çalışarak COMIS'e yüklenen fiyat dosyaları oluşturur. Rol, rate card yapıları, katsayı mantığı (örn. GEN × 1.2 = DGR), ağırlık dilimi hesaplamaları ve döviz yönetimi konularında derin anlayış gerektirir. Fiyat talepleri gönderen Satış ekipleri, MCR parametrelerini tanımlayan RM ekipleri ve gelir tanıma için Muhasebe ile yakın koordinasyon sağlar.</span></p>
+                    <div class="evidence">MoM-1: "The pricing team uploads the file from the SHR118 screens and clicks Proceed" | MoM-6: "Prices are added to Excel file and then imported back into Subrates"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Goals & Motivation -->
+        <section class="card section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="en">Goals, Motivation & Fears</span><span class="tr">Hedefler, Motivasyon & Korkular</span></h2>
+                    <p><span class="en">What drives and concerns them?</span><span class="tr">Onları ne motive eder ve endişelendirir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="en">🎯 Accurate & timely price uploads to all channels</span><span class="tr">🎯 Tüm kanallara doğru ve zamanında fiyat yüklemeleri</span></div>
+                        <div class="goal-level secondary"><span class="en">📊 Zero duplicate rate lines, clean data</span><span class="tr">📊 Sıfır mükerrer satır, temiz veri</span></div>
+                        <div class="goal-level tertiary"><span class="en">⚡ Reduce manual Excel work, automate flows</span><span class="tr">⚡ Manuel Excel işini azalt, akışları otomatikleştir</span></div>
+                    </div>
+                    <div class="two-col">
+                        <div class="list-box motivators">
+                            <h4>✅ <span class="en">Motivators</span><span class="tr">Motivatörler</span></h4>
+                            <div class="list-item"><span class="en">Successfully uploading seasonal tariffs before deadline</span><span class="tr">Sezonluk tarifeleri vaktinde yüklemek</span></div>
+                            <div class="list-item"><span class="en">Seeing prices correctly reflected across all sales channels</span><span class="tr">Fiyatların tüm kanallarda doğru yansımasını görmek</span></div>
+                            <div class="list-item"><span class="en">Positive feedback from Sales on quick turnaround</span><span class="tr">Satıştan hızlı dönüş için olumlu geri bildirim</span></div>
+                            <div class="list-item"><span class="en">Clean rate card structure with no validation errors</span><span class="tr">Doğrulama hatasız temiz rate card yapısı</span></div>
+                        </div>
+                        <div class="list-box demotivators">
+                            <h4>❌ <span class="en">Demotivators</span><span class="tr">Demotivatörler</span></h4>
+                            <div class="list-item"><span class="en">Duplicate rate lines from repeated file uploads</span><span class="tr">Tekrarlanan dosya yüklemelerinden mükerrer satırlar</span></div>
+                            <div class="list-item"><span class="en">CSV conversion errors causing upload failures</span><span class="tr">CSV dönüşüm hatalarından yükleme başarısızlıkları</span></div>
+                            <div class="list-item"><span class="en">Manual download-edit-reupload cycles</span><span class="tr">Manuel indir-düzenle-tekrar yükle döngüleri</span></div>
+                            <div class="list-item"><span class="en">ACRM-COMIS synchronization gaps causing wrong prices</span><span class="tr">ACRM-COMIS senkronizasyon açıkları yanlış fiyatlara sebep</span></div>
+                        </div>
+                    </div>
+                    <div class="list-box fears" style="margin-top: 16px;">
+                        <h4>😰 <span class="en">Primary Fears</span><span class="tr">Ana Korkular</span></h4>
+                        <div class="list-item"><span class="en">Uploading wrong prices that affect live bookings</span><span class="tr">Canlı rezervasyonları etkileyen yanlış fiyat yüklemek</span></div>
+                        <div class="list-item"><span class="en">Failing to meet seasonal price update SLAs (20th of month)</span><span class="tr">Sezonluk fiyat güncelleme SLA'larını karşılayamamak (ayın 20'si)</span></div>
+                        <div class="list-item"><span class="en">Currency exchange rate changes causing revenue loss</span><span class="tr">Döviz kuru değişikliklerinin gelir kaybına yol açması</span></div>
+                        <div class="list-item"><span class="en">Old inactive prices becoming active due to date overlap</span><span class="tr">Tarih çakışmasından eski pasif fiyatların aktif olması</span></div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The primary goal is ensuring accurate prices are available across all booking channels (COMIS, TK GO, ACRM) before promotional periods begin. Success is measured by zero duplicate rate lines, no validation errors, and meeting the monthly promo deadline (20th). Key motivators include clean data, positive Sales feedback, and streamlined processes. Major fears center on upload errors affecting live bookings, date overlap issues causing wrong prices, and currency fluctuation impacts.</span>
+                    <span class="tr">Birincil hedef, promosyon dönemleri başlamadan önce tüm rezervasyon kanallarında (COMIS, TK GO, ACRM) doğru fiyatların mevcut olmasını sağlamaktır. Başarı, sıfır mükerrer satır, doğrulama hatası olmaması ve aylık promo son tarihini (ayın 20'si) karşılama ile ölçülür.</span></p>
+                    <div class="evidence">MoM-2: "Promos are opened monthly; the internal SLA time is until the 20th of the month" | MoM-3: "Date range overlap - system makes the previous line inactive"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Workflow & Intents -->
+        <section class="card section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="en">Workflow & Intents</span><span class="tr">İş Akışı & Niyetler</span></h2>
+                    <p><span class="en">How do they work?</span><span class="tr">Nasıl çalışırlar?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px;"><span class="en">📋 Tariff/Promo Upload Flow</span><span class="tr">📋 Tarife/Promo Yükleme Akışı</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step manual"><span class="en">Request from Sales/ACRM</span><span class="tr">Satış/ACRM'den Talep</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="en">Download Excel Template</span><span class="tr">Excel Şablonu İndir</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="en">Fill Prices in Excel</span><span class="tr">Excel'de Fiyatları Doldur</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="en">Upload to Subrates</span><span class="tr">Subrates'e Yükle</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision"><span class="en">Validation Check</span><span class="tr">Doğrulama Kontrolü</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="en">Generate CSV</span><span class="tr">CSV Oluştur</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="en">Upload to COMIS</span><span class="tr">COMIS'e Yükle</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step approve"><span class="en">Rate Cards Active</span><span class="tr">Rate Card'lar Aktif</span></div>
+                    </div>
+                    
+                    <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px; margin-top: 20px;"><span class="en">🔄 Coefficient-Based Subrate Generation</span><span class="tr">🔄 Katsayı Tabanlı Subrate Üretimi</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step auto">GEN Rate Card (Base)</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision">× 1.20</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step approve">DGR Subrate</div>
+                    </div>
+                    <div class="flow-h">
+                        <div class="flow-step auto">GEN Rate Card (Base)</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision">× 1.50</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step approve">Premium Subrate</div>
+                    </div>
+                    
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="list-box">
+                            <h4 style="color: #0284c7;"><span class="en">🎯 Primary Intents</span><span class="tr">🎯 Ana Niyetler</span></h4>
+                            <div class="list-item"><strong>TRANSACTIONAL:</strong> <span class="en">Upload new tariff/promo prices</span><span class="tr">Yeni tarife/promo fiyatları yükle</span></div>
+                            <div class="list-item"><strong>TRANSACTIONAL:</strong> <span class="en">Update existing rate cards</span><span class="tr">Mevcut rate card'ları güncelle</span></div>
+                            <div class="list-item"><strong>INFORMATIONAL:</strong> <span class="en">Check current active prices</span><span class="tr">Mevcut aktif fiyatları kontrol et</span></div>
+                            <div class="list-item"><strong>CORRECTIVE:</strong> <span class="en">Fix duplicate rate lines</span><span class="tr">Mükerrer satırları düzelt</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #d97706;"><span class="en">⚠️ What-If Scenarios</span><span class="tr">⚠️ What-If Senaryoları</span></h4>
+                            <div class="list-item"><span class="en">If CSV fails → Manual retry with corrected file</span><span class="tr">CSV başarısız → Düzeltilmiş dosya ile tekrar dene</span></div>
+                            <div class="list-item"><span class="en">If duplicate detected → End-date old line manually</span><span class="tr">Mükerrer tespit → Eski satırı manuel sonlandır</span></div>
+                            <div class="list-item"><span class="en">If currency changed → Download all, recalculate, re-upload</span><span class="tr">Döviz değişti → Tümünü indir, yeniden hesapla, yükle</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The workflow is heavily Excel-dependent. Pricing requests arrive from Sales (via email or ACRM), then the specialist downloads the Excel template from Subrates, fills in prices per O/D and weight break, uploads back to Subrates for validation (hurdle check, date validation, zero-price check), generates CSV, and uploads to COMIS. The system automatically generates subrates by applying coefficients to the main GEN rate card. Critical decision points include validation errors and date overlap handling.</span>
+                    <span class="tr">İş akışı büyük ölçüde Excel'e bağımlıdır. Fiyat talepleri Satış'tan (e-posta veya ACRM ile) gelir, uzman Subrates'den Excel şablonunu indirir, O/D ve ağırlık dilimi başına fiyatları doldurur, doğrulama için (hurdle kontrolü, tarih doğrulama, sıfır fiyat kontrolü) Subrates'e yükler, CSV oluşturur ve COMIS'e yükler.</span></p>
+                    <div class="evidence">MoM-6: "Rate template (Excel) is downloaded from Subrates → Excel file is completed with destinations, validity dates, weight-break prices → File is uploaded to system"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Data & Integration -->
+        <section class="card section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="en">Data & Integration</span><span class="tr">Veri & Entegrasyon</span></h2>
+                    <p><span class="en">What systems and data are involved?</span><span class="tr">Hangi sistemler ve veriler dahil?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="three-col">
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;">📥 <span class="en">Data Sources</span><span class="tr">Veri Kaynakları</span></h4>
+                            <div class="list-item"><strong>Subrates:</strong> <span class="en">Rate card templates, coefficients</span><span class="tr">Rate card şablonları, katsayılar</span></div>
+                            <div class="list-item"><strong>ACRM:</strong> <span class="en">Contract/spot requests, MCR</span><span class="tr">Sözleşme/spot talepleri, MCR</span></div>
+                            <div class="list-item"><strong>Sabre:</strong> <span class="en">Complex rate card creation</span><span class="tr">Karmaşık rate card oluşturma</span></div>
+                            <div class="list-item"><strong>IATA:</strong> <span class="en">TACT reference prices</span><span class="tr">TACT referans fiyatları</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;">📤 <span class="en">Data Outputs</span><span class="tr">Veri Çıktıları</span></h4>
+                            <div class="list-item"><strong>COMIS:</strong> <span class="en">Active rate cards (TRF018)</span><span class="tr">Aktif rate card'lar (TRF018)</span></div>
+                            <div class="list-item"><strong>ACRM:</strong> <span class="en">Price feed (hourly job)</span><span class="tr">Fiyat beslemesi (saatlik job)</span></div>
+                            <div class="list-item"><strong>TK GO:</strong> <span class="en">Customer-facing prices</span><span class="tr">Müşteri fiyatları</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #0d9488;">🔗 <span class="en">Key Integrations</span><span class="tr">Ana Entegrasyonlar</span></h4>
+                            <div class="list-item"><span class="en">Subrates → SFTP → COMIS</span></div>
+                            <div class="list-item"><span class="en">COMIS → Hourly Job → ACRM</span></div>
+                            <div class="list-item"><span class="en">GoldenGate + Kafka replication</span></div>
+                        </div>
+                    </div>
+                    
+                    <table class="crud-table" style="margin-top: 20px;">
+                        <thead>
+                            <tr>
+                                <th><span class="en">Entity</span><span class="tr">Varlık</span></th>
+                                <th>C</th><th>R</th><th>U</th><th>D</th>
+                                <th><span class="en">Notes</span><span class="tr">Notlar</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rate Card</td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="en">Via Subrates only</span><span class="tr">Sadece Subrates ile</span></td>
+                            </tr>
+                            <tr>
+                                <td>Rate Line</td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="en">End-date instead of delete</span><span class="tr">Silme yerine bitiş tarihi</span></td>
+                            </tr>
+                            <tr>
+                                <td>Currency Rate</td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge yes">✓</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="crud-badge no">-</span></td>
+                                <td><span class="en">Accounting defines (SHR054)</span><span class="tr">Muhasebe tanımlar (SHR054)</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The pricing ecosystem involves multiple systems: Subrates for template management and coefficient logic, COMIS as the master pricing database, ACRM for dynamic pricing and approval workflows, and Sabre for complex rate card scenarios. Integration is batch-based (hourly jobs) with no real-time sync. Key screens include TRF018 (rate listing), SHR118 (file upload), and TRF017 (spot management). Currency rates are managed by Accounting in SHR054.</span>
+                    <span class="tr">Fiyatlandırma ekosistemi birden fazla sistem içerir: şablon yönetimi ve katsayı mantığı için Subrates, ana fiyatlandırma veritabanı olarak COMIS, dinamik fiyatlandırma ve onay akışları için ACRM, karmaşık rate card senaryoları için Sabre.</span></p>
+                    <div class="evidence">MoM-Solution-1: "Every hour, ACRM asks 'which lines were updated/not updated?' - there is accepted delay, not full synchronization"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Pain Points & Risk -->
+        <section class="card section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="en">Pain Points & Risks</span><span class="tr">Sıkıntılar & Riskler</span></h2>
+                    <p><span class="en">Where do they struggle?</span><span class="tr">Nerelerde zorlanırlar?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5><span class="en">CSV-Based Upload Flow</span><span class="tr">CSV Tabanlı Yükleme Akışı</span></h5>
+                                <p><span class="en">Heavy Excel dependency, CSV conversion errors, manual download-edit-reupload cycles. "CSV conversion process is time-consuming"</span>
+                                <span class="tr">Ağır Excel bağımlılığı, CSV dönüşüm hataları, manuel indir-düzenle-yükle döngüleri</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Duplicate Rate Lines</span><span class="tr">Mükerrer Fiyat Satırları</span></h5>
+                                <p><span class="en">Reprocessing same file creates duplicate lanes. "Same file may appear as loaded multiple times" - logging bug causes duplicates</span>
+                                <span class="tr">Aynı dosyanın tekrar işlenmesi mükerrer satırlar oluşturur</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5><span class="en">ACRM-COMIS Sync Delay</span><span class="tr">ACRM-COMIS Senkronizasyon Gecikmesi</span></h5>
+                                <p><span class="en">1-hour job causes price mismatches. "Unsynchronized structure - there is accepted delay, not full sync"</span>
+                                <span class="tr">1 saatlik job fiyat uyumsuzluklarına sebep olur</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Date Overlap Handling</span><span class="tr">Tarih Çakışması Yönetimi</span></h5>
+                                <p><span class="en">Valid-from/valid-to management unclear. Correct splitting of date ranges is a "To-Be expectation"</span>
+                                <span class="tr">Geçerlilik başlangıç/bitiş yönetimi belirsiz</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P5</span>
+                            <div class="pain-text">
+                                <h5><span class="en">No Price Type Visibility</span><span class="tr">Fiyat Tipi Görünürlüğü Yok</span></h5>
+                                <p><span class="en">COMIS does not store explicit price type (tariff/promo/contract) - inferred from rate card naming. "Primitive and error-prone"</span>
+                                <span class="tr">COMIS açık fiyat tipi saklamıyor - rate card adından çıkarılıyor</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P6</span>
+                            <div class="pain-text">
+                                <h5><span class="en">Currency Update Overhead</span><span class="tr">Döviz Güncelleme Yükü</span></h5>
+                                <p><span class="en">Exchange rate changes require downloading all prices, recalculating in Excel, re-uploading via Subrates</span>
+                                <span class="tr">Döviz değişiklikleri tüm fiyatları indirip Excel'de hesaplayıp tekrar yükleme gerektirir</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The most critical pain points center on the CSV-based upload flow which is error-prone and time-consuming, duplicate rate line creation from file reprocessing, and the 1-hour sync delay between COMIS and ACRM causing temporary price mismatches. Additional issues include unclear date overlap handling, lack of explicit price type fields in COMIS, and heavy manual work for currency updates.</span>
+                    <span class="tr">En kritik sıkıntılar CSV tabanlı yükleme akışında (hataya açık ve zaman alıcı), dosya tekrar işlemesinden mükerrer satır oluşumunda ve COMIS-ACRM arasındaki 1 saatlik senkronizasyon gecikmesinde toplanır.</span></p>
+                    <div class="evidence">MoM-6: "CSV conversion process is time-consuming" | MoM-9: "Duplicate fare lines can occur in live" | MoM-Solution-11: "Price type is inferred - primitive and error-prone"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Mental Model -->
+        <section class="card section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="en">Mental Model & Behavior</span><span class="tr">Zihinsel Model & Davranış</span></h2>
+                    <p><span class="en">How do they think?</span><span class="tr">Nasıl düşünürler?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="empathy-grid">
+                        <div class="empathy-quad says">
+                            <h4><span class="icon">💬</span> <span class="en">SAYS</span><span class="tr">SÖYLER</span></h4>
+                            <div class="empathy-item"><span class="en">"Let me check if the CSV uploaded correctly"</span><span class="tr">"CSV doğru yüklendi mi kontrol edeyim"</span></div>
+                            <div class="empathy-item"><span class="en">"We need to meet the 20th deadline for promos"</span><span class="tr">"Promolar için ayın 20'si son tarihini karşılamalıyız"</span></div>
+                            <div class="empathy-item"><span class="en">"Did the coefficients apply correctly?"</span><span class="tr">"Katsayılar doğru uygulandı mı?"</span></div>
+                        </div>
+                        <div class="empathy-avatar">
+                            <div class="empathy-avatar-circle">💰</div>
+                            <p style="font-size: 11px; color: #6b7280; margin-top: 12px; text-align: center;">Pricing<br>Specialist</p>
+                        </div>
+                        <div class="empathy-quad thinks">
+                            <h4><span class="icon">💭</span> <span class="en">THINKS</span><span class="tr">DÜŞÜNÜR</span></h4>
+                            <div class="empathy-item"><span class="en">"I hope there are no duplicates this time"</span><span class="tr">"Umarım bu sefer mükerrer yoktur"</span></div>
+                            <div class="empathy-item"><span class="en">"Why can't we just edit directly in the system?"</span><span class="tr">"Neden sistemde doğrudan düzenleyemiyoruz?"</span></div>
+                            <div class="empathy-item"><span class="en">"The sync delay will cause issues again"</span><span class="tr">"Senkronizasyon gecikmesi yine sorun çıkaracak"</span></div>
+                        </div>
+                        <div class="empathy-quad does">
+                            <h4><span class="icon">🔧</span> <span class="en">DOES</span><span class="tr">YAPAR</span></h4>
+                            <div class="empathy-item"><span class="en">Downloads Excel, edits meticulously, re-uploads</span><span class="tr">Excel indirir, titizlikle düzenler, tekrar yükler</span></div>
+                            <div class="empathy-item"><span class="en">Manually checks TRF018 after every upload</span><span class="tr">Her yüklemeden sonra TRF018'i manuel kontrol eder</span></div>
+                            <div class="empathy-item"><span class="en">Keeps personal Excel tracker of changes</span><span class="tr">Değişikliklerin kişisel Excel takibini tutar</span></div>
+                        </div>
+                        <div class="empathy-quad feels">
+                            <h4><span class="icon">❤️</span> <span class="en">FEELS</span><span class="tr">HİSSEDER</span></h4>
+                            <div class="empathy-item"><span class="en">Frustrated with repetitive manual work</span><span class="tr">Tekrarlayan manuel işten sıkılmış</span></div>
+                            <div class="empathy-item"><span class="en">Anxious before major seasonal uploads</span><span class="tr">Büyük sezonsal yüklemelerden önce endişeli</span></div>
+                            <div class="empathy-item"><span class="en">Relieved when prices appear correctly everywhere</span><span class="tr">Fiyatlar her yerde doğru görününce rahatlamış</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The Pricing Specialist thinks in terms of rate cards, coefficients, and upload cycles. They are highly detail-oriented and process-focused, always verifying uploads completed successfully. Frustration stems from the manual, repetitive nature of Excel-CSV workflows. They maintain personal tracking spreadsheets as a safety net. Peak stress occurs during seasonal tariff updates (October onwards) and monthly promo deadlines.</span>
+                    <span class="tr">Fiyatlandırma Uzmanı rate card'lar, katsayılar ve yükleme döngüleri açısından düşünür. Çok detay odaklı ve süreç odaklıdır, yüklemelerin başarıyla tamamlandığını her zaman doğrular.</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: Collaboration & Support -->
+        <section class="card section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="en">Collaboration & Support</span><span class="tr">İşbirliği & Destek</span></h2>
+                    <p><span class="en">Who do they work with?</span><span class="tr">Kimlerle çalışırlar?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="stakeholder-map">
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node provider"><span class="en">Sales Teams</span><span class="tr">Satış Ekipleri</span><br><small>Tariff/Promo requests</small></div>
+                            <div class="stakeholder-node provider">ACRM<br><small>Contract requests</small></div>
+                            <div class="stakeholder-node provider"><span class="en">RM Team</span><span class="tr">RM Ekibi</span><br><small>MCR definitions</small></div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node persona">💰 PRICING SPECIALIST</div>
+                        </div>
+                        <div class="stakeholder-arrow">↓</div>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node consumer">COMIS<br><small>Rate cards</small></div>
+                            <div class="stakeholder-node consumer">TK GO<br><small>Customer prices</small></div>
+                            <div class="stakeholder-node consumer"><span class="en">Accounting</span><span class="tr">Muhasebe</span><br><small>Revenue recognition</small></div>
+                        </div>
+                    </div>
+                    
+                    <div class="two-col" style="margin-top: 20px;">
+                        <div class="list-box">
+                            <h4 style="color: #059669;"><span class="en">Critical Dependencies</span><span class="tr">Kritik Bağımlılıklar</span></h4>
+                            <div class="list-item">⛔ <span class="en">Subrates system availability for uploads</span><span class="tr">Yüklemeler için Subrates sistem erişimi</span></div>
+                            <div class="list-item">⏳ <span class="en">ACRM hourly sync job completion</span><span class="tr">ACRM saatlik senkronizasyon job'ı</span></div>
+                            <div class="list-item">🕳️ <span class="en">Currency rates from Accounting (SHR054)</span><span class="tr">Muhasebeden döviz kurları (SHR054)</span></div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color: #059669;"><span class="en">Training Needs</span><span class="tr">Eğitim İhtiyaçları</span></h4>
+                            <div class="list-item"><span class="en">Subrates coefficient logic</span><span class="tr">Subrates katsayı mantığı</span></div>
+                            <div class="list-item"><span class="en">COMIS TRF screens navigation</span><span class="tr">COMIS TRF ekran navigasyonu</span></div>
+                            <div class="list-item"><span class="en">Error handling and rollback procedures</span><span class="tr">Hata yönetimi ve geri alma prosedürleri</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">The Pricing Specialist sits at the intersection of Sales, Revenue Management, and Operations. They receive requests from Sales teams (via email, soon 100% ACRM), MCR parameters from RM, and currency rates from Accounting. Their outputs flow to COMIS (master prices), ACRM (for dynamic evaluation), and ultimately to customer-facing channels like TK GO. Critical dependencies include Subrates availability, ACRM sync job timing, and accurate currency data.</span>
+                    <span class="tr">Fiyatlandırma Uzmanı Satış, Gelir Yönetimi ve Operasyonların kesişim noktasında bulunur. Satış ekiplerinden talepler (e-posta ile, yakında %100 ACRM), RM'den MCR parametreleri ve Muhasebeden döviz kurları alır.</span></p>
+                    <div class="evidence">MoM-Solution-1: "Contract requests - 80% ACRM, 20% email. Goal: 100% ACRM"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: Product Opportunities -->
+        <section class="card section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="en">Product Opportunities</span><span class="tr">Ürün Fırsatları</span></h2>
+                    <p><span class="en">How can we help?</span><span class="tr">Nasıl yardımcı olabiliriz?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div class="timeline">
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="en">Eliminate CSV Dependency</span><span class="tr">CSV Bağımlılığını Ortadan Kaldır</span></h5>
+                            <p>→ P1 | <span class="en">Direct Excel-to-system upload, no CSV conversion</span><span class="tr">Doğrudan Excel-sistem yüklemesi, CSV dönüşümü yok</span></p>
+                        </div>
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="en">Idempotent Price Uploads</span><span class="tr">İdempotent Fiyat Yüklemeleri</span></h5>
+                            <p>→ P2 | <span class="en">Prevent duplicate rate lines from re-uploads</span><span class="tr">Tekrar yüklemelerden mükerrer satırları önle</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT-TERM</span>
+                            <h5><span class="en">Real-time ACRM Sync</span><span class="tr">Gerçek Zamanlı ACRM Senkronizasyonu</span></h5>
+                            <p>→ P3 | <span class="en">Replace hourly batch with event-driven updates</span><span class="tr">Saatlik batch'i olay tabanlı güncellemelerle değiştir</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short">SHORT-TERM</span>
+                            <h5><span class="en">Explicit Price Type Field</span><span class="tr">Açık Fiyat Tipi Alanı</span></h5>
+                            <p>→ P5 | <span class="en">Store tariff/promo/contract as explicit field, not naming convention</span><span class="tr">Tarife/promo/sözleşmeyi adlandırma kuralı değil açık alan olarak sakla</span></p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long">LONG-TERM</span>
+                            <h5><span class="en">Unified Pricing Workbench</span><span class="tr">Birleşik Fiyatlandırma Çalışma Alanı</span></h5>
+                            <p>→ P1, P4, P6 | <span class="en">Single screen for all price operations, coefficient management, currency handling</span><span class="tr">Tüm fiyat operasyonları için tek ekran</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">Priority opportunities focus on eliminating the CSV bottleneck (MVP), preventing duplicate rate lines through idempotent uploads, and moving to real-time ACRM synchronization. Medium-term improvements include explicit price type modeling and better date overlap handling. Long-term vision is a unified pricing workbench consolidating Subrates, COMIS, and ACRM functionality.</span>
+                    <span class="tr">Öncelikli fırsatlar CSV darboğazını ortadan kaldırmaya (MVP), idempotent yüklemelerle mükerrer satırları önlemeye ve gerçek zamanlı ACRM senkronizasyonuna geçmeye odaklanır.</span></p>
+                    <div class="evidence">MoM-6: "Eliminate CSV dependency - Target Excel-to-Excel upload workflow" | MoM-9: "Healthier goal: direct service integrations instead of CSV"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: AI Support -->
+        <section class="card section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="en">AI Support Potential</span><span class="tr">AI Destek Potansiyeli</span></h2>
+                    <p><span class="en">Where can AI help?</span><span class="tr">AI nerede yardımcı olabilir?</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this, 'chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this, 'text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="view-pane active" data-view="chart">
+                    <div style="position: relative; height: 320px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 17%, #fef3c7 17%, #fef3c7 33%, #dcfce7 33%, #dcfce7 100%); border-radius: 12px; padding: 16px;">
+                        <div style="position: absolute; left: 0; right: 0; top: 33%; height: 3px; background: #0891b2; z-index: 10;"></div>
+                        <div style="position: absolute; right: 16px; top: 31%; font-size: 10px; color: #0891b2; font-weight: 600;">TRUST LINE</div>
+                        
+                        <div style="position: absolute; left: 16px; top: 4%; color: #dc2626; font-size: 11px;">
+                            <strong>🚫 Level 6 - FORBIDDEN</strong><br>
+                            <span class="en">Auto-upload prices to COMIS without approval</span><span class="tr">Onaysız COMIS'e otomatik fiyat yükleme</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 21%; color: #b45309; font-size: 11px;">
+                            <strong>⚠️ Level 5 - APPROVAL REQUIRED</strong><br>
+                            <span class="en">Suggest coefficient changes based on market data</span><span class="tr">Pazar verisine göre katsayı değişikliği öner</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 40%; color: #15803d; font-size: 11px;">
+                            <strong>💡 Level 4 - SUGGESTION</strong><br>
+                            <span class="en">Recommend optimal weight breaks for new routes</span><span class="tr">Yeni rotalar için optimal ağırlık dilimleri öner</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 55%; color: #15803d; font-size: 11px;">
+                            <strong>⚙️ Level 3 - PREPARATION</strong><br>
+                            <span class="en">Pre-fill Excel templates with historical data</span><span class="tr">Excel şablonlarını geçmiş veriyle önceden doldur</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 70%; color: #15803d; font-size: 11px;">
+                            <strong>📝 Level 2 - SUMMARIZATION</strong><br>
+                            <span class="en">Summarize upload validation errors</span><span class="tr">Yükleme doğrulama hatalarını özetle</span>
+                        </div>
+                        <div style="position: absolute; left: 16px; top: 85%; color: #15803d; font-size: 11px;">
+                            <strong>📊 Level 1 - INFORMATION</strong><br>
+                            <span class="en">Show price comparison across all channels</span><span class="tr">Tüm kanallarda fiyat karşılaştırmasını göster</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-suitable">
+                        <div class="ai-box suitable">
+                            <h5>✅ <span class="en">AI SUITABLE</span><span class="tr">AI UYGUN</span></h5>
+                            <ul>
+                                <li><span class="en">Detect duplicate rate lines before upload</span><span class="tr">Yüklemeden önce mükerrer satırları tespit et</span></li>
+                                <li><span class="en">Validate date overlap issues</span><span class="tr">Tarih çakışması sorunlarını doğrula</span></li>
+                                <li><span class="en">Currency impact analysis</span><span class="tr">Döviz etkisi analizi</span></li>
+                                <li><span class="en">Coefficient consistency checks</span><span class="tr">Katsayı tutarlılık kontrolleri</span></li>
+                            </ul>
+                        </div>
+                        <div class="ai-box not-suitable">
+                            <h5>❌ <span class="en">AI NOT SUITABLE</span><span class="tr">AI UYGUN DEĞİL</span></h5>
+                            <ul>
+                                <li><span class="en">Final price approval decisions</span><span class="tr">Son fiyat onay kararları</span></li>
+                                <li><span class="en">Contract negotiation with customers</span><span class="tr">Müşterilerle sözleşme müzakeresi</span></li>
+                                <li><span class="en">MCR/Hurdle rate definitions (RM domain)</span><span class="tr">MCR/Hurdle tanımları (RM alanı)</span></li>
+                                <li><span class="en">Overriding business pricing rules</span><span class="tr">İş fiyatlandırma kurallarını geçersiz kılma</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-pane" data-view="text">
+                    <p><span class="en">AI can significantly help with validation tasks: detecting duplicate rate lines before upload (P2), validating date overlaps (P4), and analyzing currency impact. Pre-filling templates with historical data can reduce manual work. However, AI should not make final pricing decisions or override business rules. All price changes must maintain human approval, especially for contract and promo prices affecting live bookings.</span>
+                    <span class="tr">AI doğrulama görevlerinde önemli ölçüde yardımcı olabilir: yüklemeden önce mükerrer satırları tespit etme (P2), tarih çakışmalarını doğrulama (P4) ve döviz etkisini analiz etme.</span></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><strong>Sources:</strong> Key User Tariff Workshop MoMs (12 sessions) | Solution Team Workshop MoMs (3 sessions)</p>
+        <p><strong>Generated:</strong> 13 May 2026</p>
+        <p style="margin-top: 8px; color: #d97706;">⚠️ <span class="en">This persona is based on MoM analysis. User validation recommended.</span><span class="tr">Bu persona MoM analizine dayanmaktadır. Kullanıcı doğrulaması önerilir.</span></p>
+    </footer>
+    </div>
+
+    <script>
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+        
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang || btn.textContent === lang.toUpperCase());
+            });
+        }
+        
+        function toggleView(btn, view) {
+            const card = btn.closest('.card');
+            card.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            card.querySelectorAll('.view-pane').forEach(p => {
+                p.classList.toggle('active', p.dataset.view === view);
+            });
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelector('.mega-menu').classList.remove('open');
+                document.querySelector('.mega-overlay').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

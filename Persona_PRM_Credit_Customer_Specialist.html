@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Customer Specialist | PRM Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #f5f5f7; color: #1f2937; line-height: 1.6; }
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+        .side-nav { position: fixed; left: 0; top: 0; bottom: 0; width: 72px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 1000; }
+        .side-nav-logo { width: 44px; height: 44px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; color: white; margin-bottom: 24px; cursor: pointer; }
+        .nav-items { display: flex; flex-direction: column; gap: 6px; flex: 1; width: 100%; padding: 0 10px; }
+        .nav-item { width: 52px; height: 52px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #64748b; font-size: 9px; font-weight: 500; transition: all 0.3s; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+        .nav-item.active { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; }
+        .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
+        .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+        .main-content { margin-left: 72px; }
+        .hero { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 50%, #d8b4fe 100%); padding: 48px 40px; }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(124,58,237,0.15); color: #6d28d9; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; z-index: 2; position: relative; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #7c3aed; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #6d28d9; }
+        .hero-subtitle { font-size: 16px; color: #581c87; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #7c3aed; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #7c3aed; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; }
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 100px; }
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        .summary-box { background: rgba(124,58,237,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #7c3aed; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        .jtbd-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 16px; }
+        .jtbd-table th, .jtbd-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .jtbd-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        @media (max-width: 768px) { .side-nav { width: 60px; } .main-content { margin-left: 60px; } .segment-card, .two-col { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="lang-tr">
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()">PRM</div>
+        <div class="nav-items">
+            <a href="Persona_PRM_Master_Data_Specialist.html" class="nav-item"><span class="nav-num">1</span><span class="nav-label">Master Data</span></a>
+            <a href="Persona_PRM_GSA_Account_Manager.html" class="nav-item"><span class="nav-num">2</span><span class="nav-label">GSA Mgr</span></a>
+            <a href="Persona_PRM_Credit_Customer_Specialist.html" class="nav-item active"><span class="nav-num">3</span><span class="nav-label">Credit</span></a>
+            <a href="Persona_PRM_Agent_Compliance_Officer.html" class="nav-item"><span class="nav-num">4</span><span class="nav-label">Compliance</span></a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">PRM · CREDIT CUSTOMER · PERSONA #3</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1><span class="tr">Credit Customer <span>Specialist</span></span><span class="en">Credit Customer <span>Specialist</span></span></h1>
+            <p class="hero-subtitle">
+                <span class="tr">İç hat kredili müşteri onboarding, teminat yönetimi, bakiye takibi ve fatura oluşturma süreçlerini yöneten gelir muhasebe uzmanı. COMIS Screen 110/112 ve SAP entegrasyonu üzerinden çalışır. "Kredili" olarak adlandırılan ama aslında ön ödemeli (peşin depozito) modelde işleyen müşteri segmenti.</span>
+                <span class="en">Revenue accounting specialist managing domestic credit customer onboarding, guarantee management, balance tracking and invoice generation. Works via COMIS Screen 110/112 and SAP integration. Customer segment called "credit" but actually operating on prepaid (advance deposit) model.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="tr">"Aslında 'kredili müşteri' diyoruz ama operasyonumuz ön ödeme bazlı. Müşteri önce IBAN'ımıza para yatırır, sonra sevkiyat yapabilir. Bakiye bitince sistem otomatik bloke eder."</span>
+                <span class="en">"We say 'credit customer' but our operation is prepaid-based. Customer first deposits to our IBAN, then can ship. When balance runs out, system automatically blocks."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item"><span class="dot" style="background:#dc2626;"></span><span><strong><span class="tr">Kullanıcı:</span><span class="en">User:</span></strong> Kargo Yurtiçi Satış Muhasebe Şefliği</span></div>
+                <div class="hero-meta-item"><span class="dot" style="background:#f59e0b;"></span><span><strong><span class="tr">Kritiklik:</span><span class="en">Criticality:</span></strong> <span style="color:#f59e0b;">★★★★☆</span> <span class="tr">Yüksek</span><span class="en">High</span></span></div>
+                <div class="hero-meta-item"><span class="dot" style="background:#3b82f6;"></span><span><strong><span class="tr">Ana Sistemler:</span><span class="en">Main Systems:</span></strong> COMIS (110, 112), SAP</span></div>
+                <div class="hero-meta-item"><span class="dot" style="background:#22c55e;"></span><span><strong><span class="tr">Kaynak:</span><span class="en">Source:</span></strong> 3 MoM</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <section class="card section-1" id="section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title"><h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s1-chart" class="view-pane active">
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label"><span class="tr">Departman</span><span class="en">Department</span></div><div class="pf-value">Kargo Yurtiçi Satış Muhasebe</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div><div class="pf-value">İç Hat Kredili Müşteri</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Model</span><span class="en">Model</span></div><div class="pf-value"><span class="tr">Ön Ödemeli (Prepaid)</span><span class="en">Prepaid (Advance)</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Müşteri Kodu</span><span class="en">Customer Code</span></div><div class="pf-value">TR-IST-TR-XXX formatı</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Ana Sistemler</span><span class="en">Main Systems</span></div><div class="pf-value">COMIS 110/112, SAP</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Gerekli Belgeler</span><span class="en">Required Docs</span></div><div class="pf-value"><span class="tr">Vergi levhası, teminat mektubu</span><span class="en">Tax plate, guarantee letter</span></div></div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-col demo"><h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Lokasyon:</span><span class="en">Location:</span></strong> IST Merkez</div>
+                            <div class="segment-item"><strong><span class="tr">Takım:</span><span class="en">Team:</span></strong> 4 kişi</div>
+                        </div>
+                        <div class="segment-col behav"><h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Faturalama:</span><span class="en">Invoicing:</span></strong> <span class="tr">Günlük/haftalık</span><span class="en">Daily/weekly</span></div>
+                            <div class="segment-item"><strong><span class="tr">Bildirim:</span><span class="en">Notification:</span></strong> <span class="tr">Günlük bakiye</span><span class="en">Daily balance</span></div>
+                        </div>
+                        <div class="segment-col psycho"><h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Öncelik:</span><span class="en">Priority:</span></strong> <span class="tr">Nakit akışı</span><span class="en">Cash flow</span></div>
+                            <div class="segment-item"><strong><span class="tr">Risk:</span><span class="en">Risk:</span></strong> <span class="tr">Teminat yetersizliği</span><span class="en">Guarantee insufficiency</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s1-text" class="view-pane">
+                    <div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">İç hat kredili müşteri süreçlerini yöneten 4 kişilik ekip. "Kredili" adına rağmen ön ödemeli modelde çalışır. Müşteri IBAN'a para yatırır, bakiye üzerinden sevkiyat yapar.</span>
+                        <span class="en">4-person team managing domestic credit customer processes. Despite "credit" name, works on prepaid model. Customer deposits to IBAN, ships against balance.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card section-2" id="section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title"><h2><span class="tr">Hedef, Motivasyon & Korku</span><span class="en">Goals, Motivation & Fears</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s2-chart" class="view-pane active">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="tr">🎯 PRİMER: Teminat ve bakiye yönetiminde sıfır açık</span><span class="en">🎯 PRIMARY: Zero gap in guarantee and balance management</span></div>
+                        <div class="goal-level secondary"><span class="tr">🥈 SEKONDER: Doğru ve zamanında faturalama</span><span class="en">🥈 SECONDARY: Accurate and timely invoicing</span></div>
+                        <div class="goal-level tertiary"><span class="tr">🥉 TERSİYER: Sorunsuz müşteri onboarding</span><span class="en">🥉 TERTIARY: Smooth customer onboarding</span></div>
+                    </div>
+                    <div class="two-col">
+                        <div class="list-box motivators"><h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                            <div class="list-item">✓ <span class="tr">Bakiye sıfırlandığında otomatik bloke</span><span class="en">Automatic block when balance zeroed</span></div>
+                            <div class="list-item">✓ <span class="tr">SAP-COMIS otomatik entegrasyonu</span><span class="en">SAP-COMIS automatic integration</span></div>
+                        </div>
+                        <div class="list-box demotivators"><h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                            <div class="list-item">✗ <span class="tr">Her istasyon için ayrı müşteri kaydı</span><span class="en">Separate customer record for each station</span></div>
+                            <div class="list-item">✗ <span class="tr">Manuel günlük bakiye bildirimi</span><span class="en">Manual daily balance notification</span></div>
+                        </div>
+                    </div>
+                    <div class="list-box fears" style="margin-top:16px;"><h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Teminatsız müşteriye sevkiyat izni</span><span class="en"><strong>High:</strong> Shipment permission for customer without guarantee</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Orta:</strong> Bakiye güncelleme gecikmesi</span><span class="en"><strong>Medium:</strong> Balance update delay</span></div>
+                    </div>
+                </div>
+                <div id="s2-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4><p><span class="tr">Ana hedef teminat/bakiye yönetiminde sıfır açık. Otomatik bloke sistemi motivasyon kaynağı. En büyük korku teminatsız sevkiyat izni.</span><span class="en">Main goal is zero gap in guarantee/balance management. Automatic block system is motivation source. Greatest fear is shipment permission without guarantee.</span></p></div></div>
+            </div>
+        </section>
+
+        <section class="card section-3" id="section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title"><h2><span class="tr">İş Akışı & JTBD</span><span class="en">Workflow & JTBD</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s3-chart" class="view-pane active">
+                    <h4 style="font-size:12px; margin-bottom:12px;"><span class="tr">📋 Kredili Müşteri Onboarding Akışı</span><span class="en">📋 Credit Customer Onboarding Flow</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step manual"><span class="tr">Satış Onayı</span><span class="en">Sales Approval</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">Belge Toplama</span><span class="en">Document Collection</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">SAP Cari Açılış</span><span class="en">SAP Account Opening</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">COMIS Müşteri Tanımı</span><span class="en">COMIS Customer Def</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual"><span class="tr">Screen 110/112 Teminat</span><span class="en">Screen 110/112 Guarantee</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">Müşteriye Bilgi</span><span class="en">Customer Notification</span></div>
+                    </div>
+                    <table class="jtbd-table">
+                        <thead><tr><th><span class="tr">İş</span><span class="en">Job</span></th><th><span class="tr">Sıklık</span><span class="en">Frequency</span></th><th><span class="tr">Sistem</span><span class="en">System</span></th></tr></thead>
+                        <tbody>
+                            <tr><td><span class="tr">Yeni müşteri onboarding</span><span class="en">New customer onboarding</span></td><td><span class="tr">Talep bazlı</span><span class="en">On-demand</span></td><td>SAP, COMIS</td></tr>
+                            <tr><td><span class="tr">Teminat girişi</span><span class="en">Guarantee entry</span></td><td><span class="tr">Onboarding sırasında</span><span class="en">During onboarding</span></td><td>COMIS 110/112</td></tr>
+                            <tr><td><span class="tr">Bakiye güncelleme</span><span class="en">Balance update</span></td><td><span class="tr">Ödeme geldiğinde</span><span class="en">When payment received</span></td><td>COMIS 110</td></tr>
+                            <tr><td><span class="tr">Günlük bakiye bildirimi</span><span class="en">Daily balance notification</span></td><td><span class="tr">Günlük</span><span class="en">Daily</span></td><td>Email</td></tr>
+                            <tr><td><span class="tr">Fatura oluşturma</span><span class="en">Invoice generation</span></td><td><span class="tr">Sevkiyat sonrası</span><span class="en">Post-shipment</span></td><td>COMIS → SAP</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="s3-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4><p><span class="tr">Onboarding satış onayıyla başlar, SAP cari açılır, COMIS tanımı yapılır ve Screen 110/112'de teminat girilir. Faturalar COMIS'te oluşur ve 3 gün içinde SAP'a otomatik akar.</span><span class="en">Onboarding starts with sales approval, SAP account opened, COMIS definition created and guarantee entered in Screen 110/112. Invoices generated in COMIS and flow to SAP automatically within 3 days.</span></p></div></div>
+            </div>
+        </section>
+
+        <section class="card section-5" id="section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title"><h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s5-chart" class="view-pane active">
+                    <div class="pain-list">
+                        <div class="pain-item high"><span class="pain-code">P1</span><div class="pain-text"><h5><span class="tr">Her İstasyon İçin Ayrı Kayıt</span><span class="en">Separate Record Per Station</span></h5><p><span class="tr">Aynı müşteri için IST, IZM, ADB ayrı ayrı tanımlanmak zorunda. Controlling Location yapısı nedeniyle.</span><span class="en">Same customer must be defined separately for IST, IZM, ADB. Due to Controlling Location structure.</span></p></div></div>
+                        <div class="pain-item medium"><span class="pain-code">P2</span><div class="pain-text"><h5><span class="tr">Manuel Bakiye Bildirimi</span><span class="en">Manual Balance Notification</span></h5><p><span class="tr">Günlük bakiye bildirimi otomatik değil, her müşteriye manuel email gönderiliyor.</span><span class="en">Daily balance notification not automatic, manual email sent to each customer.</span></p></div></div>
+                        <div class="pain-item medium"><span class="pain-code">P3</span><div class="pain-text"><h5><span class="tr">Yabancı Şirket Kredili Müşteri Olamaz</span><span class="en">Foreign Company Cannot Be Credit Customer</span></h5><p><span class="tr">Türkiye vergi numarası zorunlu. Yabancı şirketler sadece IATA acente üzerinden çalışabilir.</span><span class="en">Turkish tax number mandatory. Foreign companies can only work through IATA agent.</span></p></div></div>
+                    </div>
+                </div>
+                <div id="s5-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4><p><span class="tr">En kritik sorun her istasyon için ayrı kayıt zorunluluğu. Manuel bakiye bildirimi zaman kaybettiriyor. Yabancı şirket kısıtlaması iş kuralı.</span><span class="en">Most critical issue is mandatory separate records per station. Manual balance notification wastes time. Foreign company restriction is business rule.</span></p></div></div>
+            </div>
+        </section>
+
+        <section class="card section-8" id="section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title"><h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s8-chart" class="view-pane active">
+                    <div class="timeline">
+                        <div class="timeline-item mvp"><span class="timeline-badge mvp">MVP</span><h5><span class="tr">P1 → Multi-Station Tek Kayıt</span><span class="en">P1 → Multi-Station Single Record</span></h5><p><span class="tr">Tek müşteri kaydına birden fazla istasyon bağlama</span><span class="en">Linking multiple stations to single customer record</span></p></div>
+                        <div class="timeline-item short"><span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span><h5><span class="tr">P2 → Otomatik Bakiye Bildirimi</span><span class="en">P2 → Automatic Balance Notification</span></h5><p><span class="tr">Günlük otomatik email ile bakiye durumu</span><span class="en">Balance status via daily automatic email</span></p></div>
+                        <div class="timeline-item long"><span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span><h5><span class="tr">Müşteri Self-Service Portal</span><span class="en">Customer Self-Service Portal</span></h5><p><span class="tr">Bakiye görüntüleme, ödeme ve fatura indirme</span><span class="en">Balance viewing, payment and invoice download</span></p></div>
+                    </div>
+                </div>
+                <div id="s8-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4><p><span class="tr">MVP'de multi-station tek kayıt. Kısa vadede otomatik bakiye bildirimi. Uzun vadede müşteri self-service portal.</span><span class="en">Multi-station single record in MVP. Automatic balance notification in short term. Customer self-service portal in long term.</span></p></div></div>
+            </div>
+        </section>
+
+        <section class="card section-9" id="section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title"><h2><span class="tr">AI Destek Potansiyeli</span><span class="en">AI Support Potential</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s9-chart" class="view-pane active">
+                    <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                    <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                        <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                        <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                    </p>
+                    
+                    <!-- Slider Container -->
+                    <div style="display:flex; gap:24px; margin-bottom:32px;">
+                        <!-- Left: Scale Labels -->
+                        <div style="display:flex; flex-direction:column; justify-content:space-between; width:110px; padding:8px 0;">
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 YASAK</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI yapmamalı</span><span class="en">AI must not do</span></div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ ONAY GEREKLİ</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">İnsan onayı şart</span><span class="en">Human approval required</span></div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ GÜVENLİ</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI serbest</span><span class="en">AI autonomous</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Middle: Slider Track -->
+                        <div style="flex:1; position:relative;">
+                            <!-- Gradient Track -->
+                            <div style="height:260px; border-radius:12px; background: linear-gradient(to bottom, #fef2f2 0%, #fef3c7 40%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                                
+                                <!-- TRUST LINE - Güven Sınırı (Seviye 3) -->
+                                <div style="position:absolute; left:0; right:0; top:50%; height:3px; background:#f59e0b; z-index:10;"></div>
+                                <div style="position:absolute; right:8px; top:48%; background:#f59e0b; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                    <span class="tr">⚠️ ONAY SINIRI</span>
+                                    <span class="en">⚠️ APPROVAL LINE</span>
+                                </div>
+                                
+                                <!-- Level Markers -->
+                                <div style="position:absolute; left:12px; top:8%; font-size:10px; color:#b91c1c; font-weight:600;">
+                                    <span class="tr">5 - 🚫 Kredili müşteri onayı kararı</span>
+                                    <span class="en">5 - 🚫 Credit customer approval decision</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:25%; font-size:10px; color:#b91c1c; font-weight:600;">
+                                    <span class="tr">4 - 🚫 Teminat miktarı belirleme</span>
+                                    <span class="en">4 - 🚫 Guarantee amount determination</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:58%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">3 - ✅ Teminat yeterliliği analizi</span>
+                                    <span class="en">3 - ✅ Guarantee sufficiency analysis</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:75%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">2 - ✅ Ödeme pattern analizi</span>
+                                    <span class="en">2 - ✅ Payment pattern analysis</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:90%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">1 - ✅ Bakiye düşüklüğü tahmini ve erken uyarı</span>
+                                    <span class="en">1 - ✅ Balance shortage prediction and early warning</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="two-col" style="margin-top:20px;">
+                        <div class="list-box" style="border-left:3px solid #16a34a;">
+                            <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">📊 Bakiye düşüklüğü tahmini ve erken uyarı</span><span class="en">📊 Balance shortage prediction and early warning</span></div>
+                            <div class="list-item"><span class="tr">💰 Teminat yeterliliği analizi</span><span class="en">💰 Guarantee sufficiency analysis</span></div>
+                            <div class="list-item"><span class="tr">📈 Ödeme pattern analizi</span><span class="en">📈 Payment pattern analysis</span></div>
+                        </div>
+                        <div class="list-box" style="border-left:3px solid #dc2626;">
+                            <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">🚫 Kredili müşteri onayı kararı</span><span class="en">🚫 Credit customer approval decision</span></div>
+                            <div class="list-item"><span class="tr">🚫 Teminat miktarı belirleme</span><span class="en">🚫 Guarantee amount determination</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s9-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Özet</span><span class="en">Summary</span></h4><p><span class="tr">Credit Customer Specialist için AI, bakiye tahmini, teminat analizi ve ödeme pattern analizi için uygundur (Seviye 1-3). Kredi onayı ve teminat miktarı belirleme (Seviye 4-5) finansal risk içerdiği için insan onayı gerektirir.</span><span class="en">For Credit Customer Specialist, AI is suitable for balance prediction, guarantee analysis and payment pattern analysis (Level 1-3). Credit approval and guarantee amount determination (Level 4-5) require human approval due to financial risk.</span></p></div></div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><span class="tr">PRM - Partner Management | Credit Customer Specialist Persona | Kaynak: 3 MoM</span><span class="en">PRM - Partner Management | Credit Customer Specialist Persona | Source: 3 MoM</span></p>
+    </footer>
+    </div>
+
+    <script>
+        function switchLang(lang) { document.body.className = 'lang-' + lang; document.querySelectorAll('.lang-btn').forEach(btn => { btn.classList.remove('active'); if(btn.textContent === lang.toUpperCase()) btn.classList.add('active'); }); }
+        function toggleView(btn, section, view) { const parent = btn.closest('.toggle-wrap'); parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.getElementById(section + '-chart').classList.remove('active'); document.getElementById(section + '-text').classList.remove('active'); document.getElementById(section + '-' + view).classList.add('active'); }
+        function toggleMegaMenu() { }
+    </script>
+</body>
+</html>

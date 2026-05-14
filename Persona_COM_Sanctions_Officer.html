@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanctions & Screening Officer | Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 11px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
+        .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+        .nav-item[data-theme="purple"].active { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .nav-item[data-theme="blue"].active { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .nav-item[data-theme="red"].active { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .nav-item[data-theme="teal"].active { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .nav-item[data-theme="orange"].active { background: linear-gradient(135deg, #ea580c, #f97316); }
+
+        .nav-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 12px 10px; }
+        .module-links { display: flex; flex-direction: column; gap: 4px; padding: 0 10px 16px; }
+        .module-link { width: 52px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: #94a3b8; font-size: 10px; font-weight: 700; background: rgba(255,255,255,0.05); transition: all 0.3s; }
+        .module-link:hover { background: rgba(255,255,255,0.15); color: white; }
+
+        
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.trm { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #f59e0b; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+
+        .hero {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 50%, #fca5a5 100%);
+            padding: 48px 40px;
+            position: relative;
+            border-bottom: 4px solid #dc2626;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(220,38,38,0.15); color: #dc2626; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #dc2626; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; color: #1f2937; }
+        .hero h1 span { color: #dc2626; }
+        .hero-subtitle { font-size: 16px; color: #6b7280; max-width: 600px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #dc2626; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; background: rgba(255,255,255,0.5); padding: 16px; border-radius: 0 8px 8px 0; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title { flex: 1; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #dc2626; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .section-1 { border-left: 4px solid #dc2626; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(220,38,38,0.05); padding: 12px; border-radius: 8px; border: 1px solid rgba(220,38,38,0.1); }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo { background: #fef2f2; border: 1px solid #fecaca; }
+        .segment-col.demo h4 { color: #dc2626; border-color: #dc2626; }
+        .segment-col.behav { background: #fffbeb; border: 1px solid #fde68a; }
+        .segment-col.behav h4 { color: #b45309; border-color: #b45309; }
+        .segment-col.psycho { background: #f0fdf4; border: 1px solid #86efac; }
+        .segment-col.psycho h4 { color: #16a34a; border-color: #16a34a; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 8px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 90px; font-weight: 500; }
+        
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px; background: #fef2f2; border-radius: 12px; margin-bottom: 12px; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; border: 2px solid #fcd34d; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; border: 2px solid #93c5fd; }
+        .flow-step.decision { background: #fce7f3; color: #be185d; border: 2px solid #f9a8d4; }
+        .flow-step.critical { background: #dc2626; color: white; border: 2px solid #b91c1c; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.08); border-left: 4px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.08); border-left: 4px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.08); border-left: 4px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #dc2626, #ef4444); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%); }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #dbeafe; color: #1e40af; border: 2px solid #93c5fd; }
+        .stakeholder-node.partner { background: #dcfce7; color: #166534; border: 2px solid #86efac; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; font-weight: 700; padding: 14px 24px; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #92400e; border: 2px solid #fcd34d; }
+        .stakeholder-arrow { font-size: 20px; color: #9ca3af; }
+        
+        .timeline { display: flex; flex-direction: column; gap: 12px; }
+        .timeline-item { padding: 16px; border-radius: 12px; border-left: 4px solid; }
+        .timeline-item.mvp { background: #dcfce7; border-color: #16a34a; }
+        .timeline-item.short { background: #e0e7ff; border-color: #4f46e5; }
+        .timeline-item.long { background: #f1f5f9; border-color: #64748b; }
+        .timeline-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .timeline-badge.mvp { background: #16a34a; color: white; }
+        .timeline-badge.short { background: #4f46e5; color: white; }
+        .timeline-badge.long { background: #64748b; color: white; }
+        .timeline-item h5 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 12px; color: #6b7280; }
+        
+        .summary-box { background: #f9fafb; padding: 16px; border-radius: 10px; font-size: 13px; line-height: 1.7; margin-bottom: 12px; border: 1px solid #e5e7eb; }
+        .summary-box h4 { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 8px; }
+        
+        .evidence { margin-top: 16px; padding: 16px; background: #fef2f2; border-left: 4px solid #dc2626; border-radius: 0 8px 8px 0; font-size: 12px; color: #991b1b; }
+        .evidence strong { display: block; margin-bottom: 8px; color: #7f1d1d; }
+        
+        /* CRUD Matrix Styles */
+        .crud-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .crud-table th, .crud-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .crud-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .crud-badge { display: inline-block; width: 24px; height: 24px; border-radius: 4px; text-align: center; line-height: 24px; font-size: 11px; font-weight: 700; }
+        .crud-badge.yes { background: #d1fae5; color: #047857; }
+        .crud-badge.no { background: #f3f4f6; color: #9ca3af; }
+        
+        .intent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .intent-item { background: rgba(0,0,0,0.02); padding: 14px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.05); }
+        .intent-item h5 { font-size: 12px; font-weight: 700; color: #dc2626; margin-bottom: 6px; }
+        .intent-item p { font-size: 11px; color: #6b7280; line-height: 1.5; }
+        .intent-badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 9px; font-weight: 700; margin-top: 8px; text-transform: uppercase; }
+        .intent-badge.high { background: #fef2f2; color: #dc2626; }
+        .intent-badge.medium { background: #fefce8; color: #b45309; }
+        .intent-badge.low { background: #f0fdf4; color: #16a34a; }
+        
+        .warning-box { background: #fffbeb; border: 2px solid #fcd34d; padding: 16px; border-radius: 10px; margin: 16px 0; }
+        .warning-box h4 { color: #b45309; font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+        .warning-box p { font-size: 12px; color: #92400e; }
+        
+        .shift-badge { display: inline-block; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; background: #dc2626; color: white; margin: 8px 0; }
+        
+        .footer { margin-top: 32px; padding: 24px; text-align: center; background: linear-gradient(135deg, #1e293b, #334155); color: rgba(255,255,255,0.8); border-radius: 16px; font-size: 13px; }
+        .footer p { margin-bottom: 8px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.trm { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #f59e0b; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 60px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()" title="Tüm Modüller">COM</div>
+        <div class="nav-items">
+            <a href="Persona_COM_Embargo_Specialist.html" class="nav-item" data-theme="purple">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Embargo</span>
+            </a>
+            <a href="Persona_COM_Restriction_Specialist.html" class="nav-item" data-theme="blue">
+                <span class="nav-num">2</span>
+                <span class="nav-label">Restriction</span>
+            </a>
+            <a href="Persona_COM_Sanctions_Officer.html" class="nav-item active" data-theme="red">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Sanctions</span>
+            </a>
+            <a href="Persona_COM_Service_Standards.html" class="nav-item" data-theme="teal">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Servis Std</span>
+            </a>
+            <a href="Persona_COM_Hub_Operations.html" class="nav-item" data-theme="orange">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Hub Ops</span>
+            </a>
+        </div>
+        <div class="nav-divider"></div>
+        <div class="module-links">
+            <a href="Persona_FLM_Network_Planner.html" class="module-link" title="FLM Module">FLM</a>
+            <a href="Persona_ASM_Stock_Management_Specialist.html" class="module-link" title="ASM Module">ASM</a>
+            <a href="BKR_Persona_Hub.html" class="module-link" title="BKR Module">BKR</a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header"><span class="mega-menu-title">📦 Tüm Modüller</span><button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button></div>
+        
+        <!-- PCM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span>Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span>RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span>Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span>Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span>Station User</a>
+            </div>
+        </div>
+        
+        <!-- FLM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span>Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span>Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span>COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span>Revenue Capacity Analyst</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span>Solution Specialist</a>
+            </div>
+        </div>
+        
+        <!-- BKR -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div>
+            <div class="persona-list">
+                <a href="Persona_BKR_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span>IST General Reservation</a>
+                <a href="Persona_BKR_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span>IST Special Cargo</a>
+                <a href="Persona_BKR_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span>Domestic Reservation</a>
+                <a href="Persona_BKR_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span>GSA International Station</a>
+                <a href="Persona_BKR_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span>Capacity Planning</a>
+                <a href="Persona_BKR_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span>Operations Cargo Acceptance</a>
+                <a href="Persona_BKR_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span>Solution Technical Team</a>
+            </div>
+        </div>
+        
+        <!-- CAM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span>Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span>Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span>Sales User</a>
+            </div>
+        </div>
+        
+        <!-- COM -->
+        <div class="module-section">
+            <div class="module-header active"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span>Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span>Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link current"><span class="persona-num">3</span>Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span>Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span>Service Standards</a>
+            </div>
+        </div>
+        
+        <!-- ASM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Controller.html" class="persona-link"><span class="persona-num">1</span>Stock Controller</a>
+                <a href="Persona_ASM_Station_Agent.html" class="persona-link"><span class="persona-num">2</span>Station Agent</a>
+            </div>
+        </div>
+        
+        <!-- TRM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div>
+            <div class="persona-list">
+                <a href="Persona_TRM_Trucking_Coordinator.html" class="persona-link"><span class="persona-num">1</span>Trucking Coordinator</a>
+            </div>
+
+        <!-- SCM -->
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span>Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+    <div class="main-content">
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-header">
+            <span class="badge">COM · SANCTIONS SCREENING · PERSONA #3</span>
+            <div class="lang-toggle">
+                <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                <button class="lang-btn" onclick="switchLang('en')">EN</button>
+            </div>
+        </div>
+        <h1>
+            <span class="tr">Sanctions & Screening <span>Officer</span></span>
+            <span class="en">Sanctions & Screening <span>Officer</span></span>
+        </h1>
+        <p class="hero-subtitle">
+            <span class="tr">Accuity (LexisNexis) yaptırım listelerine karşı booking tarama, OFAC/EU/UN yaptırımları kontrolü, 7/24 vardiya sisteminde çalışan compliance uzmanı.</span>
+            <span class="en">Compliance specialist screening bookings against Accuity (LexisNexis) sanction lists, checking OFAC/EU/UN sanctions, working in 24/7 shift system.</span>
+        </p>
+        <div class="hero-quote">
+            <span class="tr">"Sometimes shipper is put as just a dot. There is no information about shipper/consignee. Even though it is told to the user, they do it by saying 'I will enter later'." — MoM 2025-12-10</span>
+            <span class="en">"Sometimes shipper is put as just a dot. There is no information about shipper/consignee. Even though it is told to the user, they do it by saying 'I will enter later'." — MoM 2025-12-10</span>
+        </div>
+        <div class="hero-meta">
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#dc2626;"></span>
+                <span><strong>User:</strong> <span class="tr">Uyum ve Yaptırım Birimi</span><span class="en">Compliance & Sanctions Unit</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#f59e0b;"></span>
+                <span><strong>Criticality:</strong> <span style="color:#dc2626;">★★★★★</span> <span class="tr">Kritik</span><span class="en">Critical</span></span>
+            </div>
+            <div class="hero-meta-item">
+                <span class="dot" style="background:#3b82f6;"></span>
+                <span><strong>Shift:</strong> <span class="shift-badge"><span class="tr">7/24 VARDİYA</span><span class="en">24/7 SHIFT</span></span></span>
+            </div>
+            <div class="hero-meta-item source-card">
+                <span class="dot" style="background:#10b981;"></span>
+                <span><strong>Source:</strong> 2 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                <div class="source-tooltip">
+                    <div style="font-weight:700; margin-bottom:10px; color:#fca5a5;">📄 Source MoM Documents</div>
+                    <div style="display:flex; flex-direction:column; gap:4px;">
+                        <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-10</span><span style="color:#86efac;">Key User</span></div>
+                        <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-2025-12-30</span><span style="color:#93c5fd;">Solution Team</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="board">
+
+    <!-- SECTION 1: PERSONA PROFILE -->
+    <section class="card section-1">
+        <div class="card-header">
+            <div class="card-icon">1</div>
+            <div class="card-title">
+                <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                <p><span class="tr">Kim, ne yapar, temel özellikler</span><span class="en">Who, what they do, key attributes</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s1-chart" class="view-pane active">
+                <div class="profile-grid">
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Rol</span><span class="en">Role</span></div>
+                        <div class="pf-value"><span class="tr">Yaptırım Tarama Memuru</span><span class="en">Sanctions Screening Officer</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div>
+                        <div class="pf-value"><span class="tr">Uyum & Yaptırımlar</span><span class="en">Compliance & Sanctions</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kullanıcı Tipi</span><span class="en">User Type</span></div>
+                        <div class="pf-value"><span class="tr">İç kullanıcı / Operasyonel + Karar Verici</span><span class="en">Internal / Operational + Decision Maker</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kullanım Sıklığı</span><span class="en">Usage Frequency</span></div>
+                        <div class="pf-value"><span class="tr">7/24 sürekli - her booking</span><span class="en">24/7 continuous - every booking</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Bilinen Kişiler</span><span class="en">Known Members</span></div>
+                        <div class="pf-value">Gizem Ercan, Nurseli Kaçar</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Ana Sistem</span><span class="en">Main System</span></div>
+                        <div class="pf-value">Accuity (LexisNexis) - 3rd Party</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Bağlı Olduğu</span><span class="en">Reports To</span></div>
+                        <div class="pf-value"><span class="tr">Compliance Müdürü</span><span class="en">Compliance Director</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Karar Yetkisi</span><span class="en">Decision Authority</span></div>
+                        <div class="pf-value"><span class="tr">OPEN→APPROVED/REJECTED</span><span class="en">OPEN→APPROVED/REJECTED</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Çalışma Ortamı</span><span class="en">Work Environment</span></div>
+                        <div class="pf-value"><span class="tr">IST, vardiyalı masa başı</span><span class="en">IST, shift-based office</span></div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Entegrasyon</span><span class="en">Integration</span></div>
+                        <div class="pf-value">COMIS (CAP103) ↔ Accuity</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Tarama Listeleri</span><span class="en">Screening Lists</span></div>
+                        <div class="pf-value">OFAC, EU, UN, UK HMT, MASAK</div>
+                    </div>
+                    <div class="pf">
+                        <div class="pf-label"><span class="tr">Kritiklik</span><span class="en">Criticality</span></div>
+                        <div class="pf-value"><span class="tr">Çok Yüksek (Yasal risk)</span><span class="en">Very High (Legal risk)</span></div>
+                    </div>
+                </div>
+                
+                <div class="segment-card">
+                    <div class="segment-col demo">
+                        <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Deneyim:</span><span class="en">Experience:</span></strong> <span class="tr">Compliance uzmanlığı (yüksek)</span><span class="en">Compliance expertise (high)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Eğitim:</span><span class="en">Training:</span></strong> <span class="tr">OFAC/EU yaptırımları sertifikalı</span><span class="en">OFAC/EU sanctions certified</span></div>
+                        <div class="segment-item"><strong><span class="tr">Dil:</span><span class="en">Language:</span></strong> <span class="tr">TR + EN (uluslararası listeler)</span><span class="en">TR + EN (international lists)</span></div>
+                        <div class="segment-item"><strong><span class="tr">Konum:</span><span class="en">Location:</span></strong> <span class="tr">IST Merkez</span><span class="en">IST Central</span></div>
+                        <div class="segment-item"><strong><span class="tr">Vardiya:</span><span class="en">Shift:</span></strong> <span class="tr">7/24 dönüşümlü</span><span class="en">24/7 rotating</span></div>
+                    </div>
+                    <div class="segment-col behav">
+                        <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Tarama:</span><span class="en">Screening:</span></strong> <span class="tr">Her booking otomatik</span><span class="en">Every booking automatic</span></div>
+                        <div class="segment-item"><strong><span class="tr">Karar:</span><span class="en">Decision:</span></strong> <span class="tr">OPEN→Approve/Reject</span><span class="en">OPEN→Approve/Reject</span></div>
+                        <div class="segment-item"><strong><span class="tr">Öncelik:</span><span class="en">Priority:</span></strong> <span class="tr">Uçuş zamanına göre</span><span class="en">Based on flight time</span></div>
+                        <div class="segment-item"><strong><span class="tr">Doğrulama:</span><span class="en">Validation:</span></strong> <span class="tr">Shipper/Consignee + Commodity</span><span class="en">Shipper/Consignee + Commodity</span></div>
+                        <div class="segment-item"><strong><span class="tr">Dikkat:</span><span class="en">Attention:</span></strong> <span class="tr">Yüksek konsantrasyon</span><span class="en">High concentration</span></div>
+                    </div>
+                    <div class="segment-col psycho">
+                        <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                        <div class="segment-item"><strong><span class="tr">Motivasyon:</span><span class="en">Motivation:</span></strong> <span class="tr">Yasal uyum koruma</span><span class="en">Legal compliance protection</span></div>
+                        <div class="segment-item"><strong><span class="tr">Stres:</span><span class="en">Stress:</span></strong> <span class="tr">Eksik bilgi ile karar</span><span class="en">Decision with missing info</span></div>
+                        <div class="segment-item"><strong><span class="tr">Değer:</span><span class="en">Value:</span></strong> <span class="tr">Doğruluk > Hız</span><span class="en">Accuracy > Speed</span></div>
+                        <div class="segment-item"><strong><span class="tr">Korku:</span><span class="en">Fear:</span></strong> <span class="tr">Yasal yaptırım, ceza</span><span class="en">Legal sanction, penalty</span></div>
+                        <div class="segment-item"><strong><span class="tr">Hedef:</span><span class="en">Goal:</span></strong> <span class="tr">Sıfır compliance ihlali</span><span class="en">Zero compliance violations</span></div>
+                    </div>
+                </div>
+                
+                <!-- Kapsam Dışı -->
+                <div style="margin-top:16px; padding:12px; background:#fef3c7; border-radius:8px; border-left:3px solid #f59e0b;">
+                    <h4 style="font-size:11px; color:#b45309; margin-bottom:6px;"><span class="tr">⚠️ BU PERSONA KAPSAMI DIŞINDA</span><span class="en">⚠️ OUT OF SCOPE FOR THIS PERSONA</span></h4>
+                    <p style="font-size:11px; color:#92400e; margin:0;">
+                        <span class="tr">Embargo/Restriction tanımları (Mustafa/Kemal), Hub operasyonları (saha ekibi), Service Standards sorguları (Burcu), Booking işlemleri (Rez ekibi)</span>
+                        <span class="en">Embargo/Restriction definitions (Mustafa/Kemal), Hub operations (field team), Service Standards queries (Burcu), Booking operations (Res team)</span>
+                    </p>
+                </div>
+            </div>
+            <div id="s1-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Sanctions & Screening Officer, booking yapıldığında shipper/consignee bilgilerini OFAC, EU, UN yaptırım listelerine karşı tarar. Accuity (LexisNexis) sistemi ile entegre çalışır. 7/24 vardiya sisteminde çalışır. OPEN→APPROVED veya REJECTED statüsüne karar verir. Kritik: Eksik bilgi sorunu - shipper/consignee "." olarak girilir.</span>
+                    <span class="en">Sanctions & Screening Officer screens shipper/consignee information against OFAC, EU, UN sanction lists when booking is made. Works integrated with Accuity (LexisNexis) system. Works in 24/7 shift system. Decides OPEN→APPROVED or REJECTED status. Critical issue: Missing information - shipper/consignee entered as "."</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-10:</strong> "Gizem Ercan Nurseli Kaçar work in the Accuity team. They make screening, if sanctioned party is involved that booking will be rejected."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: GOALS & MOTIVATION -->
+    <section class="card section-2">
+        <div class="card-header">
+            <div class="card-icon">2</div>
+            <div class="card-title">
+                <h2><span class="tr">Hedefler & Motivasyon</span><span class="en">Goals & Motivation</span></h2>
+                <p><span class="tr">Ne istiyor, neden, korkuları</span><span class="en">What they want, why, fears</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s2-chart" class="view-pane active">
+                <div class="goal-pyramid">
+                    <div class="goal-level primary"><span class="tr">🎯 %100 Yaptırım Uyumu - Sıfır Yasal Risk</span><span class="en">🎯 100% Sanctions Compliance - Zero Legal Risk</span></div>
+                    <div class="goal-level secondary"><span class="tr">📋 Hızlı Tarama | Doğru Karar | Öncelik Yönetimi</span><span class="en">📋 Fast Screening | Correct Decision | Priority Management</span></div>
+                    <div class="goal-level tertiary"><span class="tr">📧 Tam Bilgi | Uçuş Bilgisi | Otomatik Uyarı</span><span class="en">📧 Complete Info | Flight Info | Auto Alert</span></div>
+                </div>
+                
+                <!-- Sorumluluklar -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:16px 0;">
+                    <div style="background:#eff6ff; padding:12px; border-radius:8px; border-left:3px solid #3b82f6;">
+                        <h4 style="font-size:11px; color:#1e40af; margin-bottom:8px;"><span class="tr">📋 ANA SORUMLULUKLAR</span><span class="en">📋 PRIMARY RESPONSIBILITIES</span></h4>
+                        <ul style="font-size:11px; color:#1e3a8a; margin:0; padding-left:16px;">
+                            <li><span class="tr">OPEN queue'daki booking'leri yaptırım taraması</span><span class="en">Sanctions screening of OPEN queue bookings</span></li>
+                            <li><span class="tr">OFAC/EU/UN/HMT/MASAK listelerine karşı tarama</span><span class="en">Screening against OFAC/EU/UN/HMT/MASAK lists</span></li>
+                            <li><span class="tr">Shipper/Consignee/Commodity değerlendirmesi</span><span class="en">Shipper/Consignee/Commodity evaluation</span></li>
+                            <li><span class="tr">APPROVED/REJECTED statü kararı</span><span class="en">APPROVED/REJECTED status decision</span></li>
+                            <li><span class="tr">Şüpheli match durumlarında escalation</span><span class="en">Escalation for suspicious match cases</span></li>
+                            <li><span class="tr">7/24 kesintisiz tarama operasyonu</span><span class="en">24/7 uninterrupted screening operation</span></li>
+                        </ul>
+                    </div>
+                    <div style="background:#ecfdf5; padding:12px; border-radius:8px; border-left:3px solid #10b981;">
+                        <h4 style="font-size:11px; color:#047857; margin-bottom:8px;"><span class="tr">📊 KPI'LAR & BAŞARI KRİTERLERİ</span><span class="en">📊 KPIs & SUCCESS CRITERIA</span></h4>
+                        <ul style="font-size:11px; color:#065f46; margin:0; padding-left:16px;">
+                            <li><span class="tr">%0 yaptırım ihlali oranı</span><span class="en">0% sanctions violation rate</span></li>
+                            <li><span class="tr">Queue temizleme süresi < uçuş zamanı</span><span class="en">Queue clearing time < flight time</span></li>
+                            <li><span class="tr">False positive oranı minimize</span><span class="en">Minimize false positive rate</span></li>
+                            <li><span class="tr">Tüm booking'lerin taranması (%100)</span><span class="en">All bookings screened (100%)</span></li>
+                            <li><span class="tr">Denetim bulgusu sayısı: 0</span><span class="en">Audit finding count: 0</span></li>
+                            <li><span class="tr">Eksik bilgi bildirimi süresi < 1 saat</span><span class="en">Missing info notification time < 1 hour</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="three-col">
+                    <div class="list-box motivators">
+                        <h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                        <div class="list-item"><span class="tr">Şirketi yasal risklerden koruma</span><span class="en">Protecting company from legal risks</span></div>
+                        <div class="list-item"><span class="tr">Tam uyum sağlama</span><span class="en">Achieving full compliance</span></div>
+                        <div class="list-item"><span class="tr">Doğru tarama ve karar</span><span class="en">Accurate screening and decision</span></div>
+                        <div class="list-item"><span class="tr">Riskli gönderiyi önleme</span><span class="en">Preventing risky shipments</span></div>
+                    </div>
+                    <div class="list-box demotivators">
+                        <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                        <div class="list-item"><span class="tr">Shipper "." olarak girilmiş</span><span class="en">Shipper entered as "."</span></div>
+                        <div class="list-item"><span class="tr">Uçuş bilgisi yok → öncelik yok</span><span class="en">No flight info → no priority</span></div>
+                        <div class="list-item"><span class="tr">Bilgi sonradan giriliyor</span><span class="en">Info entered later</span></div>
+                        <div class="list-item"><span class="tr">7/24 vardiya stresi</span><span class="en">24/7 shift stress</span></div>
+                    </div>
+                    <div class="list-box fears">
+                        <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item"><span class="tr">Yaptırımlı taraf kaçırma</span><span class="en">Missing sanctioned party</span></div>
+                        <div class="list-item"><span class="tr">OFAC cezası</span><span class="en">OFAC penalty</span></div>
+                        <div class="list-item"><span class="tr">EU yaptırım ihlali</span><span class="en">EU sanction violation</span></div>
+                        <div class="list-item"><span class="tr">Şirket itibarı riski</span><span class="en">Company reputation risk</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s2-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Ana hedef %100 yaptırım uyumu ve sıfır yasal risk. En büyük demotivatör: Shipper/consignee bilgisinin "." olarak girilmesi. "I will enter later" diyorlar ama tarama yapılamıyor. Uçuş bilgisi olmaması da önceliklendirmeyi zorlaştırıyor.</span>
+                    <span class="en">Main goal is 100% sanctions compliance and zero legal risk. Biggest demotivator: Shipper/consignee information entered as ".". They say "I will enter later" but screening cannot be done. No flight information also makes prioritization difficult.</span></p>
+                </div>
+                <div class="evidence">
+                    <strong>MoM-2025-12-10:</strong> "They want to see who is on the plane, it would be nice to know the flight number on the Accuity side, so we can follow the risky cargo better."
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: WORKFLOW -->
+    <section class="card section-3">
+        <div class="card-header">
+            <div class="card-icon">3</div>
+            <div class="card-title">
+                <h2><span class="tr">İş Akışı & Niyetler</span><span class="en">Workflow & Intents</span></h2>
+                <p><span class="tr">Yaptırım tarama süreci</span><span class="en">Sanctions screening process</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s3-chart" class="view-pane active">
+                <!-- Tetikleyiciler ve Çıktılar -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                    <div style="background:#fef3c7; padding:12px; border-radius:8px; border-left:3px solid #f59e0b;">
+                        <h4 style="font-size:11px; color:#b45309; margin-bottom:8px;"><span class="tr">🔔 TETİKLEYİCİLER (TRIGGERS)</span><span class="en">🔔 TRIGGERS</span></h4>
+                        <ul style="font-size:11px; color:#92400e; margin:0; padding-left:16px;">
+                            <li><span class="tr">Yeni booking Accuity'e düştüğünde</span><span class="en">When new booking enters Accuity</span></li>
+                            <li><span class="tr">OPEN queue'da bekleyen kayıt olduğunda</span><span class="en">When record waiting in OPEN queue</span></li>
+                            <li><span class="tr">Shipper/Consignee bilgisi güncellendiğinde</span><span class="en">When Shipper/Consignee info updated</span></li>
+                            <li><span class="tr">Yaptırım listesi güncellendiğinde (re-scan)</span><span class="en">When sanction list updated (re-scan)</span></li>
+                            <li><span class="tr">Match uyarısı geldiğinde</span><span class="en">When match alert received</span></li>
+                        </ul>
+                    </div>
+                    <div style="background:#dbeafe; padding:12px; border-radius:8px; border-left:3px solid #3b82f6;">
+                        <h4 style="font-size:11px; color:#1e40af; margin-bottom:8px;"><span class="tr">📤 ÇIKTILAR (OUTPUTS)</span><span class="en">📤 OUTPUTS</span></h4>
+                        <ul style="font-size:11px; color:#1e3a8a; margin:0; padding-left:16px;">
+                            <li><span class="tr">APPROVED/REJECTED statü kararı</span><span class="en">APPROVED/REJECTED status decision</span></li>
+                            <li><span class="tr">Tarama log kaydı (audit trail)</span><span class="en">Screening log record (audit trail)</span></li>
+                            <li><span class="tr">Eksik bilgi bildirimi (Rez ekibine)</span><span class="en">Missing info notification (to Res team)</span></li>
+                            <li><span class="tr">Escalation e-postası (Compliance Müdürü)</span><span class="en">Escalation email (Compliance Director)</span></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#0284c7; margin-bottom:12px;"><span class="tr">YAPTIRIM TARAMA AKIŞI</span><span class="en">SANCTIONS SCREENING FLOW</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="tr">Booking Oluşur</span><span class="en">Booking Created</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">Accuity'e Gönder</span><span class="en">Send to Accuity</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">OPEN Status</span><span class="en">OPEN Status</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="tr">Liste Tarama</span><span class="en">List Screening</span></div>
+                </div>
+                <div class="flow-h">
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="tr">Match Var mı?</span><span class="en">Match Found?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background:#dcfce7; color:#166534; border:2px solid #86efac;"><span class="tr">✅ APPROVED</span><span class="en">✅ APPROVED</span></div>
+                    <span style="margin:0 8px;"><span class="tr">veya</span><span class="en">or</span></span>
+                    <div class="flow-step critical"><span class="tr">❌ REJECTED</span><span class="en">❌ REJECTED</span></div>
+                </div>
+                
+                <h4 style="font-size:11px; color:#dc2626; margin:24px 0 12px;"><span class="tr">EKSİK BİLGİ SORUNU AKIŞI</span><span class="en">MISSING INFO PROBLEM FLOW</span></h4>
+                <div class="flow-h" style="background:#fff7ed;">
+                    <div class="flow-step manual"><span class="tr">Booking: Shipper = "."</span><span class="en">Booking: Shipper = "."</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step" style="background:#fecaca; color:#991b1b; border:2px solid #f87171;"><span class="tr">❓ Tarama Yapılamaz!</span><span class="en">❓ Cannot Screen!</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">Bekleme</span><span class="en">Wait</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="tr">"Sonra gireceğim"</span><span class="en">"I'll enter later"</span></div>
+                </div>
+                
+                <div class="warning-box">
+                    <h4>⚠️ <span class="tr">EKSİK BİLGİ SORUNU</span><span class="en">MISSING INFORMATION PROBLEM</span></h4>
+                    <p><span class="tr">"Sometimes shipper is put as just a dot. There is no information about shipper/consignee. Even though it is told to the user, they do it by saying 'I will enter later'." Sonuç: Tarama yapılamıyor, yaptırım riski artıyor.</span>
+                    <span class="en">"Sometimes shipper is put as just a dot. There is no information about shipper/consignee. Even though it is told to the user, they do it by saying 'I will enter later'." Result: Cannot screen, sanction risk increases.</span></p>
+                </div>
+            </div>
+            <div id="s3-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Booking oluştuğunda Accuity'e gönderilir → OPEN status → Yaptırım listelerinde tarama → Match varsa REJECTED, yoksa APPROVED. Kritik sorun: Shipper/consignee "." olarak girilirse tarama yapılamaz. Ayrıca uçuş bilgisi Accuity'de yok, önceliklendirme zorlaşıyor.</span>
+                    <span class="en">When booking is created, sent to Accuity → OPEN status → Screening against sanction lists → REJECTED if match, APPROVED if no match. Critical issue: If shipper/consignee entered as ".", cannot screen. Also no flight info in Accuity, prioritization becomes difficult.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 4: DATA & INTEGRATION -->
+    <section class="card section-4">
+        <div class="card-header">
+            <div class="card-icon">4</div>
+            <div class="card-title">
+                <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                <p><span class="tr">CRUD, yetkiler, sistem bağımlılıkları</span><span class="en">CRUD, permissions, system dependencies</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s4-chart" class="view-pane active">
+                <h4 style="font-size:11px; color:#dc2626; margin-bottom:8px;"><span class="tr">CRUD MATRİSİ - VERİ ERİŞİM YETKİLERİ</span><span class="en">CRUD MATRIX - DATA ACCESS PERMISSIONS</span></h4>
+                <p style="font-size:11px; color:#6b7280; margin-bottom:12px; padding:8px; background:rgba(0,0,0,0.02); border-radius:6px;">
+                    <span class="tr"><strong>C</strong>=Create | <strong>R</strong>=Read | <strong>U</strong>=Update | <strong>D</strong>=Delete — <span style="color:#047857;">✓ Yetkili</span> | <span style="color:#9ca3af;">- Yetkisiz</span></span>
+                    <span class="en"><strong>C</strong>=Create | <strong>R</strong>=Read | <strong>U</strong>=Update | <strong>D</strong>=Delete — <span style="color:#047857;">✓ Authorized</span> | <span style="color:#9ca3af;">- Not Authorized</span></span>
+                </p>
+                <table class="crud-table">
+                    <thead>
+                        <tr>
+                            <th><span class="tr">Veri/Sistem</span><span class="en">Data/System</span></th>
+                            <th>C</th>
+                            <th>R</th>
+                            <th>U</th>
+                            <th>D</th>
+                            <th><span class="tr">Not</span><span class="en">Note</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Accuity (LexisNexis)</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">3rd Party SaaS - Status güncelleme yetkisi</span><span class="en">3rd Party SaaS - Status update authority</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>CAP103 (Booking Export)</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Otomatik export, sadece izleme</span><span class="en">Auto export, only monitoring</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Queue System (OPEN)</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">OPEN → CLEAR/REJECT işlemi</span><span class="en">OPEN → CLEAR/REJECT operation</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sanction Lists (OFAC/EU/UN)</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Accuity üzerinden sorgu</span><span class="en">Query via Accuity</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Booking Details</strong></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge yes">✓</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="crud-badge no">-</span></td>
+                            <td><span class="tr">Shipper/Consignee/Commodity bilgisi</span><span class="en">Shipper/Consignee/Commodity info</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h4 style="font-size:11px; color:#dc2626; margin:24px 0 12px;"><span class="tr">SİSTEM ENTEGRASYONLARI</span><span class="en">SYSTEM INTEGRATIONS</span></h4>
+                <div class="intent-grid">
+                    <div class="intent-item">
+                        <h5>COMIS → Accuity (CAP103)</h5>
+                        <p><span class="tr">Booking bilgisi otomatik gönderilir. Shipper/Consignee/Commodity tarama için.</span><span class="en">Booking info auto-sent. For Shipper/Consignee/Commodity screening.</span></p>
+                        <span class="intent-badge high">AUTO</span>
+                    </div>
+                    <div class="intent-item">
+                        <h5>Accuity Queue</h5>
+                        <p><span class="tr">Eşleşme olduğunda OPEN queue'ya düşer. Manuel değerlendirme gerekli.</span><span class="en">Falls to OPEN queue on match. Manual evaluation required.</span></p>
+                        <span class="intent-badge medium">MANUAL</span>
+                    </div>
+                    <div class="intent-item">
+                        <h5>OFAC/EU/UN Lists</h5>
+                        <p><span class="tr">Yaptırım listeleri Accuity tarafından otomatik güncellenir.</span><span class="en">Sanction lists auto-updated by Accuity.</span></p>
+                        <span class="intent-badge high">AUTO</span>
+                    </div>
+                    <div class="intent-item">
+                        <h5>MASAK List</h5>
+                        <p><span class="tr">Türkiye'deki yerel yaptırım listesi. Accuity'e entegre.</span><span class="en">Local sanction list in Turkey. Integrated to Accuity.</span></p>
+                        <span class="intent-badge high">AUTO</span>
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <h4><span class="tr">⚠️ EKSİK: Uçuş Bilgisi</span><span class="en">⚠️ MISSING: Flight Information</span></h4>
+                    <p><span class="tr">Accuity'de uçuş numarası görünmüyor. Kalkışa yakın uçuşlar önceliklendirilemiyor.</span>
+                    <span class="en">Flight number not visible in Accuity. Flights close to departure cannot be prioritized.</span></p>
+                </div>
+            </div>
+            <div id="s4-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Sanctions Officer sadece Read ve Update yetkisine sahip. Accuity 3rd party SaaS olarak kullanılıyor. CAP103 booking bilgisini otomatik export eder. Queue'daki OPEN kayıtlar için CLEAR/REJECT kararı verilir. Kritik eksik: Accuity'de uçuş numarası yok, önceliklendirme yapılamıyor.</span>
+                    <span class="en">Sanctions Officer has only Read and Update authority. Accuity used as 3rd party SaaS. CAP103 auto-exports booking info. CLEAR/REJECT decision for OPEN records in queue. Critical missing: No flight number in Accuity, cannot prioritize.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 5: PAIN POINTS -->
+    <section class="card section-5">
+        <div class="card-header">
+            <div class="card-icon">5</div>
+            <div class="card-title">
+                <h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2>
+                <p><span class="tr">Sorunlar, riskler</span><span class="en">Issues, risks</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s5-chart" class="view-pane active">
+                <div class="pain-list">
+                    <div class="pain-item high">
+                        <span class="pain-code">P1</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">🔴 Shipper/Consignee "." Olarak Girilmiş</span><span class="en">🔴 Shipper/Consignee Entered as "."</span></h5>
+                            <p><span class="tr">"Sometimes shipper is put as just a dot. Even though it is told to the user, they do it by saying 'I will enter later'." Tarama yapılamıyor!</span>
+                            <span class="en">"Sometimes shipper is put as just a dot. Even though it is told to the user, they do it by saying 'I will enter later'." Cannot screen!</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item high">
+                        <span class="pain-code">P2</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">🔴 Accuity'de Uçuş Bilgisi Yok</span><span class="en">🔴 No Flight Info in Accuity</span></h5>
+                            <p><span class="tr">"They want to see who is on the plane, it would be nice to know the flight number on the Accuity side." Önceliklendirme yapılamıyor.</span>
+                            <span class="en">"They want to see who is on the plane, it would be nice to know the flight number on the Accuity side." Cannot prioritize.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P3</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">Dual-Use Items Tespiti Zor</span><span class="en">Dual-Use Items Detection Difficult</span></h5>
+                            <p><span class="tr">Hem sivil hem askeri kullanıma sahip ürünlerin tespiti commodity description'a bağlı, eksik girilirse kaçırılabilir.</span>
+                            <span class="en">Detection of products with both civilian and military use depends on commodity description, can be missed if incomplete.</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P4</span>
+                        <div class="pain-text">
+                            <h5><span class="tr">7/24 Vardiya Stresi</span><span class="en">24/7 Shift Stress</span></h5>
+                            <p><span class="tr">Kesintisiz tarama gerektiren yüksek riskli ortamda sürekli vardiya çalışması.</span>
+                            <span class="en">Continuous shift work in high-risk environment requiring non-stop screening.</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="s5-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">En kritik sorun: Shipper/consignee bilgisinin eksik girilmesi ("." karakteri). Bu durumda yaptırım taraması yapılamıyor. İkinci kritik sorun: Accuity'de uçuş bilgisi yok, hangi kargoların öncelikli olduğu bilinmiyor.</span>
+                    <span class="en">Most critical issue: Shipper/consignee information entered incomplete ("." character). In this case, sanctions screening cannot be performed. Second critical issue: No flight info in Accuity, don't know which cargos are priority.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: EMPATHY -->
+    <section class="card section-6">
+        <div class="card-header">
+            <div class="card-icon">6</div>
+            <div class="card-title">
+                <h2><span class="tr">Zihinsel Model</span><span class="en">Mental Model</span></h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="empathy-grid">
+                <div class="empathy-quad says">
+                    <h4>💬 <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                    <div class="empathy-item"><span class="tr">"Shipper nokta olarak girilmiş, tarayamam"</span><span class="en">"Shipper entered as dot, I can't screen"</span></div>
+                    <div class="empathy-item"><span class="tr">"Uçuş numarası lazım, öncelik belirleyemiyorum"</span><span class="en">"Need flight number, can't determine priority"</span></div>
+                </div>
+                <div class="empathy-avatar">
+                    <div class="empathy-avatar-circle">🛡️</div>
+                    <div style="margin-top:10px; font-size:12px; font-weight:700; color:#dc2626;">Sanctions Officer</div>
+                </div>
+                <div class="empathy-quad thinks">
+                    <h4>💭 <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                    <div class="empathy-item"><span class="tr">"Bu eksik bilgi yüzünden yaptırımlı taraf kaçırılabilir"</span><span class="en">"Sanctioned party may be missed due to this missing info"</span></div>
+                </div>
+                <div class="empathy-quad does">
+                    <h4>⚡ <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                    <div class="empathy-item"><span class="tr">Eksik bilgi için bekler, uyarı gönderir</span><span class="en">Waits for missing info, sends warning</span></div>
+                </div>
+                <div class="empathy-quad feels">
+                    <h4>❤️ <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                    <div class="empathy-item"><span class="tr">Yasal risk endişesi, sorumluluk baskısı</span><span class="en">Legal risk anxiety, responsibility pressure</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: COLLABORATION & SUPPORT -->
+    <section class="card section-7">
+        <div class="card-header">
+            <div class="card-icon">7</div>
+            <div class="card-title">
+                <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                <p><span class="tr">Paydaşlar, koordinasyon</span><span class="en">Stakeholders, coordination</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s7-chart" class="view-pane active">
+                <div class="stakeholder-map">
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node provider"><span class="tr">🌍 OFAC / EU / UN / MASAK</span><span class="en">🌍 OFAC / EU / UN / MASAK</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">📋 Accuity (LexisNexis)</span><span class="en">📋 Accuity (LexisNexis)</span></div>
+                        <div class="stakeholder-node provider"><span class="tr">⚖️ Legal Department</span><span class="en">⚖️ Legal Department</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node persona"><span class="tr">🔒 YAPTIRIM TARAMA MEMURU</span><span class="en">🔒 SANCTIONS SCREENING OFFICER</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓ ↔️</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node partner"><span class="tr">🛡️ Compliance Müdürü</span><span class="en">🛡️ Compliance Director</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">📊 Embargo Uzmanı (Mustafa)</span><span class="en">📊 Embargo Specialist (Mustafa)</span></div>
+                        <div class="stakeholder-node partner"><span class="tr">📞 Rez. Ekibi (bilgi kaynağı)</span><span class="en">📞 Res. Team (info source)</span></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node consumer"><span class="tr">📦 Operations (kargo kabul)</span><span class="en">📦 Operations (cargo acceptance)</span></div>
+                        <div class="stakeholder-node consumer"><span class="tr">📊 Risk Management</span><span class="en">📊 Risk Management</span></div>
+                        <div class="stakeholder-node consumer"><span class="tr">📋 Audit Trail</span><span class="en">📋 Audit Trail</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s7-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">Sanctions Officer uluslararası yaptırım listelerinden (OFAC/EU/UN/MASAK), Accuity sisteminden ve Legal Department'tan bilgi alır. Compliance Müdürü'ne raporlar, Embargo Uzmanı ile koordine çalışır. Rez ekibinden eksik bilgi (shipper/consignee) talep eder. Çıktılar operasyonlara, risk management'a ve audit trail'e yansır.</span>
+                    <span class="en">Sanctions Officer receives info from international sanction lists (OFAC/EU/UN/MASAK), Accuity system and Legal Department. Reports to Compliance Director, coordinates with Embargo Specialist. Requests missing info (shipper/consignee) from Res team. Outputs reflect to operations, risk management and audit trail.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 8: OPPORTUNITIES -->
+    <section class="card section-8">
+        <div class="card-header">
+            <div class="card-icon">8</div>
+            <div class="card-title">
+                <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="timeline">
+                <div class="timeline-item mvp">
+                    <span class="timeline-badge mvp">MVP</span>
+                    <h5><span class="tr">Shipper/Consignee Validation at Booking</span><span class="en">Shipper/Consignee Validation at Booking</span></h5>
+                    <p><span class="tr">Booking sırasında shipper/consignee "." veya boş olamaz kuralı. Zorunlu alan kontrolü.</span><span class="en">Rule that shipper/consignee cannot be "." or empty during booking. Mandatory field control.</span></p>
+                </div>
+                <div class="timeline-item mvp">
+                    <span class="timeline-badge mvp">MVP</span>
+                    <h5><span class="tr">Flight Info to Accuity Integration</span><span class="en">Flight Info to Accuity Integration</span></h5>
+                    <p><span class="tr">Accuity'e uçuş numarası ve uçuş zamanı bilgisinin eklenmesi. Önceliklendirme için kritik.</span><span class="en">Adding flight number and flight time information to Accuity. Critical for prioritization.</span></p>
+                </div>
+                <div class="timeline-item short">
+                    <span class="timeline-badge short">SHORT TERM</span>
+                    <h5><span class="tr">Auto-Alert for Risky Destinations</span><span class="en">Auto-Alert for Risky Destinations</span></h5>
+                    <p><span class="tr">Yüksek riskli ülkelere (İran, Kuzey Kore, vb.) giden kargolar için otomatik uyarı.</span><span class="en">Automatic alert for cargo going to high-risk countries (Iran, North Korea, etc.).</span></p>
+                </div>
+            </div>
+            </div>
+            <div id="s8-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">3 ana fırsat tanımlandı: MVP seviyesinde Shipper/Consignee Validation ve Flight Info to Accuity. Kısa vadede Auto-Alert for Risky Destinations. Bu çözümler eksik bilgi ve önceliklendirme sorunlarını çözebilir.</span>
+                    <span class="en">3 main opportunities identified: At MVP level Shipper/Consignee Validation and Flight Info to Accuity. Short term Auto-Alert for Risky Destinations. These solutions can solve missing info and prioritization issues.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 9: AI SUPPORT -->
+    <section class="card section-9">
+        <div class="card-header">
+            <div class="card-icon">9</div>
+            <div class="card-title">
+                <h2><span class="tr">AI Destek</span><span class="en">AI Support</span></h2>
+                <p><span class="tr">AI potansiyeli</span><span class="en">AI potential</span></p>
+            </div>
+            <div class="toggle-wrap">
+                <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="s9-chart" class="view-pane active">
+                <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;"><span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span><span class="en">Maximum automation level AI can safely reach for this persona</span></p>
+                
+                <!-- Gradient Slider -->
+                <div style="display:flex; gap:24px; margin-bottom:32px;">
+                    <div style="display:flex; flex-direction:column; justify-content:space-between; width:100px; padding:8px 0;">
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 FORBIDDEN</span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI yapmamalı</span><span class="en">AI must not do</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ APPROVAL</span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">Onay gerekli</span><span class="en">Needs approval</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ SAFE</span>
+                            <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI devam edebilir</span><span class="en">AI can proceed</span></div>
+                        </div>
+                    </div>
+                    
+                    <div style="flex:1; position:relative;">
+                        <div style="height:240px; border-radius:12px; background: linear-gradient(to bottom, #fecaca 0%, #fecaca 33%, #fed7aa 33%, #fed7aa 50%, #dcfce7 50%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            <div style="position:absolute; left:12px; top:4%; font-size:10px; color:#dc2626; font-weight:600;">6 - 🚫 <span class="tr">APPROVED/REJECTED kararı</span><span class="en">APPROVED/REJECTED decision</span></div>
+                            <div style="position:absolute; left:12px; top:21%; font-size:10px; color:#dc2626; font-weight:600;">5 - 🚫 <span class="tr">Match doğrulama (true positive)</span><span class="en">Match verification (true positive)</span></div>
+                            
+                            <div style="position:absolute; left:0; right:0; top:50%; height:3px; background:#0891b2; z-index:10;"></div>
+                            <div style="position:absolute; right:8px; top:48%; background:#0891b2; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">⬆️ TRUST LINE</div>
+                            
+                            <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">4 - 💡 <span class="tr">Fuzzy match ön analizi</span><span class="en">Fuzzy match pre-analysis</span></div>
+                            <div style="position:absolute; left:12px; top:68%; font-size:10px; color:#15803d; font-weight:600;">3 - ⚙️ <span class="tr">Queue önceliklendirme</span><span class="en">Queue prioritization</span></div>
+                            <div style="position:absolute; left:12px; top:81%; font-size:10px; color:#15803d; font-weight:600;">2 - 📝 <span class="tr">False positive analizi</span><span class="en">False positive analysis</span></div>
+                            <div style="position:absolute; left:12px; top:94%; font-size:10px; color:#15803d; font-weight:600;">1 - 📊 <span class="tr">Tarama istatistikleri</span><span class="en">Screening statistics</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="two-col" style="margin-top:20px;">
+                    <div class="list-box" style="border-left:3px solid #16a34a;">
+                        <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">📋 Queue önceliklendirme (uçuş zamanına göre)</span><span class="en">📋 Queue prioritization (by flight time)</span></div>
+                        <div class="list-item"><span class="tr">🔍 Fuzzy name matching ön analizi</span><span class="en">🔍 Fuzzy name matching pre-analysis</span></div>
+                        <div class="list-item"><span class="tr">📊 Günlük/haftalık tarama istatistikleri</span><span class="en">📊 Daily/weekly screening statistics</span></div>
+                        <div class="list-item"><span class="tr">⏰ Eksik bilgi bildirimi otomasyonu</span><span class="en">⏰ Missing info notification automation</span></div>
+                        <div class="list-item"><span class="tr">📈 False positive analizi ve öneri</span><span class="en">📈 False positive analysis and suggestion</span></div>
+                    </div>
+                    <div class="list-box" style="border-left:3px solid #dc2626;">
+                        <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                        <div class="list-item"><span class="tr">🚫 APPROVED/REJECTED kararı verme</span><span class="en">🚫 Making APPROVED/REJECTED decision</span></div>
+                        <div class="list-item"><span class="tr">🚫 Match doğrulama (true positive tespiti)</span><span class="en">🚫 Match verification (true positive detection)</span></div>
+                        <div class="list-item"><span class="tr">🚫 Yaptırım listesi yorumlama</span><span class="en">🚫 Sanction list interpretation</span></div>
+                        <div class="list-item"><span class="tr">🚫 Escalation kararı</span><span class="en">🚫 Escalation decision</span></div>
+                    </div>
+                </div>
+            </div>
+            <div id="s9-text" class="view-pane">
+                <div class="summary-box">
+                    <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                    <p><span class="tr">AI yaptırım taramada bilgi sunma ve önceliklendirme seviyelerinde destek sağlayabilir: Queue sıralama, fuzzy match ön analizi, istatistik. Ancak APPROVED/REJECTED kararı, match doğrulama, liste yorumlama kesinlikle insan kontrolünde kalmalı - yasal risk çok yüksek, OFAC/EU cezaları milyonlarca dolar.</span>
+                    <span class="en">AI can support sanctions screening at information and prioritization levels: Queue ordering, fuzzy match pre-analysis, statistics. However, APPROVED/REJECTED decision, match verification, list interpretation must absolutely remain under human control - legal risk too high, OFAC/EU penalties millions of dollars.</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer class="footer">
+    <p><span class="tr">📅 Analiz: 12 Mayıs 2026 | 📄 2 Kaynak MoM | 🛡️ Sanctions & Screening Officer</span>
+    <span class="en">📅 Analysis: May 12, 2026 | 📄 2 Source MoMs | 🛡️ Sanctions & Screening Officer</span></p>
+    <p>COM - Compliance Management | THY Cargo | Sungur Product Team</p>
+</footer>
+    </div>
+
+    <script>
+    function switchLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+        });
+    }
+    function toggleView(btn, section, view) {
+        btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(section + '-chart').classList.remove('active');
+        document.getElementById(section + '-text').classList.remove('active');
+        document.getElementById(section + '-' + view).classList.add('active');
+    }
+
+    function toggleMegaMenu() {
+        document.querySelector('.mega-menu').classList.toggle('open');
+        document.querySelector('.mega-overlay').classList.toggle('open');
+    }
+    </script>
+</body>
+</html>

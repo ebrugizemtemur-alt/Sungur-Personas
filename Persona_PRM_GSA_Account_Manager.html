@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSA Account Manager | PRM Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #f5f5f7;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+        
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 72px;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 0;
+            z-index: 1000;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+        }
+        .side-nav-logo {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 11px;
+            color: white;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            width: 100%;
+            padding: 0 10px;
+            overflow-y: auto;
+        }
+        .nav-item {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #64748b;
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .nav-item:hover {
+            background: rgba(255,255,255,0.1);
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: white;
+            box-shadow: 0 4px 12px rgba(124,58,237,0.4);
+        }
+        .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
+        .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+
+        .mega-menu {
+            position: fixed;
+            left: 72px;
+            top: 0;
+            bottom: 0;
+            width: 320px;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            box-shadow: 4px 0 30px rgba(0,0,0,0.3);
+            z-index: 999;
+            transform: translateX(-400px);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close {
+            width: 32px; height: 32px;
+            background: rgba(255,255,255,0.1);
+            border: none; border-radius: 8px;
+            color: #94a3b8; font-size: 18px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 24px; }
+        .module-header {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 10px;
+            margin-bottom: 8px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .module-header:hover { background: rgba(255,255,255,0.05); }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 10px; color: white;
+        }
+        .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.prm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px; border-radius: 8px;
+            text-decoration: none; color: #94a3b8;
+            font-size: 12px; transition: all 0.2s;
+            border-left: 2px solid transparent;
+            margin-left: 16px;
+        }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #a855f7; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.3); z-index: 998;
+            opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+        
+        .hero {
+            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 50%, #d8b4fe 100%);
+            padding: 48px 40px;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(124,58,237,0.15); color: #6d28d9; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; z-index: 2; position: relative; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #7c3aed; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #6d28d9; }
+        .hero-subtitle { font-size: 16px; color: #581c87; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #7c3aed; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 0;
+            min-width: 280px;
+            background: #1f2937;
+            color: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 11px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+        .source-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 24px;
+            width: 12px;
+            height: 12px;
+            background: #1f2937;
+            transform: rotate(45deg);
+        }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+        
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #7c3aed; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 100px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #059669, #10b981); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; align-items: flex-start; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .jtbd-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 16px; }
+        .jtbd-table th, .jtbd-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .jtbd-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad h4 span.icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.says h4 span.icon { background: rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.thinks h4 span.icon { background: rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.does h4 span.icon { background: rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-quad.feels h4 span.icon { background: rgba(225,29,72,0.15); }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #d1fae5; color: #047857; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #e0e7ff; color: #4338ca; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        
+        .summary-box { background: rgba(124,58,237,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #7c3aed; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .hero { padding: 32px 20px; }
+            .hero h1 { font-size: 28px; }
+            .board { padding: 16px; }
+            .segment-card, .two-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-tr">
+    <nav class="side-nav">
+        <div class="side-nav-logo" title="Tüm Modüller" onclick="toggleMegaMenu()">PRM</div>
+        <div class="nav-items">
+            <a href="Persona_PRM_Master_Data_Specialist.html" class="nav-item" title="Master Data Specialist">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Master Data</span>
+            </a>
+            <a href="Persona_PRM_GSA_Account_Manager.html" class="nav-item active" title="GSA Account Manager">
+                <span class="nav-num">2</span>
+                <span class="nav-label">GSA Mgr</span>
+            </a>
+            <a href="Persona_PRM_Credit_Customer_Specialist.html" class="nav-item" title="Credit Customer Specialist">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Credit</span>
+            </a>
+            <a href="Persona_PRM_Agent_Compliance_Officer.html" class="nav-item" title="Agent Compliance Officer">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Compliance</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 Tüm Modüller</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon pcm">PCM</div>
+                <span class="module-name">Pricing Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon flm">FLM</div>
+                <span class="module-name">Flight Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon bkr">BKR</div>
+                <span class="module-name">Booking & Reservation</span>
+                <span class="module-count">7 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a>
+                <a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a>
+                <a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a>
+                <a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a>
+                <a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a>
+                <a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a>
+                <a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cam">CAM</div>
+                <span class="module-name">Capacity Management</span>
+                <span class="module-count">3 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon com">COM</div>
+                <span class="module-name">Compliance Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon asm">ASM</div>
+                <span class="module-name">AWB Stock Management</span>
+                <span class="module-count">2 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a>
+                <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon trm">TRM</div>
+                <span class="module-name">Truck Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a>
+            </div>
+        </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon scm">SCM</div>
+                <span class="module-name">Special Cargo Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a>
+            </div>
+        </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Supervisor</a>
+            </div>
+        </div>
+
+        <div class="module-section">
+            <div class="module-header active">
+                <div class="module-icon prm">PRM</div>
+                <span class="module-name">Partner Management</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PRM_Master_Data_Specialist.html" class="persona-link"><span class="persona-num">1</span> Master Data Specialist</a>
+                <a href="Persona_PRM_GSA_Account_Manager.html" class="persona-link current"><span class="persona-num">2</span> GSA Account Manager</a>
+                <a href="Persona_PRM_Credit_Customer_Specialist.html" class="persona-link"><span class="persona-num">3</span> Credit Customer Specialist</a>
+                <a href="Persona_PRM_Agent_Compliance_Officer.html" class="persona-link"><span class="persona-num">4</span> Agent Compliance Officer</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">PRM · GSA MANAGEMENT · PERSONA #2</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1>
+                <span class="tr">GSA Account <span>Manager</span></span>
+                <span class="en">GSA Account <span>Manager</span></span>
+            </h1>
+            <p class="hero-subtitle">
+                <span class="tr">60 aktif GSA ve çok sayıda ACS ile ilişkileri yöneten, komisyon hesaplama, scorecard değerlendirme, teminat takibi ve partner performansını izleyen satış kanalları uzmanı. TK Cargo gelirinin %25'ini oluşturan GSA network'ünün stratejik yöneticisi.</span>
+                <span class="en">Sales channels specialist managing relationships with 60 active GSAs and numerous ACS, calculating commissions, evaluating scorecards, tracking guarantees and monitoring partner performance. Strategic manager of GSA network constituting 25% of TK Cargo revenue.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="tr">"GSA'lar TK Cargo'nun fiyatını aynen müşteriye sunmak zorunda, kar marjı ekleyemezler. ACS'ler ise margin bazlı çalışır, kendi marjlarını ekleyebilirler. Ülke başına maksimum 1 GSA olabilir."</span>
+                <span class="en">"GSAs must offer TK Cargo's exact price to customers, they cannot add profit margins. ACS work on margin basis, they can add their own margins. Maximum 1 GSA per country."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#dc2626;"></span>
+                    <span><strong><span class="tr">Kullanıcı:</span><span class="en">User:</span></strong> Kargo Global Satış Kanalları Md.</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong><span class="tr">Kritiklik:</span><span class="en">Criticality:</span></strong> <span style="color:#f59e0b;">★★★★★</span> <span class="tr">Çok Yüksek</span><span class="en">Very High</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong><span class="tr">Ana Sistemler:</span><span class="en">Main Systems:</span></strong> CRM, DW, Doktor Kargo, SAP</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong><span class="tr">Kaynak:</span><span class="en">Source:</span></strong> 2 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#d8b4fe; font-size:12px;">📄 Source MoM Documents</div>
+                        <div style="display:flex; flex-direction:column; gap:4px;">
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>MoM-2025-12-17 (GSA/ACS)</span><span style="color:#86efac;">Key User</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>MoM-2025-12-30</span><span style="color:#93c5fd;">Solution Team</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1 -->
+        <section class="card section-1" id="section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2>
+                    <p><span class="tr">Demografik, Davranışsal, Psikografik</span><span class="en">Demographic, Behavioral, Psychographic</span></p>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s1-chart" class="view-pane active">
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label"><span class="tr">Departman</span><span class="en">Department</span></div><div class="pf-value">Kargo Global Satış Kanalları Md.</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Kapsam</span><span class="en">Scope</span></div><div class="pf-value">60 GSA + ACS Network</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Gelir Payı</span><span class="en">Revenue Share</span></div><div class="pf-value">GSA: %25, ACS: ~%2</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Temel Amaç</span><span class="en">Primary Purpose</span></div><div class="pf-value"><span class="tr">Partner performans yönetimi</span><span class="en">Partner performance management</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Ana Sistemler</span><span class="en">Main Systems</span></div><div class="pf-value">CRM, DW, Doktor Kargo</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">COMIS Durumu</span><span class="en">COMIS Status</span></div><div class="pf-value"><span class="tr">Test aşamasında (4 ekran)</span><span class="en">Testing phase (4 screens)</span></div></div>
+                    </div>
+                    
+                    <div class="segment-card">
+                        <div class="segment-col demo">
+                            <h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Lokasyon:</span><span class="en">Location:</span></strong> IST Merkez</div>
+                            <div class="segment-item"><strong><span class="tr">Uzmanlık:</span><span class="en">Expertise:</span></strong> <span class="tr">Partner ilişkileri</span><span class="en">Partner relations</span></div>
+                            <div class="segment-item"><strong><span class="tr">Koordinasyon:</span><span class="en">Coordination:</span></strong> <span class="tr">Global bölgeler</span><span class="en">Global regions</span></div>
+                        </div>
+                        <div class="segment-col behav">
+                            <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                            <div class="segment-item"><strong><span class="tr">İzleme:</span><span class="en">Monitoring:</span></strong> <span class="tr">Aylık/6 aylık</span><span class="en">Monthly/6-monthly</span></div>
+                            <div class="segment-item"><strong><span class="tr">Araç:</span><span class="en">Tool:</span></strong> Excel, CRM, DW</div>
+                            <div class="segment-item"><strong><span class="tr">Değerlendirme:</span><span class="en">Evaluation:</span></strong> Scorecard</div>
+                        </div>
+                        <div class="segment-col psycho">
+                            <h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Öncelik:</span><span class="en">Priority:</span></strong> <span class="tr">Gelir hedefleri</span><span class="en">Revenue targets</span></div>
+                            <div class="segment-item"><strong><span class="tr">Yaklaşım:</span><span class="en">Approach:</span></strong> <span class="tr">Stratejik</span><span class="en">Strategic</span></div>
+                            <div class="segment-item"><strong><span class="tr">Odak:</span><span class="en">Focus:</span></strong> <span class="tr">Partner başarısı</span><span class="en">Partner success</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s1-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">TK Cargo'nun global satış kanalları ağını yöneten uzman. 60 GSA ile %25'lik gelir payını ve ACS network'ünü koordine eder. Komisyon hesaplama, scorecard değerlendirme ve teminat yönetimi ana sorumlulukları.</span>
+                        <span class="en">Specialist managing TK Cargo's global sales channels network. Coordinates 60 GSAs with 25% revenue share and ACS network. Commission calculation, scorecard evaluation and guarantee management are main responsibilities.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2 -->
+        <section class="card section-2" id="section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="tr">Hedef, Motivasyon & Korku</span><span class="en">Goals, Motivation & Fears</span></h2>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s2-chart" class="view-pane active">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="tr">🎯 PRİMER: GSA/ACS performansını maksimize etmek</span><span class="en">🎯 PRIMARY: Maximize GSA/ACS performance</span></div>
+                        <div class="goal-level secondary"><span class="tr">🥈 SEKONDER: Doğru komisyon hesaplama ve ödeme</span><span class="en">🥈 SECONDARY: Accurate commission calculation and payment</span></div>
+                        <div class="goal-level tertiary"><span class="tr">🥉 TERSİYER: Teminat ve sözleşme yönetimi</span><span class="en">🥉 TERTIARY: Guarantee and contract management</span></div>
+                    </div>
+                    
+                    <div class="two-col">
+                        <div class="list-box motivators">
+                            <h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                            <div class="list-item">✓ <span class="tr">Hedef aşan GSA performansı</span><span class="en">GSA performance exceeding targets</span></div>
+                            <div class="list-item">✓ <span class="tr">80+ scorecard puanıyla incentive hak eden partnerler</span><span class="en">Partners earning incentives with 80+ scorecard</span></div>
+                            <div class="list-item">✓ <span class="tr">Pazar payı artışı</span><span class="en">Market share increase</span></div>
+                        </div>
+                        <div class="list-box demotivators">
+                            <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                            <div class="list-item">✗ <span class="tr">Komisyon hesaplama CCI-AWB tarih uyumsuzluğu</span><span class="en">Commission calculation CCI-AWB date mismatch</span></div>
+                            <div class="list-item">✗ <span class="tr">ACS station-based yetki sorunu (rakip erişimi)</span><span class="en">ACS station-based auth issue (competitor access)</span></div>
+                            <div class="list-item">✗ <span class="tr">Excel bazlı manuel süreçler</span><span class="en">Excel-based manual processes</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="list-box fears" style="margin-top:16px;">
+                        <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Yanlış komisyon ödemesi ve mali kayıp</span><span class="en"><strong>High:</strong> Wrong commission payment and financial loss</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> GSA teminat yetersizliğinin tespit edilememesi</span><span class="en"><strong>High:</strong> Failure to detect GSA guarantee insufficiency</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Orta:</strong> Partner performans düşüşünü geç fark etme</span><span class="en"><strong>Medium:</strong> Late detection of partner performance decline</span></div>
+                    </div>
+                </div>
+                <div id="s2-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Ana hedef GSA/ACS performansını maksimize etmek. Komisyon hesaplamada CCI-AWB tarih uyumsuzluğu en büyük teknik sorun. En büyük korku yanlış komisyon ödemesi.</span>
+                        <span class="en">Main goal is to maximize GSA/ACS performance. CCI-AWB date mismatch in commission calculation is biggest technical issue. Greatest fear is wrong commission payment.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3 -->
+        <section class="card section-3" id="section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="tr">İş Akışı & JTBD</span><span class="en">Workflow & JTBD</span></h2>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s3-chart" class="view-pane active">
+                    <table class="jtbd-table">
+                        <thead>
+                            <tr>
+                                <th><span class="tr">İş (Job)</span><span class="en">Job</span></th>
+                                <th><span class="tr">Sıklık</span><span class="en">Frequency</span></th>
+                                <th><span class="tr">Sistem</span><span class="en">System</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="tr">Komisyon Hesaplama</span><span class="en">Commission Calculation</span></td>
+                                <td><span class="tr">Aylık</span><span class="en">Monthly</span></td>
+                                <td>Excel, COMIS (test), SAP</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Scorecard Değerlendirme</span><span class="en">Scorecard Evaluation</span></td>
+                                <td><span class="tr">Çeyreklik</span><span class="en">Quarterly</span></td>
+                                <td>DW, Doktor Kargo</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Teminat Mektubu Takibi</span><span class="en">Guarantee Letter Tracking</span></td>
+                                <td><span class="tr">Aylık</span><span class="en">Monthly</span></td>
+                                <td>Excel, CRM (portal)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">GSA/ACS Sözleşme Yönetimi</span><span class="en">GSA/ACS Contract Management</span></td>
+                                <td><span class="tr">Yıllık</span><span class="en">Annual</span></td>
+                                <td>CRM Portal (geliştiriliyor)</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Performans İzleme</span><span class="en">Performance Monitoring</span></td>
+                                <td><span class="tr">Haftalık</span><span class="en">Weekly</span></td>
+                                <td>Doktor Kargo, DW</td>
+                            </tr>
+                            <tr>
+                                <td><span class="tr">Incentive Hesaplama (80+ puan)</span><span class="en">Incentive Calculation (80+ score)</span></td>
+                                <td><span class="tr">6 aylık</span><span class="en">6-monthly</span></td>
+                                <td>Excel, SAP</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="s3-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Aylık komisyon hesaplama, çeyreklik scorecard ve 6 aylık incentive döngüsü. Performans izleme Doktor Kargo üzerinden. CRM Agent Portal Ocak 2025 sonrası canlıya alınacak.</span>
+                        <span class="en">Monthly commission calculation, quarterly scorecard and 6-monthly incentive cycle. Performance monitoring via Doktor Kargo. CRM Agent Portal going live after January 2025.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4 -->
+        <section class="card section-4" id="section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="tr">Veri & Entegrasyon</span><span class="en">Data & Integration</span></h2>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s4-chart" class="view-pane active">
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label">CRM</div><div class="pf-value"><span class="tr">Müşteri ilişkileri, COMIS entegreli</span><span class="en">Customer relations, COMIS integrated</span></div></div>
+                        <div class="pf"><div class="pf-label">DW (Data Warehouse)</div><div class="pf-value"><span class="tr">Performans verileri kaynağı</span><span class="en">Performance data source</span></div></div>
+                        <div class="pf"><div class="pf-label">Doktor Kargo</div><div class="pf-value"><span class="tr">Tonaj, gelir, unit price raporları</span><span class="en">Tonnage, revenue, unit price reports</span></div></div>
+                        <div class="pf"><div class="pf-label">SAP</div><div class="pf-value"><span class="tr">Komisyon ödeme (SP entry)</span><span class="en">Commission payment (SP entry)</span></div></div>
+                        <div class="pf"><div class="pf-label">COMIS (Test)</div><div class="pf-value"><span class="tr">4 komisyon ekranı IBS ile geliştirildi</span><span class="en">4 commission screens developed with IBS</span></div></div>
+                    </div>
+                </div>
+                <div id="s4-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Çoklu sistem kullanımı zorunlu. DW temel veri kaynağı, Doktor Kargo raporlama, CRM ilişki yönetimi, SAP ödeme için. COMIS komisyon ekranları hala test aşamasında.</span>
+                        <span class="en">Multiple system usage mandatory. DW is primary data source, Doktor Kargo for reporting, CRM for relationship management, SAP for payment. COMIS commission screens still in testing.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5 -->
+        <section class="card section-5" id="section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s5-chart" class="view-pane active">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Komisyon CCI-AWB Tarih Uyumsuzluğu</span><span class="en">Commission CCI-AWB Date Mismatch</span></h5>
+                                <p><span class="tr">CCI tarihleri AWB tarihlerinden farklı olunca yanlış döneme komisyon hesaplanıyor. 5 yıldır IBS ile çözüm bekleniyor.</span>
+                                <span class="en">When CCI dates differ from AWB dates, commission is calculated for wrong period. Solution awaited from IBS for 5 years.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">ACS Station-Based Yetki Sorunu</span><span class="en">ACS Station-Based Authorization Issue</span></h5>
+                                <p><span class="tr">Aynı istasyonda birden fazla ACS olunca rakipler birbirinin bilgisine erişebiliyor. CRM'de de aynı sorun var.</span>
+                                <span class="en">When multiple ACS exist at same station, competitors can access each other's information. Same issue exists in CRM.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">ACS Performans Takibi Yapılamıyor</span><span class="en">ACS Performance Cannot Be Tracked</span></h5>
+                                <p><span class="tr">Hangi ACS hangi forwarder ile çalışıyor görülemiyor. AWB stok dağılımı manuel toplanıyor.</span>
+                                <span class="en">Cannot see which ACS works with which forwarder. AWB stock distribution collected manually.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Manuel Excel Süreçleri</span><span class="en">Manual Excel Processes</span></h5>
+                                <p><span class="tr">Teminat, sözleşme ve performans takibi büyük oranda Excel'de. Portal geliştirmesi devam ediyor.</span>
+                                <span class="en">Guarantee, contract and performance tracking largely in Excel. Portal development ongoing.</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s5-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">En kritik sorun 5 yıldır çözülemeyen komisyon hesaplama hatası. ACS yetki yapısı ve performans takibi eksikliği ikincil sorunlar.</span>
+                        <span class="en">Most critical issue is commission calculation error unresolved for 5 years. ACS authorization structure and performance tracking gaps are secondary issues.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6 -->
+        <section class="card section-6" id="section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="tr">Zihinsel Model & Davranış</span><span class="en">Mental Model & Behavior</span></h2>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s6-chart" class="view-pane active">
+                    <div class="empathy-grid">
+                        <div class="empathy-quad says">
+                            <h4><span class="icon">💬</span> <span class="tr">SÖYLER</span><span class="en">SAYS</span></h4>
+                            <div class="empathy-item"><span class="tr">"GSA komisyondan kar marjı ekleyemez, TK fiyatını aynen sunmalı"</span><span class="en">"GSA cannot add profit margin from commission, must offer TK price as is"</span></div>
+                            <div class="empathy-item"><span class="tr">"Ülke başına maksimum 1 GSA olabilir"</span><span class="en">"Maximum 1 GSA per country"</span></div>
+                        </div>
+                        <div class="empathy-quad thinks">
+                            <h4><span class="icon">💭</span> <span class="tr">DÜŞÜNÜR</span><span class="en">THINKS</span></h4>
+                            <div class="empathy-item"><span class="tr">"Bu komisyon hesaplama sorunu 5 yıldır neden çözülmedi?"</span><span class="en">"Why hasn't this commission calculation issue been solved for 5 years?"</span></div>
+                            <div class="empathy-item"><span class="tr">"ACS performansını göremiyorsak nasıl yöneteceğiz?"</span><span class="en">"How will we manage if we can't see ACS performance?"</span></div>
+                        </div>
+                        <div class="empathy-quad does">
+                            <h4><span class="icon">🎯</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
+                            <div class="empathy-item"><span class="tr">Excel'de komisyon hesaplar, SAP'a SP entry girer</span><span class="en">Calculates commission in Excel, enters SP entry to SAP</span></div>
+                            <div class="empathy-item"><span class="tr">Doktor Kargo'dan performans raporları çeker</span><span class="en">Pulls performance reports from Doktor Kargo</span></div>
+                        </div>
+                        <div class="empathy-quad feels">
+                            <h4><span class="icon">❤️</span> <span class="tr">HİSSEDER</span><span class="en">FEELS</span></h4>
+                            <div class="empathy-item"><span class="tr">Sistem entegrasyonu eksikliğinden hayal kırıklığı</span><span class="en">Frustrated by lack of system integration</span></div>
+                            <div class="empathy-item"><span class="tr">%25 gelir sorumluluğunun ağırlığı</span><span class="en">Weight of 25% revenue responsibility</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s6-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Stratejik düşünen, partner başarısını önemseyen profil. Sistem entegrasyonu eksikliği ve uzun süredir çözülmeyen teknik sorunlardan hayal kırıklığı yaşıyor.</span>
+                        <span class="en">Strategic thinker who values partner success. Frustrated by lack of system integration and long-standing unresolved technical issues.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7 -->
+        <section class="card section-7" id="section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="tr">İşbirliği & Destek</span><span class="en">Collaboration & Support</span></h2>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s7-chart" class="view-pane active">
+                    <div class="stakeholder-map">
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node provider"><span class="tr">Bölge Ofisleri</span><span class="en">Regional Offices</span></div>
+                            <div class="stakeholder-node provider"><span class="tr">GSA/ACS Partners</span><span class="en">GSA/ACS Partners</span></div>
+                        </div>
+                        <span class="stakeholder-arrow">↓</span>
+                        <div class="stakeholder-node persona"><span class="tr">GSA Account Manager</span><span class="en">GSA Account Manager</span></div>
+                        <span class="stakeholder-arrow">↓</span>
+                        <div class="stakeholder-row">
+                            <div class="stakeholder-node consumer"><span class="tr">Master Data Team</span><span class="en">Master Data Team</span></div>
+                            <div class="stakeholder-node consumer"><span class="tr">Finans/Muhasebe</span><span class="en">Finance/Accounting</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s7-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">Bölge ofisleri ve GSA/ACS partnerlerden veri ve talep alır. Master Data'ya tanımlama, Finans'a ödeme talepleri iletir.</span>
+                        <span class="en">Receives data and requests from regional offices and GSA/ACS partners. Forwards definition requests to Master Data, payment requests to Finance.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 8 -->
+        <section class="card section-8" id="section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s8-chart" class="view-pane active">
+                    <div class="timeline">
+                        <div class="timeline-item mvp">
+                            <span class="timeline-badge mvp">MVP</span>
+                            <h5><span class="tr">P1 → CCI-AWB Tarih Senkronizasyonu</span><span class="en">P1 → CCI-AWB Date Synchronization</span></h5>
+                            <p><span class="tr">Komisyon hesaplamada doğru dönem eşleştirmesi</span><span class="en">Correct period matching in commission calculation</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                            <h5><span class="tr">P2 → ACS-Bazlı Yetkilendirme</span><span class="en">P2 → ACS-Based Authorization</span></h5>
+                            <p><span class="tr">Station yerine ACS bazlı erişim kontrolü</span><span class="en">Access control based on ACS instead of station</span></p>
+                        </div>
+                        <div class="timeline-item short">
+                            <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                            <h5><span class="tr">P3 → ACS Family Number</span><span class="en">P3 → ACS Family Number</span></h5>
+                            <p><span class="tr">ACS-forwarder ilişkisi ve AWB stok takibi</span><span class="en">ACS-forwarder relationship and AWB stock tracking</span></p>
+                        </div>
+                        <div class="timeline-item long">
+                            <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
+                            <h5><span class="tr">Partner Performance Dashboard</span><span class="en">Partner Performance Dashboard</span></h5>
+                            <p><span class="tr">Real-time GSA/ACS performans ve scorecard görünümü</span><span class="en">Real-time GSA/ACS performance and scorecard view</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="s8-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">MVP'de 5 yıllık komisyon sorunu çözülmeli. Kısa vadede ACS yetkilendirme ve family number. Uzun vadede real-time performance dashboard.</span>
+                        <span class="en">5-year commission issue must be solved in MVP. ACS authorization and family number in short term. Real-time performance dashboard in long term.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9 -->
+        <section class="card section-9" id="section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="tr">AI Destek Potansiyeli</span><span class="en">AI Support Potential</span></h2>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s9-chart" class="view-pane active">
+                    <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                    <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                        <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                        <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                    </p>
+                    
+                    <!-- Slider Container -->
+                    <div style="display:flex; gap:24px; margin-bottom:32px;">
+                        <!-- Left: Scale Labels -->
+                        <div style="display:flex; flex-direction:column; justify-content:space-between; width:110px; padding:8px 0;">
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 YASAK</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI yapmamalı</span><span class="en">AI must not do</span></div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ ONAY GEREKLİ</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">İnsan onayı şart</span><span class="en">Human approval required</span></div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ GÜVENLİ</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI serbest</span><span class="en">AI autonomous</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Middle: Slider Track -->
+                        <div style="flex:1; position:relative;">
+                            <!-- Gradient Track -->
+                            <div style="height:280px; border-radius:12px; background: linear-gradient(to bottom, #fef2f2 0%, #fef3c7 35%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                                
+                                <!-- TRUST LINE - Güven Sınırı (Seviye 4) -->
+                                <div style="position:absolute; left:0; right:0; top:50%; height:3px; background:#f59e0b; z-index:10;"></div>
+                                <div style="position:absolute; right:8px; top:48%; background:#f59e0b; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                    <span class="tr">⚠️ ONAY SINIRI</span>
+                                    <span class="en">⚠️ APPROVAL LINE</span>
+                                </div>
+                                
+                                <!-- Level Markers -->
+                                <div style="position:absolute; left:12px; top:5%; font-size:10px; color:#b91c1c; font-weight:600;">
+                                    <span class="tr">6 - 🚫 Komisyon oranı değişikliği</span>
+                                    <span class="en">6 - 🚫 Commission rate change</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:18%; font-size:10px; color:#b91c1c; font-weight:600;">
+                                    <span class="tr">5 - 🚫 Partner seçimi ve tender kararı</span>
+                                    <span class="en">5 - 🚫 Partner selection and tender decision</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:32%; font-size:10px; color:#b91c1c; font-weight:600;">
+                                    <span class="tr">4 - 🚫 GSA sözleşme şartları belirleme</span>
+                                    <span class="en">4 - 🚫 GSA contract terms determination</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:55%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">3 - ✅ Teminat yetersizliği tahmini</span>
+                                    <span class="en">3 - ✅ Guarantee insufficiency prediction</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:72%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">2 - ✅ Scorecard otomatik hesaplama</span>
+                                    <span class="en">2 - ✅ Automatic scorecard calculation</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:88%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">1 - ✅ Performans trend analizi ve erken uyarı</span>
+                                    <span class="en">1 - ✅ Performance trend analysis and early warning</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="two-col" style="margin-top:20px;">
+                        <div class="list-box" style="border-left:3px solid #16a34a;">
+                            <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">📊 Performans trend analizi ve erken uyarı</span><span class="en">📊 Performance trend analysis and early warning</span></div>
+                            <div class="list-item"><span class="tr">📋 Scorecard otomatik hesaplama</span><span class="en">📋 Automatic scorecard calculation</span></div>
+                            <div class="list-item"><span class="tr">💰 Teminat yetersizliği tahmini</span><span class="en">💰 Guarantee insufficiency prediction</span></div>
+                            <div class="list-item"><span class="tr">🔍 Komisyon anomali tespiti</span><span class="en">🔍 Commission anomaly detection</span></div>
+                        </div>
+                        <div class="list-box" style="border-left:3px solid #dc2626;">
+                            <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">🚫 GSA sözleşme şartları belirleme</span><span class="en">🚫 GSA contract terms determination</span></div>
+                            <div class="list-item"><span class="tr">🚫 Partner seçimi ve tender kararı</span><span class="en">🚫 Partner selection and tender decision</span></div>
+                            <div class="list-item"><span class="tr">🚫 Komisyon oranı değişikliği</span><span class="en">🚫 Commission rate change</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s9-text" class="view-pane">
+                    <div class="summary-box">
+                        <h4><span class="tr">Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">GSA Account Manager için AI, performans analizi, scorecard hesaplama ve anomali tespitinde değer katabilir (Seviye 1-3). Sözleşme şartları, partner seçimi ve komisyon kararları (Seviye 4-6) stratejik iş kararları olarak insan onayı gerektirir.</span>
+                        <span class="en">For GSA Account Manager, AI can add value in performance analysis, scorecard calculation and anomaly detection (Level 1-3). Contract terms, partner selection and commission decisions (Level 4-6) require human approval as strategic business decisions.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><span class="tr">PRM - Partner Management | GSA Account Manager Persona | Kaynak: 2 MoM</span>
+        <span class="en">PRM - Partner Management | GSA Account Manager Persona | Source: 2 MoM</span></p>
+        <p><span class="tr">Yöntem: Özetleme Promptu × BKR Persona Şablonu | Sadece doküman kanıtlarına dayalıdır</span>
+        <span class="en">Method: Summary Prompt × BKR Persona Template | Based solely on document evidence</span></p>
+    </footer>
+    </div>
+
+    <script>
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+            });
+        }
+        
+        function toggleView(btn, section, view) {
+            const parent = btn.closest('.toggle-wrap');
+            parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            document.getElementById(section + '-chart').classList.remove('active');
+            document.getElementById(section + '-text').classList.remove('active');
+            document.getElementById(section + '-' + view).classList.add('active');
+        }
+        
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+    </script>
+</body>
+</html>

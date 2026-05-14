@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PCM - Station User Persona</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f5f7; color: #1f2937; line-height: 1.6; }
+        body.lang-en .tr { display: none !important; }
+        body.lang-tr .en { display: none !important; }
+        
+        .side-nav {
+            position: fixed; top: 0; left: 0; width: 72px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 16px 0; z-index: 1000;
+        }
+        .side-nav-logo {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 11px; color: white;
+            margin-bottom: 24px; cursor: pointer;
+        }
+        .side-nav-logo:hover { transform: scale(1.05); box-shadow: 0 8px 24px rgba(124,58,237,0.4); }
+        .nav-items { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 0 8px; }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 10px 4px; border-radius: 10px; text-decoration: none;
+            color: #64748b; transition: all 0.2s; font-size: 10px;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .nav-item.active { background: rgba(124,58,237,0.2); color: #c4b5fd; }
+        .nav-num { width: 24px; height: 24px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+        .nav-label { font-size: 9px; text-align: center; }
+
+        .mega-menu {
+            position: fixed; top: 0; left: 72px; width: 320px; height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            z-index: 999; transform: translateX(-100%); transition: transform 0.3s ease;
+            overflow-y: auto; padding: 20px;
+        }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+                .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+.module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; transition: all 0.2s; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #a855f7; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+
+        .main-content { margin-left: 72px; }
+        
+        .hero {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%);
+            padding: 48px 40px;
+        }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(5,150,105,0.15); color: #047857; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; z-index: 2; position: relative; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #059669; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #047857; }
+        .hero-subtitle { font-size: 16px; color: #065f46; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #059669; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        
+        .source-card { position: relative; cursor: pointer; }
+        .source-tooltip { position: absolute; bottom: calc(100% + 8px); left: 0; min-width: 280px; background: #1f2937; color: white; padding: 14px 16px; border-radius: 10px; font-size: 11px; opacity: 0; visibility: hidden; transition: all 0.2s ease; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+        .source-tooltip::after { content: ''; position: absolute; bottom: -6px; left: 24px; width: 12px; height: 12px; background: #1f2937; transform: rotate(45deg); }
+        .source-card:hover .source-tooltip { opacity: 1; visibility: visible; }
+        
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #059669; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; }
+        
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-4 .card-icon { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .section-4 { border-left: 4px solid #0d9488; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-6 .card-icon { background: linear-gradient(135deg, #9333ea, #a855f7); }
+        .section-6 { border-left: 4px solid #9333ea; }
+        .section-7 .card-icon { background: linear-gradient(135deg, #059669, #10b981); }
+        .section-7 { border-left: 4px solid #059669; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; }
+        
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #059669, #10b981); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 90%; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .list-item:last-child { border-bottom: none; }
+        
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.decision { background: #ede9fe; color: #7c3aed; }
+        .flow-step.approve { background: #dcfce7; color: #16a34a; }
+        .flow-step.reject { background: #fecaca; color: #dc2626; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; align-items: stretch; }
+        .empathy-avatar { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; min-width: 130px; }
+        .empathy-avatar-circle { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #059669, #10b981); display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); border: 4px solid white; }
+        .empathy-quad { padding: 16px; border-radius: 12px; border: 2px solid rgba(0,0,0,0.08); }
+        .empathy-quad h4 { font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border-color: rgba(236,72,153,0.15); }
+        .empathy-quad.says h4 { color: #db2777; }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border-color: rgba(79,70,229,0.15); }
+        .empathy-quad.thinks h4 { color: #4f46e5; }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.15); }
+        .empathy-quad.does h4 { color: #059669; }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border-color: rgba(225,29,72,0.15); }
+        .empathy-quad.feels h4 { color: #e11d48; }
+        .empathy-item { font-size: 11px; color: #374151; margin-bottom: 8px; padding-left: 12px; border-left: 2px solid rgba(0,0,0,0.1); }
+        
+        .stakeholder-map { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 20px; }
+        .stakeholder-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+        .stakeholder-node { padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; text-align: center; }
+        .stakeholder-node.provider { background: #dbeafe; color: #1d4ed8; }
+        .stakeholder-node.persona { background: linear-gradient(135deg, #059669, #10b981); color: white; padding: 16px 24px; font-weight: 700; }
+        .stakeholder-node.partner { background: #dcfce7; color: #047857; }
+        .stakeholder-node.consumer { background: #fef3c7; color: #b45309; }
+        .stakeholder-arrow { color: #9ca3af; font-size: 20px; }
+        
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        
+        .evidence { font-size: 11px; color: #6b7280; font-style: italic; margin-top: 8px; padding: 8px; background: rgba(0,0,0,0.02); border-radius: 6px; border-left: 2px solid #d1d5db; }
+        .summary-box { background: rgba(5,150,105,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #059669; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        
+        @media (max-width: 768px) {
+            .side-nav { width: 60px; }
+            .main-content { margin-left: 60px; }
+            .segment-card, .two-col, .three-col, .empathy-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="lang-en">
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()">PCM</div>
+        <div class="nav-items">
+            <a href="Persona_PCM_Pricing_Specialist.html" class="nav-item">
+                <span class="nav-num">1</span>
+                <span class="nav-label">Pricing</span>
+            </a>
+            <a href="Persona_PCM_RM_Analyst.html" class="nav-item">
+                <span class="nav-num">2</span>
+                <span class="nav-label">RM</span>
+            </a>
+            <a href="Persona_PCM_Interline_Specialist.html" class="nav-item">
+                <span class="nav-num">3</span>
+                <span class="nav-label">Interline</span>
+            </a>
+            <a href="Persona_PCM_Sales_Manager.html" class="nav-item">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Sales</span>
+            </a>
+            <a href="Persona_PCM_Station_User.html" class="nav-item active">
+                <span class="nav-num">5</span>
+                <span class="nav-label">Station</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 All Modules</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header active">
+                <div class="module-icon pcm">PCM</div>
+                <span class="module-name">Pricing Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a>
+                <a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a>
+                <a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a>
+                <a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a>
+                <a href="Persona_PCM_Station_User.html" class="persona-link current"><span class="persona-num">5</span> Station User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon flm">FLM</div>
+                <span class="module-name">Flight Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a>
+                <a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a>
+                <a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a>
+                <a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a>
+                <a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon bkr">BKR</div>
+                <span class="module-name">Booking & Reservation</span>
+                <span class="module-count">7 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a>
+                <a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a>
+                <a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a>
+                <a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a>
+                <a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a>
+                <a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a>
+                <a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cam">CAM</div>
+                <span class="module-name">Capacity Management</span>
+                <span class="module-count">3 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon com">COM</div>
+                <span class="module-name">Compliance Management</span>
+                <span class="module-count">5 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a>
+                <a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a>
+                <a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a>
+                <a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">4</span> Hub Operations</a>
+                <a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">5</span> Service Standards</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon asm">ASM</div>
+                <span class="module-name">AWB Stock Management</span>
+                <span class="module-count">2 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a>
+                <a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a>
+            </div>
+        </div>
+        
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon trm">TRM</div>
+                <span class="module-name">Truck Management</span>
+                <span class="module-count">1 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a>
+            </div>
+
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon scm">SCM</div>
+                <span class="module-name">Special Cargo Management</span>
+                <span class="module-count">1</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header">
+                <div class="module-icon cra">CRA</div>
+                <span class="module-name">Cargo Revenue Accounting</span>
+                <span class="module-count">4 persona</span>
+            </div>
+            <div class="persona-list">
+                <a href="Persona_CRA_Domestic_Revenue_Accountant.html" class="persona-link"><span class="persona-num">1</span> Domestic Revenue Accountant</a>
+                <a href="Persona_CRA_International_CASS_Specialist.html" class="persona-link"><span class="persona-num">2</span> International CASS Specialist</a>
+                <a href="Persona_CRA_Interline_Billing_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Billing Specialist</a>
+                <a href="Persona_CRA_Revenue_Accounting_Supervisor.html" class="persona-link"><span class="persona-num">4</span> Revenue Accounting Supervisor</a>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">PCM · OPERATIONS · PERSONA #5</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1><span class="en">Station</span><span class="tr">İstasyon</span> <span>User</span></h1>
+            <p class="hero-subtitle">
+                <span class="en">Local operations user at cargo stations who handles booking, reservations, and price lookups. Consumes pricing data to process shipments and interacts with interline cost queries. Front-line contact for station-level pricing issues.</span>
+                <span class="tr">Kargo istasyonlarında rezervasyon, fiyat sorgulama yapan yerel operasyon kullanıcısı. Sevkiyatları işlemek için fiyatlandırma verisini kullanır ve interline maliyet sorguları ile etkileşir.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="en">"Reservation agents do not trigger autorate; this is the responsibility of the sales teams. Stations are contacted via email for interline cost data not found in the system."</span>
+                <span class="tr">"Rezervasyon acenteleri autorate'i tetiklemez; bu satış ekiplerinin sorumluluğundadır. Sistemde bulunamayan interline maliyet verisi için istasyonlarla e-posta ile iletişime geçilir."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#059669;"></span>
+                    <span><strong>Unit:</strong> <span class="en">Station Operations</span><span class="tr">İstasyon Operasyonları</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#0284c7;"></span>
+                    <span><strong><span class="en">Role</span><span class="tr">Rol</span>:</strong> <span class="en">Price Consumer</span><span class="tr">Fiyat Tüketicisi</span></span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong><span class="en">Systems</span><span class="tr">Sistemler</span>:</strong> COMIS, Reservation</span>
+                </div>
+                <div class="hero-meta-item source-card">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Source:</strong> 4 MoM</span>
+                    <div class="source-tooltip">
+                        <div style="font-weight:700; margin-bottom:10px; color:#6ee7b7;">📄 Source Documents</div>
+                        <div>Key User Workshop 2, 8, Interline (3 MoM)</div>
+                        <div>Solution Team Workshop 1 (1 MoM)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <!-- SECTION 1: Persona Profile -->
+        <section class="card section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title">
+                    <h2><span class="en">Persona Profile</span><span class="tr">Persona Profili</span></h2>
+                    <p><span class="en">Who uses pricing data at stations?</span><span class="tr">İstasyonlarda fiyatlandırma verisini kim kullanır?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="summary-box">
+                    <h4><span class="en">Profile Summary</span><span class="tr">Profil Özeti</span></h4>
+                    <p><span class="en">Station Users are the operational end-consumers of pricing data. They look up prices for bookings, handle reservations, and manage day-to-day cargo operations at local stations. They do NOT trigger pricing processes like autorate—that's the sales teams' responsibility. However, they are contacted for interline cost data queries and serve as the front-line when pricing issues arise during cargo acceptance.</span>
+                    <span class="tr">İstasyon Kullanıcıları fiyatlandırma verisinin operasyonel son tüketicileridir. Rezervasyonlar için fiyat sorgular, rezervasyonları yönetir ve yerel istasyonlarda günlük kargo operasyonlarını yürütür.</span></p>
+                </div>
+                <div class="profile-grid">
+                    <div class="pf"><div class="pf-label">Role</div><div class="pf-value"><span class="en">Station Agent / Booker</span><span class="tr">İstasyon Acentesi / Rezervasyoncu</span></div></div>
+                    <div class="pf"><div class="pf-label">Department</div><div class="pf-value"><span class="en">Station Operations</span><span class="tr">İstasyon Operasyonları</span></div></div>
+                    <div class="pf"><div class="pf-label"><span class="en">Location</span><span class="tr">Konum</span></div><div class="pf-value"><span class="en">Cargo Stations (Global)</span><span class="tr">Kargo İstasyonları (Global)</span></div></div>
+                    <div class="pf"><div class="pf-label"><span class="en">Primary Task</span><span class="tr">Ana Görev</span></div><div class="pf-value"><span class="en">Price Lookup & Booking</span><span class="tr">Fiyat Sorgulama & Rezervasyon</span></div></div>
+                    <div class="pf"><div class="pf-label"><span class="en">Pricing Authority</span><span class="tr">Fiyat Yetkisi</span></div><div class="pf-value"><span class="en">Consumer only</span><span class="tr">Sadece tüketici</span></div></div>
+                    <div class="pf"><div class="pf-label"><span class="en">Contact Method</span><span class="tr">İletişim</span></div><div class="pf-value">Email</div></div>
+                </div>
+                <div class="segment-card">
+                    <div class="segment-col demo">
+                        <h4><span class="en">Demographic</span><span class="tr">Demografik</span></h4>
+                        <div class="segment-item"><span class="en">Operations background</span><span class="tr">Operasyon arka planı</span></div>
+                        <div class="segment-item"><span class="en">Local market knowledge</span><span class="tr">Yerel pazar bilgisi</span></div>
+                        <div class="segment-item"><span class="en">High transaction volume</span><span class="tr">Yüksek işlem hacmi</span></div>
+                    </div>
+                    <div class="segment-col behav">
+                        <h4><span class="en">Behavioral</span><span class="tr">Davranışsal</span></h4>
+                        <div class="segment-item"><span class="en">Quick price lookups</span><span class="tr">Hızlı fiyat sorguları</span></div>
+                        <div class="segment-item"><span class="en">Process-oriented</span><span class="tr">Süreç odaklı</span></div>
+                        <div class="segment-item"><span class="en">Escalates pricing issues</span><span class="tr">Fiyat sorunlarını yükseltir</span></div>
+                    </div>
+                    <div class="segment-col psycho">
+                        <h4><span class="en">Psychographic</span><span class="tr">Psikografik</span></h4>
+                        <div class="segment-item"><span class="en">Accuracy-focused</span><span class="tr">Doğruluk odaklı</span></div>
+                        <div class="segment-item"><span class="en">Customer-facing</span><span class="tr">Müşteri yüzlü</span></div>
+                        <div class="segment-item"><span class="en">Time-sensitive</span><span class="tr">Zamana duyarlı</span></div>
+                    </div>
+                </div>
+                <div class="evidence">MoM-8: "Reservation agents do not trigger autorate; this is the responsibility of the sales teams"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: Goals & Motivation -->
+        <section class="card section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title">
+                    <h2><span class="en">Goals, Motivation & Fears</span><span class="tr">Hedefler, Motivasyon & Korkular</span></h2>
+                    <p><span class="en">What drives station pricing needs?</span><span class="tr">İstasyon fiyatlandırma ihtiyaçlarını ne yönlendirir?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="goal-pyramid">
+                    <div class="goal-level primary"><span class="en">🎯 Get accurate prices quickly for bookings</span><span class="tr">🎯 Rezervasyonlar için hızlıca doğru fiyatlar al</span></div>
+                    <div class="goal-level secondary"><span class="en">📊 Process shipments without pricing delays</span><span class="tr">📊 Fiyat gecikmeleri olmadan sevkiyatları işle</span></div>
+                    <div class="goal-level tertiary"><span class="en">⚡ Resolve interline cost queries efficiently</span><span class="tr">⚡ Interline maliyet sorgularını verimli çöz</span></div>
+                </div>
+                <div class="two-col">
+                    <div class="list-box motivators">
+                        <h4>✅ <span class="en">Motivators</span><span class="tr">Motivatörler</span></h4>
+                        <div class="list-item"><span class="en">Fast system response times</span><span class="tr">Hızlı sistem yanıt süreleri</span></div>
+                        <div class="list-item"><span class="en">Accurate price availability</span><span class="tr">Doğru fiyat bulunabilirliği</span></div>
+                        <div class="list-item"><span class="en">Clear pricing for customer quotes</span><span class="tr">Müşteri teklifleri için net fiyatlandırma</span></div>
+                    </div>
+                    <div class="list-box demotivators">
+                        <h4>❌ <span class="en">Demotivators</span><span class="tr">Demotivatörler</span></h4>
+                        <div class="list-item"><span class="en">Missing prices in system</span><span class="tr">Sistemde eksik fiyatlar</span></div>
+                        <div class="list-item"><span class="en">TACT fallback (very high prices)</span><span class="tr">TACT fallback (çok yüksek fiyatlar)</span></div>
+                        <div class="list-item"><span class="en">Manual email queries for interline</span><span class="tr">Interline için manuel e-posta sorguları</span></div>
+                    </div>
+                </div>
+                <div class="list-box fears" style="margin-top: 16px;">
+                    <h4>😰 <span class="en">Primary Fears</span><span class="tr">Ana Korkular</span></h4>
+                    <div class="list-item"><span class="en">Quoting wrong prices to customers</span><span class="tr">Müşterilere yanlış fiyat verme</span></div>
+                    <div class="list-item"><span class="en">Cargo stuck due to pricing issues</span><span class="tr">Fiyat sorunları nedeniyle takılan kargo</span></div>
+                    <div class="list-item"><span class="en">Getting blamed for HQ pricing errors</span><span class="tr">Merkez fiyatlandırma hataları için suçlanma</span></div>
+                </div>
+                <div class="evidence">MoM-Interline: "Stations are contacted via email for interline cost data not found in system"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: Workflow -->
+        <section class="card section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title">
+                    <h2><span class="en">Workflow & Intents</span><span class="tr">İş Akışı & Niyetler</span></h2>
+                    <p><span class="en">How do stations use pricing?</span><span class="tr">İstasyonlar fiyatlandırmayı nasıl kullanır?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px;">📋 <span class="en">Price Lookup Flow</span><span class="tr">Fiyat Sorgulama Akışı</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="en">Customer Request</span><span class="tr">Müşteri Talebi</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step auto"><span class="en">System Lookup</span><span class="tr">Sistem Sorgusu</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="en">Price Found?</span><span class="tr">Fiyat Bulundu mu?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step approve"><span class="en">Quote & Book</span><span class="tr">Teklif & Rezervasyon</span></div>
+                </div>
+                
+                <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px; margin-top: 20px;">🔄 <span class="en">Interline Cost Query Flow</span><span class="tr">Interline Maliyet Sorgu Akışı</span></h4>
+                <div class="flow-h">
+                    <div class="flow-step manual"><span class="en">Accounting Query</span><span class="tr">Muhasebe Sorgusu</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step decision"><span class="en">Data in System?</span><span class="tr">Sistemde Veri Var mı?</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step reject">NO</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step manual"><span class="en">Email to Station</span><span class="tr">İstasyona E-posta</span></div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step approve"><span class="en">Station Responds</span><span class="tr">İstasyon Yanıtlar</span></div>
+                </div>
+                
+                <div class="summary-box" style="margin-top: 20px;">
+                    <h4><span class="en">Key Constraint: No Pricing Authority</span><span class="tr">Ana Kısıt: Fiyat Yetkisi Yok</span></h4>
+                    <p><span class="en">"Reservation agents do not trigger autorate; this is the responsibility of the sales teams." Station users consume prices but cannot create or modify pricing.</span>
+                    <span class="tr">"Rezervasyon acenteleri autorate'i tetiklemez; bu satış ekiplerinin sorumluluğundadır." İstasyon kullanıcıları fiyatları tüketir ama oluşturamaz veya değiştiremez.</span></p>
+                </div>
+                <div class="evidence">MoM-8: "Who triggers Autorate? Sales teams, not the bookers"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: Data & Integration -->
+        <section class="card section-4">
+            <div class="card-header">
+                <div class="card-icon">4</div>
+                <div class="card-title">
+                    <h2><span class="en">Data & Integration</span><span class="tr">Veri & Entegrasyon</span></h2>
+                    <p><span class="en">What systems do stations access?</span><span class="tr">İstasyonlar hangi sistemlere erişir?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="three-col">
+                    <div class="list-box">
+                        <h4 style="color: #0d9488;"><span class="en">📥 Inputs</span><span class="tr">📥 Girdiler</span></h4>
+                        <div class="list-item"><strong>COMIS:</strong> <span class="en">Price lookup</span><span class="tr">Fiyat sorgusu</span></div>
+                        <div class="list-item"><strong><span class="en">Tariff/Promo</span><span class="tr">Tarife/Promo</span>:</strong> <span class="en">Published rates</span><span class="tr">Yayınlanmış oranlar</span></div>
+                        <div class="list-item"><strong><span class="en">Spot prices</span><span class="tr">Spot fiyatlar</span>:</strong> <span class="en">Ad-hoc rates</span><span class="tr">Anlık oranlar</span></div>
+                    </div>
+                    <div class="list-box">
+                        <h4 style="color: #0d9488;"><span class="en">📤 Outputs</span><span class="tr">📤 Çıktılar</span></h4>
+                        <div class="list-item"><strong><span class="en">Quotes</span><span class="tr">Teklifler</span>:</strong> <span class="en">To customers</span><span class="tr">Müşterilere</span></div>
+                        <div class="list-item"><strong><span class="en">Bookings</span><span class="tr">Rezervasyonlar</span>:</strong> <span class="en">Confirmed shipments</span><span class="tr">Onaylanmış sevkiyatlar</span></div>
+                        <div class="list-item"><strong><span class="en">Interline data</span><span class="tr">Interline veri</span>:</strong> <span class="en">To accounting</span><span class="tr">Muhasebeye</span></div>
+                    </div>
+                    <div class="list-box">
+                        <h4 style="color: #0d9488;"><span class="en">🔗 Key Systems</span><span class="tr">🔗 Ana Sistemler</span></h4>
+                        <div class="list-item"><strong>COMIS:</strong> <span class="en">Main pricing lookup</span><span class="tr">Ana fiyat sorgusu</span></div>
+                        <div class="list-item"><strong><span class="en">Reservation</span><span class="tr">Rezervasyon</span>:</strong> <span class="en">Booking system</span><span class="tr">Rezervasyon sistemi</span></div>
+                        <div class="list-item"><strong>Email:</strong> <span class="en">Interline queries</span><span class="tr">Interline sorguları</span></div>
+                    </div>
+                </div>
+                <div class="evidence">MoM-Interline: "To understand interline cost, separate reports are kept in Excel via emails - sent to accounting. For those not found, stations are contacted."</div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: Pain Points -->
+        <section class="card section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title">
+                    <h2><span class="en">Pain Points & Risks</span><span class="tr">Sıkıntılar & Riskler</span></h2>
+                    <p><span class="en">What challenges do stations face?</span><span class="tr">İstasyonlar hangi zorluklarla karşılaşır?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="pain-list">
+                    <div class="pain-item high">
+                        <span class="pain-code">P1</span>
+                        <div class="pain-text">
+                            <h5><span class="en">TACT Fallback = Very High Prices</span><span class="tr">TACT Fallback = Çok Yüksek Fiyatlar</span></h5>
+                            <p><span class="en">"If a spot isn't entered, TACT fee is applied - very high" - customers complain, station gets blamed</span>
+                            <span class="tr">"Spot girilmezse TACT ücreti uygulanır - çok yüksek" - müşteriler şikayet eder, istasyon suçlanır</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item high">
+                        <span class="pain-code">P2</span>
+                        <div class="pain-text">
+                            <h5><span class="en">Manual Interline Cost Queries</span><span class="tr">Manuel Interline Maliyet Sorguları</span></h5>
+                            <p><span class="en">"Stations are contacted via email for interline cost data not found" - breaks workflow, causes delays</span>
+                            <span class="tr">"Bulunamayan interline maliyet verisi için istasyonlarla e-posta ile iletişime geçilir" - iş akışını bozar</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P3</span>
+                        <div class="pain-text">
+                            <h5><span class="en">No Control Over Pricing Errors</span><span class="tr">Fiyat Hataları Üzerinde Kontrol Yok</span></h5>
+                            <p><span class="en">When prices are wrong in system, station has no authority to fix—must escalate to HQ</span>
+                            <span class="tr">Sistemde fiyatlar yanlış olduğunda, istasyonun düzeltme yetkisi yok—merkeze yükseltmeli</span></p>
+                        </div>
+                    </div>
+                    <div class="pain-item medium">
+                        <span class="pain-code">P4</span>
+                        <div class="pain-text">
+                            <h5><span class="en">Report Corrections Manual</span><span class="tr">Rapor Düzeltmeleri Manuel</span></h5>
+                            <p><span class="en">"Reports are being manually corrected" when pricing errors occur at station level</span>
+                            <span class="tr">"Raporlar manuel olarak düzeltiliyor" - istasyon seviyesinde fiyat hataları oluştuğunda</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="evidence">MoM-Interline: "If a spot isn't entered, TACT fee is applied - very high. Reports are being manually corrected."</div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: Mental Model -->
+        <section class="card section-6">
+            <div class="card-header">
+                <div class="card-icon">6</div>
+                <div class="card-title">
+                    <h2><span class="en">Mental Model & Behavior</span><span class="tr">Zihinsel Model & Davranış</span></h2>
+                    <p><span class="en">How do they think?</span><span class="tr">Nasıl düşünürler?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="empathy-grid">
+                    <div class="empathy-quad says">
+                        <h4><span class="icon">💬</span> SAYS</h4>
+                        <div class="empathy-item"><span class="en">"The system is showing TACT price again"</span><span class="tr">"Sistem yine TACT fiyatı gösteriyor"</span></div>
+                        <div class="empathy-item"><span class="en">"I need the interline cost for this AWB"</span><span class="tr">"Bu AWB için interline maliyetine ihtiyacım var"</span></div>
+                        <div class="empathy-item"><span class="en">"This price can't be right"</span><span class="tr">"Bu fiyat doğru olamaz"</span></div>
+                    </div>
+                    <div class="empathy-avatar">
+                        <div class="empathy-avatar-circle">📍</div>
+                        <p style="font-size: 11px; color: #6b7280; margin-top: 12px; text-align: center;">Station<br>User</p>
+                    </div>
+                    <div class="empathy-quad thinks">
+                        <h4><span class="icon">💭</span> THINKS</h4>
+                        <div class="empathy-item"><span class="en">"Why wasn't this spot entered?"</span><span class="tr">"Bu spot neden girilmemiş?"</span></div>
+                        <div class="empathy-item"><span class="en">"HQ should fix the pricing"</span><span class="tr">"Merkez fiyatlandırmayı düzeltmeli"</span></div>
+                        <div class="empathy-item"><span class="en">"Customer will complain about this"</span><span class="tr">"Müşteri bundan şikayet edecek"</span></div>
+                    </div>
+                    <div class="empathy-quad does">
+                        <h4><span class="icon">🔧</span> DOES</h4>
+                        <div class="empathy-item"><span class="en">Looks up prices in COMIS</span><span class="tr">COMIS'te fiyat sorgular</span></div>
+                        <div class="empathy-item"><span class="en">Responds to interline cost emails</span><span class="tr">Interline maliyet e-postalarına yanıt verir</span></div>
+                        <div class="empathy-item"><span class="en">Escalates pricing issues to sales/HQ</span><span class="tr">Fiyat sorunlarını satış/merkeze yükseltir</span></div>
+                    </div>
+                    <div class="empathy-quad feels">
+                        <h4><span class="icon">❤️</span> FEELS</h4>
+                        <div class="empathy-item"><span class="en">Powerless over pricing errors</span><span class="tr">Fiyat hataları karşısında güçsüz</span></div>
+                        <div class="empathy-item"><span class="en">Frustrated by manual queries</span><span class="tr">Manuel sorgulardan sıkılmış</span></div>
+                        <div class="empathy-item"><span class="en">Caught between customer and HQ</span><span class="tr">Müşteri ve merkez arasında sıkışmış</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: Collaboration -->
+        <section class="card section-7">
+            <div class="card-header">
+                <div class="card-icon">7</div>
+                <div class="card-title">
+                    <h2><span class="en">Collaboration & Support</span><span class="tr">İşbirliği & Destek</span></h2>
+                    <p><span class="en">Who do they work with?</span><span class="tr">Kimlerle çalışırlar?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="stakeholder-map">
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node provider"><span class="en">Local Customers</span><span class="tr">Yerel Müşteriler</span><br><small>Shipment requests</small></div>
+                        <div class="stakeholder-node provider"><span class="en">Local Agents</span><span class="tr">Yerel Acenteler</span><br><small>Volume bookings</small></div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node persona">📍 STATION USER</div>
+                    </div>
+                    <div class="stakeholder-arrow">↓</div>
+                    <div class="stakeholder-row">
+                        <div class="stakeholder-node consumer"><span class="en">Sales Team (HQ)</span><span class="tr">Satış Ekibi (Merkez)</span><br><small>Escalations</small></div>
+                        <div class="stakeholder-node consumer"><span class="en">Accounting</span><span class="tr">Muhasebe</span><br><small>Interline queries</small></div>
+                        <div class="stakeholder-node consumer"><span class="en">Pricing Team</span><span class="tr">Fiyat Ekibi</span><br><small>Error reports</small></div>
+                    </div>
+                </div>
+                <div class="evidence">MoM-Interline: "For those not found, stations are contacted via email"</div>
+            </div>
+        </section>
+
+        <!-- SECTION 8: Product Opportunities -->
+        <section class="card section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title">
+                    <h2><span class="en">Product Opportunities</span><span class="tr">Ürün Fırsatları</span></h2>
+                    <p><span class="en">How can we improve station pricing experience?</span><span class="tr">İstasyon fiyatlandırma deneyimini nasıl iyileştirebiliriz?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="en">TACT Fallback Alert</span><span class="tr">TACT Fallback Uyarısı</span></h5>
+                        <p>→ P1 | <span class="en">Warn when TACT price is applied, trigger spot request flow</span><span class="tr">TACT fiyatı uygulandığında uyar, spot talep akışını tetikle</span></p>
+                    </div>
+                    <div class="timeline-item mvp">
+                        <span class="timeline-badge mvp">MVP</span>
+                        <h5><span class="en">Interline Cost Self-Service</span><span class="tr">Interline Maliyet Self-Servis</span></h5>
+                        <p>→ P2 | <span class="en">Digital tool for stations to submit interline costs directly</span><span class="tr">İstasyonların interline maliyetlerini doğrudan göndermesi için dijital araç</span></p>
+                    </div>
+                    <div class="timeline-item short">
+                        <span class="timeline-badge short">SHORT-TERM</span>
+                        <h5><span class="en">Pricing Error Flag & Track</span><span class="tr">Fiyat Hatası İşaretleme & Takip</span></h5>
+                        <p>→ P3 | <span class="en">Allow stations to flag pricing errors with tracking</span><span class="tr">İstasyonların fiyat hatalarını takipli işaretlemesine izin ver</span></p>
+                    </div>
+                    <div class="timeline-item long">
+                        <span class="timeline-badge long">LONG-TERM</span>
+                        <h5><span class="en">Real-time Pricing Sync</span><span class="tr">Gerçek Zamanlı Fiyat Senkronizasyonu</span></h5>
+                        <p>→ P1 | <span class="en">Eliminate TACT fallback with better price coverage</span><span class="tr">Daha iyi fiyat kapsamı ile TACT fallback'i ortadan kaldır</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 9: AI Support -->
+        <section class="card section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title">
+                    <h2><span class="en">AI Support Potential</span><span class="tr">AI Destek Potansiyeli</span></h2>
+                    <p><span class="en">Where can AI assist?</span><span class="tr">AI nerede yardımcı olabilir?</span></p>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="ai-suitable">
+                    <div class="ai-box suitable">
+                        <h5>✅ AI SUITABLE</h5>
+                        <ul>
+                            <li><span class="en">Detect TACT fallback and suggest spot request</span><span class="tr">TACT fallback tespit et ve spot talebi öner</span></li>
+                            <li><span class="en">Auto-extract interline costs from emails</span><span class="tr">E-postalardan interline maliyetlerini otomatik çıkar</span></li>
+                            <li><span class="en">Flag suspected pricing errors</span><span class="tr">Şüpheli fiyat hatalarını işaretle</span></li>
+                            <li><span class="en">Route escalations to right team</span><span class="tr">Yükseltmeleri doğru ekibe yönlendir</span></li>
+                        </ul>
+                    </div>
+                    <div class="ai-box not-suitable">
+                        <h5>❌ AI NOT SUITABLE</h5>
+                        <ul>
+                            <li><span class="en">Setting or modifying prices</span><span class="tr">Fiyat belirleme veya değiştirme</span></li>
+                            <li><span class="en">Approving pricing exceptions</span><span class="tr">Fiyat istisnalarını onaylama</span></li>
+                            <li><span class="en">Customer negotiations</span><span class="tr">Müşteri müzakereleri</span></li>
+                            <li><span class="en">Final quote decisions</span><span class="tr">Son teklif kararları</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><strong>Sources:</strong></p>
+        <p style="font-size: 10px; color: #6b7280; margin-top: 4px;">MoM-2 (Workshop-2): Station interaction with pricing | MoM-8 (Workshop-7): Autorate trigger responsibility (sales, not bookers) | MoM-Interline: Station email queries for interline costs, TACT fallback issue | MoM-Solution-1: Price consumer role</p>
+        <p style="margin-top: 8px;"><strong>Generated:</strong> 13 May 2026</p>
+        <p style="margin-top: 8px; color: #059669;">⚠️ <span class="en">This persona is based on MoM analysis. User validation recommended.</span><span class="tr">Bu persona MoM analizine dayanmaktadır. Kullanıcı doğrulaması önerilir.</span></p>
+    </footer>
+    </div>
+
+    <script>
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+        
+        function switchLang(lang) {
+            document.body.className = 'lang-' + lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === lang.toUpperCase());
+            });
+        }
+        
+        function toggleView(btn, view) {
+            const card = btn.closest('.card');
+            card.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            card.querySelectorAll('.view-pane').forEach(p => {
+                p.classList.toggle('active', p.dataset.view === view);
+            });
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelector('.mega-menu').classList.remove('open');
+                document.querySelector('.mega-overlay').classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>
