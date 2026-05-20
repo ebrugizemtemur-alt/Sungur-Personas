@@ -18,6 +18,38 @@
         .nav-item.active { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; }
         .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
         .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+        /* Mega Menu Styles */
+        .mega-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1001; }
+        .mega-overlay.active { display: block; }
+        .mega-menu { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 1000px; max-height: 85vh; background: white; border-radius: 20px; box-shadow: 0 25px 80px rgba(0,0,0,0.3); z-index: 1002; overflow-y: auto; }
+        .mega-menu.active { display: block; }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; background: white; z-index: 10; }
+        .mega-menu-title { font-size: 18px; font-weight: 700; color: #1f2937; }
+        .mega-menu-close { background: #f3f4f6; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; transition: all 0.2s; }
+        .mega-menu-close:hover { background: #e5e7eb; }
+        .module-section { padding: 16px 24px; border-bottom: 1px solid #f3f4f6; }
+        .module-section:last-child { border-bottom: none; }
+        .module-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .module-header.active { background: rgba(124,58,237,0.06); margin: -16px -24px 12px -24px; padding: 16px 24px; }
+        .module-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.bkr { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+        .module-icon.cam { background: linear-gradient(135deg, #10b981, #34d399); }
+        .module-icon.pcm { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        .module-icon.flm { background: linear-gradient(135deg, #ef4444, #f87171); }
+        .module-icon.com { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+        .module-icon.asm { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        .module-icon.prm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.scm { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+        .module-icon.trm { background: linear-gradient(135deg, #84cc16, #a3e635); }
+        .module-icon.cra { background: linear-gradient(135deg, #f97316, #fb923c); }
+        .module-name { font-size: 14px; font-weight: 600; color: #374151; }
+        .module-count { font-size: 11px; color: #9ca3af; margin-left: auto; }
+        .persona-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; text-decoration: none; color: #4b5563; font-size: 12px; transition: all 0.2s; }
+        .persona-link:hover { background: #f3f4f6; color: #1f2937; }
+        .persona-link.current { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; }
+        .persona-num { width: 20px; height: 20px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; }
+        .persona-link.current .persona-num { background: rgba(255,255,255,0.3); }
         .main-content { margin-left: 72px; }
         .hero { background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 50%, #d8b4fe 100%); padding: 48px 40px; }
         .hero-content { max-width: 1200px; margin: 0 auto; }
@@ -142,6 +174,20 @@
             <a href="Persona_PRM_Agent_Compliance_Officer.html" class="nav-item"><span class="nav-num">4</span><span class="nav-label">Compliance</span></a>
         </div>
     </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header"><span class="mega-menu-title">📦 Tüm Modüller</span><button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div><div class="persona-list"><a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a><a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a><a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a><a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a><a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a><a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a><a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div><div class="persona-list"><a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a><a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a><a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a><a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a><a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a><a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a><a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a><a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a><a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a><a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a><a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a><a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a><a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a><a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">4</span> Service Standards</a><a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">5</span> Hub Operations</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div><div class="persona-list"><a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a><a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a></div></div>
+        <div class="module-section"><div class="module-header active"><div class="module-icon prm">PRM</div><span class="module-name">Partner Management</span><span class="module-count">4</span></div><div class="persona-list"><a href="Persona_PRM_Master_Data_Specialist.html" class="persona-link"><span class="persona-num">1</span> Master Data Specialist</a><a href="Persona_PRM_GSA_Account_Manager.html" class="persona-link"><span class="persona-num">2</span> GSA Account Manager</a><a href="Persona_PRM_Credit_Customer_Specialist.html" class="persona-link current"><span class="persona-num">3</span> Credit Customer Specialist</a><a href="Persona_PRM_Agent_Compliance_Officer.html" class="persona-link"><span class="persona-num">4</span> Agent Compliance Officer</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a></div></div>
+    </div>
 
     <div class="main-content">
     <section class="hero">
@@ -431,7 +477,7 @@
     <script>
         function switchLang(lang) { document.body.className = 'lang-' + lang; document.querySelectorAll('.lang-btn').forEach(btn => { btn.classList.remove('active'); if(btn.textContent === lang.toUpperCase()) btn.classList.add('active'); }); }
         function toggleView(btn, section, view) { const parent = btn.closest('.toggle-wrap'); parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.getElementById(section + '-chart').classList.remove('active'); document.getElementById(section + '-text').classList.remove('active'); document.getElementById(section + '-' + view).classList.add('active'); }
-        function toggleMegaMenu() { }
+        function toggleMegaMenu() { document.querySelector('.mega-menu').classList.toggle('active'); document.querySelector('.mega-overlay').classList.toggle('active'); }
     </script>
 </body>
 </html>
