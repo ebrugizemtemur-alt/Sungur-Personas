@@ -443,7 +443,7 @@
                         <div class="pf"><div class="pf-label"><span class="tr">Departman</span><span class="en">Department</span></div><div class="pf-value">Cargo Marketing & Sales Solutions</div></div>
                         <div class="pf"><div class="pf-label"><span class="tr">Seviye</span><span class="en">Level</span></div><div class="pf-value"><span class="tr">Teknik Uzman</span><span class="en">Technical Specialist</span></div></div>
                         <div class="pf"><div class="pf-label"><span class="tr">Ana Odak</span><span class="en">Main Focus</span></div><div class="pf-value"><span class="tr">Sistem entegrasyonu</span><span class="en">System integration</span></div></div>
-                        <div class="pf"><div class="pf-label"><span class="tr">Mesaj Türleri</span><span class="en">Message Types</span></div><div class="pf-value">SSIM, SSM, FLTRequest</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Mesaj Türleri</span><span class="en">Message Types</span></div><div class="pf-value">SSIM, SSM, FLTRequest, ASM</div></div>
                         <div class="pf"><div class="pf-label"><span class="tr">Ana Ekranlar</span><span class="en">Main Screens</span></div><div class="pf-value">MSG005, FLT002, FLT004, CAP149</div></div>
                         <div class="pf"><div class="pf-label"><span class="tr">Web Servisler</span><span class="en">Web Services</span></div><div class="pf-value">LFI Service, ACRM API</div></div>
                         <div class="pf"><div class="pf-label"><span class="tr">Çalışma Modu</span><span class="en">Work Mode</span></div><div class="pf-value"><span class="tr">Mesai + Sezon dönemleri</span><span class="en">Business hours + Season periods</span></div></div>
@@ -463,6 +463,7 @@
                             <div class="segment-item"><strong><span class="tr">SSIM:</span><span class="en">SSIM:</span></strong> <span class="tr">Manuel upload (sezon)</span><span class="en">Manual upload (season)</span></div>
                             <div class="segment-item"><strong><span class="tr">SSM:</span><span class="en">SSM:</span></strong> <span class="tr">Otomatik işleme</span><span class="en">Automatic processing</span></div>
                             <div class="segment-item"><strong><span class="tr">FLTRequest:</span><span class="en">FLTRequest:</span></strong> <span class="tr">Schedule planner'dan gelen</span><span class="en">From schedule planner</span></div>
+                            <div class="segment-item"><strong><span class="tr">ASM:</span><span class="en">ASM:</span></strong> <span class="tr">Otomatik işleme</span><span class="en">Automatic processing</span></div>
                             <div class="segment-item"><strong><span class="tr">LFI:</span><span class="en">LFI:</span></strong> <span class="tr">Dış partner sorguları</span><span class="en">External partner queries</span></div>
                         </div>
                         <div class="segment-col psycho">
@@ -556,8 +557,6 @@
                     <div class="flow-h">
                         <div class="flow-step manual"><span class="tr">SSIM Dosyası Alım</span><span class="en">Receive SSIM File</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step decision"><span class="tr">Validasyon (FLT002)</span><span class="en">Validation (FLT002)</span></div>
-                        <span class="flow-arrow">→</span>
                         <div class="flow-step auto"><span class="tr">COMMIS'e Upload</span><span class="en">Upload to COMMIS</span></div>
                         <span class="flow-arrow">→</span>
                         <div class="flow-step auto"><span class="tr">Flights Oluşturma</span><span class="en">Create Flights</span></div>
@@ -572,22 +571,32 @@
                         <span class="flow-arrow">→</span>
                         <div class="flow-step auto"><span class="tr">Uçuş Güncelleme</span><span class="en">Flight Update</span></div>
                     </div>
+                    <h4 style="font-size:12px; font-weight:600; margin:16px 0 12px;"><span class="tr">📋 ASM Otomatik İşleme Akışı</span><span class="en">📋 ASM Automatic Processing Flow</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step auto"><span class="tr">ASM Mesaj Alım</span><span class="en">Receive ASM Message</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">Otomatik Parse</span><span class="en">Auto Parse</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision"><span class="tr">Validasyon</span><span class="en">Validation</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="tr">Uçuş Güncelleme</span><span class="en">Flight Update</span></div>
+                    </div>
                     <h4 style="font-size:12px; font-weight:600; margin:16px 0 12px;"><span class="tr">📋 FLTRequest İşleme Akışı</span><span class="en">📋 FLTRequest Processing Flow</span></h4>
                     <div class="flow-h">
-                        <div class="flow-step manual"><span class="tr">Schedule Planner Talep</span><span class="en">Schedule Planner Request</span></div>
+                        <div class="flow-step auto"><span class="tr">FLTRequest Mesaj Alım</span><span class="en">Receive FLTRequest</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step auto"><span class="tr">FLTRequest Oluşturma</span><span class="en">Create FLTRequest</span></div>
+                        <div class="flow-step auto"><span class="tr">Otomatik Parse</span><span class="en">Auto Parse</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step auto"><span class="tr">Partner'a İletim</span><span class="en">Send to Partner</span></div>
+                        <div class="flow-step decision"><span class="tr">Validasyon</span><span class="en">Validation</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step manual"><span class="tr">Yanıt Takibi (MSG005)</span><span class="en">Response Tracking (MSG005)</span></div>
+                        <div class="flow-step auto"><span class="tr">Uçuş Güncelleme</span><span class="en">Flight Update</span></div>
                     </div>
                 </div>
                 <div id="s3-text" class="view-pane">
                     <div class="summary-box">
                         <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
-                        <p><span class="tr">Üç ana iş akışı: 1) SSIM Upload - sezon başında manuel upload ve validasyon. 2) SSM İşleme - otomatik mesaj alım ve uçuş güncelleme. 3) FLTRequest - schedule planner taleplerinin partner'lara iletimi. MSG005'te mesaj geçmişi takip edilir.</span>
-                        <span class="en">Three main workflows: 1) SSIM Upload - manual upload and validation at season start. 2) SSM Processing - automatic message receipt and flight update. 3) FLTRequest - forwarding schedule planner requests to partners. Message history is tracked in MSG005.</span></p>
+                        <p><span class="tr">Dört ana iş akışı: 1) SSIM Upload - sezon başında manuel upload. 2) SSM İşleme - otomatik mesaj alım ve uçuş güncelleme. 3) ASM İşleme - otomatik mesaj alım ve uçuş güncelleme. 4) FLTRequest - otomatik parse/validasyon sonrası uçuş güncelleme. MSG005'te mesaj geçmişi takip edilir.</span>
+                        <span class="en">Four main workflows: 1) SSIM Upload - manual upload at season start. 2) SSM Processing - automatic message receipt and flight update. 3) ASM Processing - automatic message receipt and flight update. 4) FLTRequest - flight update after auto parse/validation. Message history is tracked in MSG005.</span></p>
                     </div>
                     <div class="evidence">
                         <strong>Sol.Team MoM-2:</strong> "FLTRequest messages are generated when schedule planners need to communicate flight changes to external partners. MSG005 screen is used to track all message history."
@@ -636,7 +645,7 @@
                                 <td><span class="crud-badge yes">✓</span></td>
                                 <td><span class="crud-badge yes">✓</span></td>
                                 <td><span class="crud-badge no">-</span></td>
-                                <td><span class="tr">SSIM upload, uçuş oluşturma</span><span class="en">SSIM upload, flight creation</span></td>
+                                <td><span class="tr">Uçuş oluşturma ve düzenleme</span><span class="en">Flight creation and editing</span></td>
                             </tr>
                             <tr>
                                 <td><strong>COMMIS - FLT004</strong></td>
@@ -676,8 +685,8 @@
                 <div id="s4-text" class="view-pane">
                     <div class="summary-box">
                         <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
-                        <p><span class="tr">COMMIS'te MSG005 (mesaj log), FLT002 (SSIM upload), FLT004 (uçuş düzenleme), CAP149 (kapasite raporları) ekranları kullanılır. NetLine entegrasyonu üzerinden uçuş verisi çekilir. LFI Service dış partner sorgularına API üzerinden yanıt verir.</span>
-                        <span class="en">In COMMIS, MSG005 (message log), FLT002 (SSIM upload), FLT004 (flight editing), CAP149 (capacity reports) screens are used. Flight data is pulled via NetLine integration. LFI Service responds to external partner queries via API.</span></p>
+                        <p><span class="tr">COMMIS'te MSG005 (mesaj log), FLT002 (uçuş oluşturma/düzenleme), FLT004 (uçuş düzenleme), CAP149 (kapasite raporları) ekranları kullanılır. NetLine entegrasyonu üzerinden uçuş verisi çekilir. LFI Service dış partner sorgularına API üzerinden yanıt verir.</span>
+                        <span class="en">In COMMIS, MSG005 (message log), FLT002 (flight creation/editing), FLT004 (flight editing), CAP149 (capacity reports) screens are used. Flight data is pulled via NetLine integration. LFI Service responds to external partner queries via API.</span></p>
                     </div>
                     <div class="evidence">
                         <strong>Sol.Team MoM-4:</strong> "LFI (Last Flight Information) Service is an API endpoint that external partners use to query the latest flight schedule and capacity information."
@@ -704,25 +713,25 @@
                         <div class="pain-item high">
                             <span class="pain-code">P1</span>
                             <div class="pain-text">
+                                <h5><span class="tr">NetLine-COMMIS Senkronizasyon</span><span class="en">NetLine-COMMIS Synchronization</span></h5>
+                                <p><span class="tr">Zaman zaman senkronizasyon gecikmeleri yaşanıyor — en kritik sorun olup iş akışlarını önemli ölçüde sekteye uğratabilir.</span>
+                                <span class="en">Sometimes synchronization delays occur — the most critical issue that can significantly disrupt workflows.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
                                 <h5><span class="tr">SSIM Validasyon Karmaşıklığı</span><span class="en">SSIM Validation Complexity</span></h5>
                                 <p><span class="tr">SSIM dosyaları büyük ve kompleks, manuel kontrol zor, hatalar geç fark edilebilir</span>
                                 <span class="en">SSIM files are large and complex, manual checking is difficult, errors may be detected late</span></p>
                             </div>
                         </div>
                         <div class="pain-item high">
-                            <span class="pain-code">P2</span>
+                            <span class="pain-code">P3</span>
                             <div class="pain-text">
                                 <h5><span class="tr">SSM Mesaj Hata Takibi</span><span class="en">SSM Message Error Tracking</span></h5>
                                 <p><span class="tr">Başarısız SSM mesajları için detaylı hata nedeni görülemiyor</span>
                                 <span class="en">Detailed error reason cannot be seen for failed SSM messages</span></p>
-                            </div>
-                        </div>
-                        <div class="pain-item medium">
-                            <span class="pain-code">P3</span>
-                            <div class="pain-text">
-                                <h5><span class="tr">NetLine-COMMIS Senkronizasyon</span><span class="en">NetLine-COMMIS Synchronization</span></h5>
-                                <p><span class="tr">Zaman zaman senkronizasyon gecikmeleri yaşanıyor</span>
-                                <span class="en">Sometimes synchronization delays occur</span></p>
                             </div>
                         </div>
                         <div class="pain-item low">
@@ -778,7 +787,7 @@
                         </div>
                         <div class="empathy-quad does">
                             <h4><span class="icon">🎯</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
-                            <div class="empathy-item"><span class="tr">SSIM dosyasını FLT002'ye upload eder</span><span class="en">Uploads SSIM file to FLT002</span></div>
+                            <div class="empathy-item"><span class="tr">SSIM dosyasını COMMIS'e upload eder</span><span class="en">Uploads SSIM file to COMMIS</span></div>
                             <div class="empathy-item"><span class="tr">MSG005'te mesaj loglarını kontrol eder</span><span class="en">Checks message logs in MSG005</span></div>
                             <div class="empathy-item"><span class="tr">Hatalı mesajları manuel düzeltir</span><span class="en">Manually fixes erroneous messages</span></div>
                         </div>

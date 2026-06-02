@@ -442,7 +442,7 @@
                 </div>
             </div>
             <h1>RFS <span>Schedule Planner</span></h1>
-            <p class="hero-subtitle">Road Feeder Service planning specialist who manages truck schedules extending the air network into inland areas. Creates, maintains, and optimizes truck routes with intermodal connections to flights. Responsible for Excel imports, MCT configurations, and lane management.</p>
+            <p class="hero-subtitle">Road Feeder Service planning specialist who manages truck schedules extending the air network into inland areas. Creates, maintains, and optimizes truck routes with intermodal connections to flights. Responsible for Excel imports and lane management.</p>
             <div class="hero-quote">"Truck routes and timing are maintained including departure/arrival schedules and transit times. RFS capacity is coordinated with connecting flights to ensure intermodal transfers."</div>
             <div class="hero-meta">
                 <div class="hero-meta-item">
@@ -459,11 +459,12 @@
                 </div>
                 <div class="hero-meta-item source-card">
                     <span class="dot" style="background:#22c55e;"></span>
-                    <span><strong>Source:</strong> 1 BRD <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
+                    <span><strong>Source:</strong> BRD + 2025-12-02 MoM <span style="font-size:10px; color:#9ca3af;">ⓘ hover</span></span>
                     <div class="source-tooltip">
                         <div style="font-weight:700; margin-bottom:10px; color:#5eead4; font-size:12px;">📄 Source Documents</div>
                         <div style="display:flex; flex-direction:column; gap:4px;">
-                            <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>TRM Business Requirements Document</span><span style="color:#fcd34d;">BRD</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.1);"><span>TRM Business Requirements Document</span><span style="color:#fcd34d;">BRD</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>2025-12-02 Key User Schedule/Flight Management Workshop MoM</span><span style="color:#86efac;">MoM</span></div>
                         </div>
                     </div>
                 </div>
@@ -495,7 +496,7 @@
                         <div class="pf"><div class="pf-label">Main Systems</div><div class="pf-value">RFS Schedule Manager, Excel Import</div></div>
                         <div class="pf"><div class="pf-label">Transport Types</div><div class="pf-value">Truck (TRUCK/TRKSCH), future: Railway, Seaway</div></div>
                         <div class="pf"><div class="pf-label">Data Format</div><div class="pf-value">Excel (validated staging)</div></div>
-                        <div class="pf"><div class="pf-label">MCT Focus</div><div class="pf-value">Truck-to-Flight, Flight-to-Truck</div></div>
+                        <div class="pf"><div class="pf-label">Planning Focus</div><div class="pf-value">Truck lane schedule continuity</div></div>
                     </div>
                     
                     <div class="segment-card">
@@ -511,7 +512,7 @@
                             <div class="segment-item"><strong>Monitoring:</strong> Lane validity & effective dates</div>
                             <div class="segment-item"><strong>Intervention:</strong> Schedule create/update/cancel</div>
                             <div class="segment-item"><strong>Import:</strong> Excel with validation</div>
-                            <div class="segment-item"><strong>Decision:</strong> MCT feasibility check</div>
+                            <div class="segment-item"><strong>Decision:</strong> Lane feasibility and continuity check</div>
                         </div>
                         <div class="segment-col psycho">
                             <h4>Psychographic</h4>
@@ -527,14 +528,14 @@
                     </div>
                     
                     <div class="discovery-needed">
-                        <h5>🔍 Discovery Needed</h5>
-                        <p>User interview (MoM) data not available. Profile derived from BRD requirements only. Additional discovery needed for: actual user demographics, daily workflow patterns, pain points from user perspective.</p>
+                        <h5>🔍 Discovery Note</h5>
+                        <p>Profile is based on BRD plus 2025-12-02 Key User Schedule/Flight Management Workshop MoM. Additional targeted discovery is still needed for daily exceptions and edge-case workflows.</p>
                     </div>
                 </div>
                 <div id="s1-text" class="view-pane">
                     <div class="summary-box">
                         <h4>Summary</h4>
-                        <p>RFS Schedule Planner manages Road Feeder Service schedules that extend air network reach via truck transportation. Creates and maintains truck lanes with operating days, effective dates, and transit times. Coordinates intermodal connections between trucks and flights using MCT configurations. Imports schedules via Excel with staging validation.</p>
+                        <p>RFS Schedule Planner manages Road Feeder Service schedules that extend air network reach via truck transportation. Creates and maintains truck lanes with operating days, effective dates, and transit times. Manages truck planning flow and imports schedules via Excel with staging validation.</p>
                     </div>
                     <div class="evidence">
                         <strong>BRD - RFS Schedule Manager:</strong> "Manages Road Feeder Service schedules that extend air network reach via truck transportation. Truck routes and timing are maintained including departure/arrival schedules and transit times."
@@ -560,7 +561,7 @@
                 <div id="s2-chart" class="view-pane active">
                     <div class="goal-pyramid">
                         <div class="goal-level primary">🎯 PRIMARY: Extend air network reach via reliable truck schedules</div>
-                        <div class="goal-level secondary">🥈 SECONDARY: Ensure valid intermodal connections (MCT compliance)</div>
+                        <div class="goal-level secondary">🥈 SECONDARY: Ensure valid intermodal connections through reliable truck planning</div>
                         <div class="goal-level tertiary">🥉 TERTIARY: Maintain data quality in schedule imports</div>
                     </div>
                     
@@ -570,12 +571,11 @@
                             <div class="list-item">✓ Successful intermodal connection coordination</div>
                             <div class="list-item">✓ Clean Excel imports without validation errors</div>
                             <div class="list-item">✓ Network coverage expansion to inland areas</div>
-                            <div class="list-item">✓ Efficient capacity alignment with flights</div>
+                            <div class="list-item">✓ Reliable truck schedule continuity for intermodal operations</div>
                         </div>
                         <div class="list-box demotivators">
                             <h4>✗ DEMOTIVATORS</h4>
                             <div class="list-item">✗ Duplicate lanes from Excel reprocessing</div>
-                            <div class="list-item">✗ Invalid MCT configurations breaking connections</div>
                             <div class="list-item">✗ Missing vendor/contract reference data</div>
                             <div class="list-item">✗ Overlapping effective dates causing conflicts</div>
                         </div>
@@ -583,9 +583,9 @@
                     
                     <div class="list-box fears" style="margin-top:16px;">
                         <h4>⚠️ FEARS</h4>
-                        <div class="list-item">⚠️ <strong>High:</strong> Broken intermodal connections due to incorrect MCT</div>
+                        <div class="list-item">⚠️ <strong>High:</strong> Broken intermodal connections due to lane/schedule inconsistency</div>
                         <div class="list-item">⚠️ <strong>High:</strong> Duplicate lane creation from non-idempotent imports</div>
-                        <div class="list-item">⚠️ <strong>Medium:</strong> Capacity misalignment between truck and flight</div>
+                        <div class="list-item">⚠️ <strong>Medium:</strong> Real truck capacity not available, default capacity usage creates planning risk</div>
                     </div>
                     
                     <div class="discovery-needed">
@@ -596,7 +596,7 @@
                 <div id="s2-text" class="view-pane">
                     <div class="summary-box">
                         <h4>Summary</h4>
-                        <p>Main goal is extending air network reach through reliable truck schedules. Key success factors include valid intermodal connections and data quality. Main fears relate to duplicate data creation and MCT configuration errors.</p>
+                        <p>Main goal is extending air network reach through reliable truck schedules. Key success factors include valid intermodal connections and data quality. Main fears relate to duplicate data creation and lane/schedule inconsistencies.</p>
                     </div>
                     <div class="evidence">
                         <strong>BRD:</strong> "RFS capacity is coordinated with connecting flights to ensure intermodal transfers."
@@ -632,7 +632,7 @@
                         <span class="flow-arrow">→</span>
                         <div class="flow-step manual">Review & Fix</div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step approve">Commit</div>
+                        <div class="flow-step approve">Display in FLT pages</div>
                         <span class="flow-arrow">→</span>
                         <div class="flow-step auto">Connection Builder</div>
                     </div>
@@ -664,9 +664,9 @@
                                 <td>Validated data without duplicates</td>
                             </tr>
                             <tr>
-                                <td>Configure MCT</td>
-                                <td>Intermodal connection setup</td>
-                                <td>Valid truck-to-flight and flight-to-truck transfers</td>
+                                <td>Publish truck schedule</td>
+                                <td>After validation is completed</td>
+                                <td>Truck schedule is visible in FLT pages for downstream users</td>
                             </tr>
                             <tr>
                                 <td>Edit/Cancel lane</td>
@@ -684,7 +684,7 @@
                 <div id="s3-text" class="view-pane">
                     <div class="summary-box">
                         <h4>Summary</h4>
-                        <p>RFS Schedule Planner creates truck schedules either manually or via Excel import. Excel imports go through staging validation (duplicates, invalid lanes, time logic errors, missing vendor, overlapping effective dates) before commitment. Schedules are modeled consistently with flight legs for Connection Builder integration.</p>
+                        <p>RFS Schedule Planner creates truck schedules either manually or via Excel import. Excel imports go through staging validation (duplicates, invalid lanes, time logic errors, missing vendor, overlapping effective dates) before publication. Schedules are modeled consistently with flight legs for Connection Builder integration.</p>
                     </div>
                     <div class="evidence">
                         <strong>BRD:</strong> "Excel import with staging validation (duplicates, invalid lanes, time logic errors, missing vendor, overlapping effective dates)"
@@ -737,20 +737,12 @@
                                 <td>Instance-level operations</td>
                             </tr>
                             <tr>
-                                <td><strong>MCT Configuration</strong></td>
-                                <td><span class="crud-badge yes">✓</span></td>
-                                <td><span class="crud-badge yes">✓</span></td>
-                                <td><span class="crud-badge yes">✓</span></td>
-                                <td><span class="crud-badge no">-</span></td>
-                                <td>Truck-to-flight, flight-to-truck buffers</td>
-                            </tr>
-                            <tr>
                                 <td><strong>Excel Import Staging</strong></td>
                                 <td><span class="crud-badge yes">✓</span></td>
                                 <td><span class="crud-badge yes">✓</span></td>
                                 <td><span class="crud-badge no">-</span></td>
                                 <td><span class="crud-badge yes">✓</span></td>
-                                <td>Validation before commit</td>
+                                <td>Validation before publication</td>
                             </tr>
                             <tr>
                                 <td><strong>Vendor/Contract Reference</strong></td>
@@ -790,7 +782,7 @@
                 <div id="s4-text" class="view-pane">
                     <div class="summary-box">
                         <h4>Summary</h4>
-                        <p>RFS Schedule Planner has full CRUD on truck schedules and operational trucks. MCT configurations define intermodal transfer times. Excel imports use staging validation. Truck legs are modeled consistently with flight legs for unified Connection Builder processing.</p>
+                        <p>RFS Schedule Planner has full CRUD on truck schedules and operational trucks. Excel imports use staging validation. Truck legs are modeled consistently with flight legs for unified Connection Builder processing.</p>
                     </div>
                     <div class="evidence">
                         <strong>BRD:</strong> "Truck service is modeled as a scheduled transport leg (similar to flight leg) vendor(truck,trksch) and lane attributes"
@@ -832,15 +824,15 @@
                         <div class="pain-item medium">
                             <span class="pain-code">P3</span>
                             <div class="pain-text">
-                                <h5>MCT Buffer Complexity</h5>
-                                <p>Separate MCT profiles needed for truck-to-flight vs flight-to-truck transfers, different by product/commodity.</p>
+                                <h5>Default Capacity Dependency</h5>
+                                <p>Real truck capacity is often unavailable; planning continues with default capacity values.</p>
                             </div>
                         </div>
                         <div class="pain-item medium">
                             <span class="pain-code">P4</span>
                             <div class="pain-text">
                                 <h5>Excel Validation Gaps</h5>
-                                <p>Time logic errors, invalid lanes, overlapping effective dates require manual review before commit.</p>
+                                <p>Time logic errors, invalid lanes, overlapping effective dates require manual review before publication.</p>
                             </div>
                         </div>
                         <div class="pain-item low">
@@ -860,7 +852,7 @@
                 <div id="s5-text" class="view-pane">
                     <div class="summary-box">
                         <h4>Summary</h4>
-                        <p>Critical pain points relate to data quality (duplicate lanes, vendor definition gaps) and intermodal complexity (MCT configuration). Future-proofing for multi-modal transport is a strategic concern.</p>
+                        <p>Critical pain points relate to data quality (duplicate lanes, vendor definition gaps) and capacity visibility limitations. Future-proofing for multi-modal transport is a strategic concern.</p>
                     </div>
                     <div class="evidence">
                         <strong>BRD:</strong> "There is no specific vendor definition in the current system but truck schedules divided as TRUCK (unknown capacity information) and TRKSCH (known capacity information)."
@@ -888,7 +880,7 @@
                         <div class="empathy-quad says">
                             <h4><span class="icon">💬</span> SAYS</h4>
                             <div class="empathy-item">"I need to import this Excel and check validation results"</div>
-                            <div class="empathy-item">"Is the MCT configured correctly for this lane?"</div>
+                            <div class="empathy-item">"Is this lane publishable and visible in FLT pages?"</div>
                             <div class="empathy-item">"We need to suspend this truck service temporarily"</div>
                         </div>
                         <div class="empathy-avatar">
@@ -905,7 +897,7 @@
                             <h4><span class="icon">⚡</span> DOES</h4>
                             <div class="empathy-item">Prepares Excel with truck schedule data</div>
                             <div class="empathy-item">Reviews staging validation errors</div>
-                            <div class="empathy-item">Configures MCT for intermodal transfers</div>
+                            <div class="empathy-item">Publishes validated truck schedules to FLT pages</div>
                         </div>
                         <div class="empathy-quad feels">
                             <h4><span class="icon">❤️</span> FEELS</h4>
@@ -923,7 +915,7 @@
                 <div id="s6-text" class="view-pane">
                     <div class="summary-box">
                         <h4>Summary</h4>
-                        <p>RFS Planner thinks in terms of lanes, effective dates, and intermodal connections. Primary cognitive load comes from validation review and MCT configuration complexity. Main concerns are data quality and connection integrity.</p>
+                        <p>RFS Planner thinks in terms of lanes, effective dates, and intermodal connections. Primary cognitive load comes from validation review and publication readiness. Main concerns are data quality and connection integrity.</p>
                     </div>
                 </div>
             </div>
@@ -969,8 +961,8 @@
                         </div>
                         <div class="list-box" style="border-left:3px solid #d97706;">
                             <h4 style="color:#d97706;">⏳ DELAY RISK</h4>
-                            <div class="list-item">MCT configuration complexity</div>
                             <div class="list-item">Excel validation cycle time</div>
+                            <div class="list-item">Default capacity dependency</div>
                         </div>
                         <div class="list-box" style="border-left:3px solid #7c3aed;">
                             <h4 style="color:#7c3aed;">🕳️ DATA GAP</h4>
@@ -1015,8 +1007,8 @@
                         </div>
                         <div class="timeline-item short">
                             <span class="timeline-badge short">SHORT TERM</span>
-                            <h5>Centralized MCT Workbench ← P3</h5>
-                            <p>Single page for truck-to-flight and flight-to-truck MCT configuration by product/commodity</p>
+                            <h5>Capacity Quality Controls ← P3</h5>
+                            <p>Improve default-vs-real truck capacity visibility and warnings in planning flow</p>
                         </div>
                         <div class="timeline-item short">
                             <span class="timeline-badge short">SHORT TERM</span>
@@ -1033,7 +1025,7 @@
                 <div id="s8-text" class="view-pane">
                     <div class="summary-box">
                         <h4>Summary</h4>
-                        <p>MVP priorities: idempotent imports and unified leg modeling. Short-term: centralized MCT workbench. Long-term: multi-modal transport support (railway, seaway).</p>
+                        <p>MVP priorities: idempotent imports and unified leg modeling. Short-term: capacity quality controls. Long-term: multi-modal transport support (railway, seaway).</p>
                     </div>
                     <div class="evidence">
                         <strong>BRD:</strong> "For the future enhancements the system should support both railway and seaway schedules and also operations."
@@ -1065,8 +1057,8 @@
                         <div style="position:absolute; left:50%; top:33%; transform:translate(-50%,-50%); background:#0891b2; color:white; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; z-index:3;">TRUST LINE</div>
                         
                         <div style="position:absolute; left:16px; top:4%; font-size:11px; color:#dc2626; font-weight:600;">🚫 Level 6: Auto-commit schedules without validation</div>
-                        <div style="position:absolute; left:16px; top:21%; font-size:11px; color:#b45309; font-weight:600;">⚠️ Level 5: MCT changes (approval required)</div>
-                        <div style="position:absolute; left:16px; top:40%; font-size:11px; color:#15803d; font-weight:600;">💡 Level 4: Suggest optimal MCT values</div>
+                        <div style="position:absolute; left:16px; top:21%; font-size:11px; color:#b45309; font-weight:600;">⚠️ Level 5: Schedule publication actions (approval required)</div>
+                        <div style="position:absolute; left:16px; top:40%; font-size:11px; color:#15803d; font-weight:600;">💡 Level 4: Suggest lane quality improvements</div>
                         <div style="position:absolute; left:16px; top:55%; font-size:11px; color:#15803d; font-weight:600;">⚙️ Level 3: Pre-validate Excel before upload</div>
                         <div style="position:absolute; left:16px; top:70%; font-size:11px; color:#15803d; font-weight:600;">📝 Level 2: Summarize validation errors</div>
                         <div style="position:absolute; left:16px; top:85%; font-size:11px; color:#15803d; font-weight:600;">📊 Level 1: Display lane status dashboard</div>
@@ -1079,7 +1071,7 @@
                                 <li>📊 Lane status and validation dashboard</li>
                                 <li>📝 Validation error summarization</li>
                                 <li>⚙️ Excel pre-validation before upload</li>
-                                <li>💡 MCT optimization suggestions</li>
+                                <li>💡 Lane quality and timing optimization suggestions</li>
                                 <li>🔍 Duplicate detection alerts</li>
                             </ul>
                         </div>
@@ -1087,7 +1079,7 @@
                             <h5>⛔ AI NOT SUITABLE (Level 5-6)</h5>
                             <ul>
                                 <li>🚫 Auto-commit schedules without review</li>
-                                <li>🚫 Automatic MCT changes</li>
+                                <li>🚫 Automatic schedule publication actions</li>
                                 <li>🚫 Lane cancellation without approval</li>
                                 <li>🚫 Vendor contract modifications</li>
                             </ul>
@@ -1097,7 +1089,7 @@
                 <div id="s9-text" class="view-pane">
                     <div class="summary-box">
                         <h4>Summary</h4>
-                        <p>AI is suitable for informational, summarization, and suggestion levels. Schedule commits and MCT changes require human approval due to operational impact.</p>
+                        <p>AI is suitable for informational, summarization, and suggestion levels. Schedule publication actions require human approval due to operational impact.</p>
                     </div>
                 </div>
             </div>

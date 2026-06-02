@@ -389,8 +389,8 @@
                 <span class="en">Coordinator managing flight changes within operational window (last 3 days). Performs delay, cancellation, aircraft type change and diversion operations via ATOM, Mono and NetLine OPS systems. Carries 24/7 operational responsibility.</span>
             </p>
             <div class="hero-quote">
-                <span class="tr">"ATOM ağırlıklı olarak uçuş zaman değişiklikleri (delay) için kullanılır, uçuş ekleme/silme/değiştirme için değil. Diğer değişiklikler NetLine OPS veya OBSIS üzerinden yapılır."</span>
-                <span class="en">"ATOM is mainly used for flight time changes (delays), not for adding, deleting, or changing flights. Other changes are handled in NetLine OPS or via OBSIS."</span>
+                <span class="tr">"ATOM ağırlıklı olarak uçuş zaman değişiklikleri (delay) için kullanılır, uçuş ekleme/silme/değiştirme için değil. Diğer değişiklikler NetLine OPS üzerinden yapılır."</span>
+                <span class="en">"ATOM is mainly used for flight time changes (delays), not for adding, deleting, or changing flights. Other changes are handled in NetLine OPS."</span>
             </div>
             <div class="hero-meta">
                 <div class="hero-meta-item">
@@ -459,7 +459,7 @@
                             <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
                             <div class="segment-item"><strong><span class="tr">Delay:</span><span class="en">Delay:</span></strong> <span class="tr">ATOM + Mono üzerinden</span><span class="en">Via ATOM + Mono</span></div>
                             <div class="segment-item"><strong><span class="tr">Schedule Chg:</span><span class="en">Schedule Chg:</span></strong> <span class="tr">Farklı gün veya büyük değişiklik</span><span class="en">Different day or major change</span></div>
-                            <div class="segment-item"><strong><span class="tr">Onay:</span><span class="en">Approval:</span></strong> <span class="tr">OBSIS üzerinden</span><span class="en">Via OBSIS</span></div>
+                            <div class="segment-item"><strong><span class="tr">Onay:</span><span class="en">Approval:</span></strong> <span class="tr">NetLine OPS üzerinden</span><span class="en">Via NetLine OPS</span></div>
                             <div class="segment-item"><strong><span class="tr">İzleme:</span><span class="en">Monitoring:</span></strong> <span class="tr">Gerçek zamanlı</span><span class="en">Real-time</span></div>
                         </div>
                         <div class="segment-col psycho">
@@ -477,7 +477,7 @@
                         <span class="en">COCC Coordinator is responsible for all flight changes within operational window (last 3 days). Works 24/7 shifts. Delay operations via ATOM, aircraft changes and tail assignment via NetLine OPS. Changes automatically reflect to COMMIS.</span></p>
                     </div>
                     <div class="evidence">
-                        <strong>MoM-2026-02-18:</strong> "ATOM is mainly used for flight time changes (delays), not for adding, deleting, or changing flights. Other changes are handled in NetLine OPS or via OBSIS."
+                        <strong>MoM-2026-02-18:</strong> "ATOM is mainly used for flight time changes (delays), not for adding, deleting, or changing flights. Other changes are handled in NetLine OPS."
                     </div>
                 </div>
             </div>
@@ -514,13 +514,11 @@
                             <h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
                             <div class="list-item">✗ <span class="tr">Çoklu sistem arasında geçiş zorluğu</span><span class="en">Difficulty switching between multiple systems</span></div>
                             <div class="list-item">✗ <span class="tr">Rol tabanlı erişim kısıtlamaları</span><span class="en">Role-based access restrictions</span></div>
-                            <div class="list-item">✗ <span class="tr">ATOM-NetLine entegrasyon tutarsızlıkları</span><span class="en">ATOM-NetLine integration inconsistencies</span></div>
                         </div>
                     </div>
                     
                     <div class="list-box fears" style="margin-top:16px;">
                         <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
-                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> HUM veya AVI kargo olan uçuşu iptal etmek</span><span class="en"><strong>High:</strong> Cancelling flight with HUM or AVI cargo</span></div>
                         <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Delay/schedule change ayrımını yanlış yapmak</span><span class="en"><strong>High:</strong> Making wrong delay/schedule change distinction</span></div>
                         <div class="list-item">⚠️ <span class="tr"><strong>Orta:</strong> Sistemler arasında veri tutarsızlığı</span><span class="en"><strong>Medium:</strong> Data inconsistency between systems</span></div>
                     </div>
@@ -528,8 +526,8 @@
                 <div id="s2-text" class="view-pane">
                     <div class="summary-box">
                         <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
-                        <p><span class="tr">Ana hedef operasyonel sürekliliği sağlamak. Kritik kargo (HUM, AVI) farkındalığı çok önemli. En büyük korku kritik kargo olan uçuşu fark etmeden iptal etmek.</span>
-                        <span class="en">Main goal is to ensure operational continuity. Critical cargo (HUM, AVI) awareness is very important. Greatest fear is cancelling flight with critical cargo without noticing.</span></p>
+                        <p><span class="tr">Ana hedef operasyonel sürekliliği sağlamak. Kritik kargo (HUM, AVI) farkındalığı operasyonel kontrolün parçasıdır ve FLTSEGCAPUTL mesajıyla desteklenir. En kritik endişe delay/schedule change ayrımında yanlış karar verilmesidir.</span>
+                        <span class="en">Main goal is to ensure operational continuity. Critical cargo (HUM, AVI) awareness is part of operational control and supported via FLTSEGCAPUTL message. The key concern is making wrong decisions in delay/schedule change distinction.</span></p>
                     </div>
                 </div>
             </div>
@@ -562,8 +560,6 @@
                     <div class="flow-h">
                         <div class="flow-step decision"><span class="tr">Schedule Change?</span><span class="en">Schedule Change?</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step manual"><span class="tr">OBSIS Onay</span><span class="en">OBSIS Approval</span></div>
-                        <span class="flow-arrow">→</span>
                         <div class="flow-step manual"><span class="tr">NetLine OPS</span><span class="en">NetLine OPS</span></div>
                         <span class="flow-arrow">→</span>
                         <div class="flow-step auto"><span class="tr">COMMIS'e Yansıma</span><span class="en">Reflect to COMMIS</span></div>
@@ -572,8 +568,8 @@
                 <div id="s3-text" class="view-pane">
                     <div class="summary-box">
                         <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
-                        <p><span class="tr">İki tip zaman değişikliği var: Delay (kısa vadeli kaymalar) ve Schedule Change (farklı güne taşıma veya büyük değişiklikler). Delay ATOM üzerinden, Schedule Change OBSIS onayıyla NetLine OPS üzerinden yapılır. Tüm değişiklikler COMMIS'e otomatik yansır.</span>
-                        <span class="en">Two types of time changes: Delay (short-term shifts) and Schedule Change (moving to different day or major changes). Delay via ATOM, Schedule Change via NetLine OPS with OBSIS approval. All changes automatically reflect to COMMIS.</span></p>
+                        <p><span class="tr">İki tip zaman değişikliği var: Delay (kısa vadeli kaymalar) ve Schedule Change (farklı güne taşıma veya büyük değişiklikler). Delay ATOM üzerinden, Schedule Change NetLine OPS üzerinden yapılır. Tüm değişiklikler COMMIS'e otomatik yansır.</span>
+                        <span class="en">Two types of time changes: Delay (short-term shifts) and Schedule Change (moving to different day or major changes). Delay via ATOM, Schedule Change via NetLine OPS. All changes automatically reflect to COMMIS.</span></p>
                     </div>
                     <div class="evidence">
                         <strong>MoM-2026-02-18:</strong> "There are two types of time changes: delay and schedule change. Delay is applied for short-term shifts, while schedule change is for moving flights to another day or significant changes."
@@ -633,14 +629,6 @@
                                 <td><span class="tr">Ana operasyonel kontrol, tail assignment</span><span class="en">Main operational control, tail assignment</span></td>
                             </tr>
                             <tr>
-                                <td><strong>OBSIS</strong></td>
-                                <td><span class="crud-badge yes">✓</span></td>
-                                <td><span class="crud-badge yes">✓</span></td>
-                                <td><span class="crud-badge yes">✓</span></td>
-                                <td><span class="crud-badge no">-</span></td>
-                                <td><span class="tr">Onay workflow (slot, operasyonel)</span><span class="en">Approval workflow (slot, operational)</span></td>
-                            </tr>
-                            <tr>
                                 <td><strong>COMMIS - CAP145/147</strong></td>
                                 <td><span class="crud-badge no">-</span></td>
                                 <td><span class="crud-badge yes">✓</span></td>
@@ -654,8 +642,8 @@
                 <div id="s4-text" class="view-pane">
                     <div class="summary-box">
                         <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
-                        <p><span class="tr">COCC Coordinator 5 farklı sistemle çalışır: ATOM (delay), Mono (delay detay), NetLine OPS (ana kontrol + tail), OBSIS (onaylar), COMMIS (kargo kontrolü). ATOM ve NetLine OPS entegredir. ATOM ve COMMIS doğrudan bağlı değil.</span>
-                        <span class="en">COCC Coordinator works with 5 different systems: ATOM (delay), Mono (delay detail), NetLine OPS (main control + tail), OBSIS (approvals), COMMIS (cargo check). ATOM and NetLine OPS are integrated. ATOM and COMMIS are not directly connected.</span></p>
+                        <p><span class="tr">COCC Coordinator 4 farklı sistemle çalışır: ATOM (delay), Mono (delay detay), NetLine OPS (ana kontrol + tail), COMMIS (kargo kontrolü). ATOM ve NetLine OPS entegredir. ATOM ve COMMIS doğrudan bağlı değil.</span>
+                        <span class="en">COCC Coordinator works with 4 different systems: ATOM (delay), Mono (delay detail), NetLine OPS (main control + tail), COMMIS (cargo check). ATOM and NetLine OPS are integrated. ATOM and COMMIS are not directly connected.</span></p>
                     </div>
                     <div class="evidence">
                         <strong>MoM-2026-02-18:</strong> "All changes in ATOM are reflected in NetLine OPS, and NetLine OPS is the main source for other systems like COMIS. ATOM and NetLine OPS are integrated, but ATOM and COMIS are not directly connected."
@@ -683,8 +671,8 @@
                             <span class="pain-code">P1</span>
                             <div class="pain-text">
                                 <h5><span class="tr">Çoklu Sistem Karmaşıklığı</span><span class="en">Multiple System Complexity</span></h5>
-                                <p><span class="tr">5 farklı sistem arasında geçiş zorluğu: ATOM, Mono, NetLine OPS, OBSIS, COMMIS</span>
-                                <span class="en">Difficulty switching between 5 different systems: ATOM, Mono, NetLine OPS, OBSIS, COMMIS</span></p>
+                                <p><span class="tr">4 farklı sistem arasında geçiş zorluğu: ATOM, Mono, NetLine OPS, COMMIS</span>
+                                <span class="en">Difficulty switching between 4 different systems: ATOM, Mono, NetLine OPS, COMMIS</span></p>
                             </div>
                         </div>
                         <div class="pain-item high">
@@ -795,7 +783,6 @@
                     <div class="stakeholder-map">
                         <div class="stakeholder-row">
                             <div class="stakeholder-node provider"><span class="tr">Schedule Planning</span><span class="en">Schedule Planning</span></div>
-                            <div class="stakeholder-node provider"><span class="tr">Slot Management</span><span class="en">Slot Management</span></div>
                         </div>
                         <span class="stakeholder-arrow">↓</span>
                         <div class="stakeholder-node persona">COCC Coordinator</div>
@@ -804,14 +791,15 @@
                             <div class="stakeholder-node consumer"><span class="tr">Station Operations</span><span class="en">Station Operations</span></div>
                             <div class="stakeholder-node partner"><span class="tr">Crew Planning</span><span class="en">Crew Planning</span></div>
                             <div class="stakeholder-node partner"><span class="tr">Cargo Team</span><span class="en">Cargo Team</span></div>
+                            <div class="stakeholder-node partner"><span class="tr">Slot Management</span><span class="en">Slot Management</span></div>
                         </div>
                     </div>
                 </div>
                 <div id="s7-text" class="view-pane">
                     <div class="summary-box">
                         <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
-                        <p><span class="tr">COCC Coordinator, operasyonel pencerede (son 3 gün) ana karar vericidir. Schedule Planning'den devralır, Slot Management ile koordine olur. Station Operations, Crew Planning ve Cargo team'lere bilgi sağlar.</span>
-                        <span class="en">COCC Coordinator is the main decision maker in operational window (last 3 days). Takes over from Schedule Planning, coordinates with Slot Management. Provides information to Station Operations, Crew Planning and Cargo teams.</span></p>
+                        <p><span class="tr">COCC Coordinator, operasyonel pencerede (son 3 gün) ana karar vericidir. Schedule Planning'den devralır. Station Operations, Crew Planning, Cargo ve Slot Management ekiplerine bilgi sağlar.</span>
+                        <span class="en">COCC Coordinator is the main decision maker in operational window (last 3 days). Takes over from Schedule Planning. Provides information to Station Operations, Crew Planning, Cargo and Slot Management teams.</span></p>
                     </div>
                 </div>
             </div>
