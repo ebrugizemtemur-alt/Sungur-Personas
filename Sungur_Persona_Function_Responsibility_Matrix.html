@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sungur Cargo Module — Persona-Function Responsibility Matrix</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e293b;
+            min-height: 100vh;
+            padding: 24px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .header .subtitle {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 16px;
+        }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #475569;
+        }
+        .legend-badge {
+            width: 28px;
+            height: 22px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: white;
+        }
+        .legend-badge.primary { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .legend-badge.support { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .legend-badge.approval { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .legend-badge.view { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .legend-badge.configure { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .legend-badge.none { background: #cbd5e1; color: #64748b; }
+        
+        .matrix-container {
+            overflow-x: auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            min-width: 1400px;
+        }
+        
+        thead th {
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            color: white;
+            padding: 14px 8px;
+            font-weight: 600;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 3px solid #0f172a;
+        }
+        thead th:first-child {
+            text-align: left;
+            padding-left: 16px;
+            min-width: 220px;
+            border-radius: 12px 0 0 0;
+        }
+        thead th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+        thead th .th-sub {
+            font-size: 9px;
+            font-weight: 400;
+            opacity: 0.7;
+            display: block;
+            margin-top: 2px;
+        }
+        
+        /* Module Group Headers */
+        .module-group {
+            background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+        .module-group td {
+            padding: 10px 16px;
+            font-weight: 700;
+            font-size: 13px;
+            color: #0f172a;
+            border-bottom: 2px solid #cbd5e1;
+        }
+        .module-group td:first-child {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .module-badge {
+            width: 36px;
+            height: 28px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+            color: white;
+        }
+        .module-badge.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-badge.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-badge.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-badge.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-badge.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-badge.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-badge.prm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-badge.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-badge.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        
+        tbody tr {
+            transition: background 0.2s;
+        }
+        tbody tr:hover:not(.module-group) {
+            background: #f8fafc;
+        }
+        tbody tr:nth-child(even):not(.module-group) {
+            background: rgba(241, 245, 249, 0.5);
+        }
+        tbody tr:nth-child(even):not(.module-group):hover {
+            background: #f1f5f9;
+        }
+        
+        tbody td {
+            padding: 10px 6px;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        tbody td:first-child {
+            text-align: left;
+            padding-left: 20px;
+            font-weight: 500;
+            color: #334155;
+        }
+        
+        .cell {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 24px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .cell:hover {
+            transform: scale(1.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        
+        .cell.P { background: linear-gradient(135deg, #16a34a, #22c55e); color: white; }
+        .cell.S { background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; }
+        .cell.A { background: linear-gradient(135deg, #ea580c, #f97316); color: white; }
+        .cell.V { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; }
+        .cell.C { background: linear-gradient(135deg, #dc2626, #ef4444); color: white; }
+        .cell.N { background: #e2e8f0; color: #94a3b8; }
+        
+        /* Combined badges */
+        .cell.PA { background: linear-gradient(135deg, #16a34a 50%, #ea580c 50%); color: white; }
+        .cell.PS { background: linear-gradient(135deg, #16a34a 50%, #2563eb 50%); color: white; }
+        .cell.SA { background: linear-gradient(135deg, #2563eb 50%, #ea580c 50%); color: white; }
+        .cell.VS { background: linear-gradient(135deg, #7c3aed 50%, #2563eb 50%); color: white; }
+        .cell.VA { background: linear-gradient(135deg, #7c3aed 50%, #ea580c 50%); color: white; }
+        .cell.AV { background: linear-gradient(135deg, #ea580c 50%, #7c3aed 50%); color: white; }
+        .cell.VP { background: linear-gradient(135deg, #7c3aed 50%, #16a34a 50%); color: white; }
+        .cell.PV { background: linear-gradient(135deg, #16a34a 50%, #7c3aed 50%); color: white; }
+        .cell.SV { background: linear-gradient(135deg, #2563eb 50%, #7c3aed 50%); color: white; }
+        .cell.CP { background: linear-gradient(135deg, #dc2626 50%, #16a34a 50%); color: white; }
+        .cell.PC { background: linear-gradient(135deg, #16a34a 50%, #dc2626 50%); color: white; }
+        .cell.CA { background: linear-gradient(135deg, #dc2626 50%, #ea580c 50%); color: white; }
+        .cell.AC { background: linear-gradient(135deg, #ea580c 50%, #dc2626 50%); color: white; }
+        .cell.CS { background: linear-gradient(135deg, #dc2626 50%, #2563eb 50%); color: white; }
+        .cell.SC { background: linear-gradient(135deg, #2563eb 50%, #dc2626 50%); color: white; }
+        .cell.CV { background: linear-gradient(135deg, #dc2626 50%, #7c3aed 50%); color: white; }
+        .cell.AP { background: linear-gradient(135deg, #ea580c 50%, #16a34a 50%); color: white; }
+        .cell.CA { background: linear-gradient(135deg, #dc2626 50%, #ea580c 50%); color: white; }
+        .cell.CAP { background: linear-gradient(90deg, #dc2626 33%, #ea580c 33%, #ea580c 66%, #16a34a 66%); color: white; font-size: 8px; }
+        
+        .footer {
+            text-align: center;
+            margin-top: 24px;
+            padding: 16px;
+            font-size: 11px;
+            color: #64748b;
+        }
+        .footer p { margin: 4px 0; }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            body { padding: 12px; }
+            .header h1 { font-size: 22px; }
+            table { font-size: 10px; }
+        }
+        
+        /* Print styles */
+        @media print {
+            body { padding: 0; background: white; }
+            .matrix-container { box-shadow: none; }
+            thead th { position: static; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sungur Cargo Module — Persona-Function Responsibility Matrix</h1>
+        <div class="subtitle">Relationship and responsibility levels across cargo personas and system functions</div>
+    </div>
+    
+    <div class="legend">
+        <div class="legend-item"><span class="legend-badge primary">P</span> Primary</div>
+        <div class="legend-item"><span class="legend-badge support">S</span> Support</div>
+        <div class="legend-item"><span class="legend-badge approval">A</span> Approval / Control</div>
+        <div class="legend-item"><span class="legend-badge view">V</span> View</div>
+        <div class="legend-item"><span class="legend-badge configure">C</span> Configure</div>
+        <div class="legend-item"><span class="legend-badge none">–</span> No / Limited</div>
+        <div class="legend-item" style="margin-left: 20px; border-left: 1px solid #cbd5e1; padding-left: 20px;"><span class="legend-badge" style="background: linear-gradient(135deg, #dc2626 50%, #16a34a 50%);">C/P</span> Configure + Primary</div>
+        <div class="legend-item"><span class="legend-badge" style="background: linear-gradient(135deg, #ea580c 50%, #16a34a 50%);">A/P</span> Approval + Primary</div>
+    </div>
+    
+    <div class="matrix-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Persona / Role</th>
+                    <th>Compliance</th>
+                    <th>Digital Channels</th>
+                    <th>Capacity Mgmt.</th>
+                    <th>Booking</th>
+                    <th>Partner Mgmt.</th>
+                    <th>Messages</th>
+                    <th>Rates</th>
+                    <th>Tracing & Claims</th>
+                    <th>Schedule</th>
+                    <th>Allotment Mgmt.</th>
+                    <th>AWB Stock Mgmt.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ========== BKR MODULE ========== -->
+                <tr class="module-group">
+                    <td colspan="12"><span class="module-badge bkr">BKR</span> Booking & Reservation Module (7 Personas)</td>
+                </tr>
+                <tr>
+                    <td>General Reservation Agent (IST)</td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                </tr>
+                <tr>
+                    <td>Special Cargo Reservation Agent</td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                </tr>
+                <tr>
+                    <td>Domestic Reservation Agent</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell N">–</span></td>
+                    <td><span class="cell P">P</span></td>
+                </tr>
+                <tr>
+                    <td>Capacity Planning Specialist</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>GSA / International Station Agent</td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                </tr>
+                <tr>
+                    <td>Cargo Operations Agent</td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                </tr>
+                <tr>
+                    <td>Solution / Technical Specialist</td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                </tr>
+                
+                <!-- ========== CAM MODULE ========== -->
+                <tr class="module-group">
+                    <td colspan="12"><span class="module-badge cam">CAM</span> Capacity Management Module (3 Personas)</td>
+                </tr>
+                <tr>
+                    <td>Capacity Analyst</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell A">A</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Flight Optimizer</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell A">A</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell A">A</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>CAM Sales User</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                
+                <!-- ========== PCM MODULE ========== -->
+                <tr class="module-group">
+                    <td colspan="12"><span class="module-badge pcm">PCM</span> Pricing Management Module (5 Personas)</td>
+                </tr>
+                <tr>
+                    <td>Pricing Specialist</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Revenue Management Analyst</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell AP">A/P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Interline Specialist (PCM)</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Sales Manager (PCM)</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell A">A</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell A">A</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Station User (PCM)</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                
+                <!-- ========== FLM MODULE ========== -->
+                <tr class="module-group">
+                    <td colspan="12"><span class="module-badge flm">FLM</span> Flight Management Module (6 Personas)</td>
+                </tr>
+                <tr>
+                    <td>Network Planner</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Schedule Planner</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Revenue & Capacity Analyst</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>COCC Coordinator</td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Interline Specialist (FLM)</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Solution Specialist (FLM)</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                
+                <!-- ========== COM MODULE ========== -->
+                <tr class="module-group">
+                    <td colspan="12"><span class="module-badge com">COM</span> Compliance Management Module (5 Personas)</td>
+                </tr>
+                <tr>
+                    <td>Embargo Definition Specialist</td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Sanctions Officer</td>
+                    <td><span class="cell A">A</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell A">A</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Restriction Specialist</td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                <tr>
+                    <td>Hub Operations Coordinator</td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                </tr>
+                <tr>
+                    <td>Service Standards Specialist</td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell P">P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                
+                <!-- ========== ASM MODULE ========== -->
+                <tr class="module-group">
+                    <td colspan="12"><span class="module-badge asm">ASM</span> AWB Stock Management Module (2 Personas)</td>
+                </tr>
+                <tr>
+                    <td>AWB Stock Management Specialist</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                </tr>
+                <tr>
+                    <td>Messaging Specialist</td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                </tr>
+                
+                <!-- ========== PRM MODULE ========== -->
+                <tr class="module-group">
+                    <td colspan="12"><span class="module-badge prm">PRM</span> Partner Management Module (1 Persona)</td>
+                </tr>
+                <tr>
+                    <td>Master Data Specialist</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell C">C</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                </tr>
+                
+                <!-- ========== SCM MODULE ========== -->
+                <tr class="module-group">
+                    <td colspan="12"><span class="module-badge scm">SCM</span> Special Cargo Management Module (1 Persona)</td>
+                </tr>
+                <tr>
+                    <td>Special Cargo Consultant</td>
+                    <td><span class="cell AP">A/P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                </tr>
+                
+                <!-- ========== TRM MODULE ========== -->
+                <tr class="module-group">
+                    <td colspan="12"><span class="module-badge trm">TRM</span> Truck Management Module (1 Persona)</td>
+                </tr>
+                <tr>
+                    <td>RFS Schedule Planner</td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell S">S</span></td>
+                    <td><span class="cell CP">C/P</span></td>
+                    <td><span class="cell V">V</span></td>
+                    <td><span class="cell V">V</span></td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="footer">
+        <p><strong>Sungur Cargo Module — Persona-Function Responsibility Matrix</strong></p>
+        <p>Generated from Key User & Solution Team MoMs | May 2026</p>
+        <p>9 Modules: BKR • CAM • PCM • FLM • COM • ASM • PRM • SCM • TRM | 31 Personas</p>
+    </div>
+</body>
+</html>
