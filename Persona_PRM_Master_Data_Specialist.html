@@ -681,9 +681,10 @@
                     
                     <div class="list-box fears" style="margin-top:16px;">
                         <h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item" style="background:rgba(220,38,38,0.08); padding:8px; border-radius:6px;">⚠️ <span class="tr"><strong style="color:#dc2626;">Kritik:</strong> Default acente ile rezervasyon yapılıp kargo kabul edilmesi ve tahsil edilemeyecek alacak oluşması</span><span class="en"><strong style="color:#dc2626;">Critical:</strong> Booking made and cargo accepted with defaulted agent, creating uncollectable receivables</span></div>
                         <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Yanlış IATA kodu ile booking yapılması ve ödeme alınamaması</span><span class="en"><strong>High:</strong> Booking with wrong IATA code and payment not received</span></div>
                         <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Silinemeyen hatalı kayıtların birikip veri kirliliği oluşturması</span><span class="en"><strong>High:</strong> Undeletable erroneous records accumulating and creating data pollution</span></div>
-                        <div class="list-item">⚠️ <span class="tr"><strong>Orta:</strong> IATA default acentesinin geç tespit edilmesi ve gelir kaybı</span><span class="en"><strong>Medium:</strong> Late detection of IATA default agent and revenue loss</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Deaktivasyon sırasının yanlış yapılması ve sistem hatası</span><span class="en"><strong>High:</strong> Wrong deactivation sequence causing system error</span></div>
                     </div>
                 </div>
                 <div id="s2-text" class="view-pane">
@@ -725,14 +726,19 @@
                         <div class="flow-step auto"><span class="tr">Partner Aktif</span><span class="en">Partner Active</span></div>
                     </div>
                     
-                    <h4 style="font-size:12px; font-weight:600; margin:24px 0 12px 0; color:#f59e0b;"><span class="tr">🔄 IATA Default/Terminate Statü Yönetimi</span><span class="en">🔄 IATA Default/Terminate Status Management</span></h4>
+                    <h4 style="font-size:12px; font-weight:600; margin:24px 0 12px 0; color:#dc2626;"><span class="tr">🚨 IATA Default/Terminate Deaktivasyon Akışı (Kritik Sıralama)</span><span class="en">🚨 IATA Default/Terminate Deactivation Flow (Critical Sequence)</span></h4>
                     <div class="flow-h">
-                        <div class="flow-step auto"><span class="tr">IATA Raporu (Günlük/Haftalık)</span><span class="en">IATA Report (Daily/Weekly)</span></div>
+                        <div class="flow-step auto"><span class="tr">IATA Raporu (Günlük)</span><span class="en">IATA Report (Daily)</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step manual"><span class="tr">Default Acente Tespiti</span><span class="en">Default Agent Detection</span></div>
+                        <div class="flow-step manual" style="background:#fecaca; color:#b91c1c;"><span class="tr">1. STK-017 Mapping Sil</span><span class="en">1. STK-017 Delete Mapping</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step manual" style="background:#fef3c7; color:#b45309;"><span class="tr">CMT-002 Pasife Al</span><span class="en">CMT-002 Set Inactive</span></div>
+                        <div class="flow-step manual" style="background:#fecaca; color:#b91c1c;"><span class="tr">2. STK-007 Stok Kontrol</span><span class="en">2. STK-007 Stock Check</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual" style="background:#fecaca; color:#b91c1c;"><span class="tr">3. STK-006 Stok Tanım Sil</span><span class="en">3. STK-006 Delete Stock Def</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual" style="background:#fecaca; color:#b91c1c;"><span class="tr">4. CMT-002 Inactive</span><span class="en">4. CMT-002 Inactive</span></div>
                     </div>
+                    <p style="font-size:11px; color:#dc2626; margin-top:8px; font-weight:500;"><span class="tr">⚠️ Sıralama kritik: Yanlış sıra sistem hatasına yol açar. Önce AWB stok mapping silinmeli, sonra stok tanımı, en son acente pasife alınmalı.</span><span class="en">⚠️ Sequence is critical: Wrong order causes system errors. First delete AWB stock mapping, then stock definition, finally deactivate agent.</span></p>
                     
                     <table class="jtbd-table">
                         <thead>
@@ -762,6 +768,21 @@
                                 <td><span class="tr">Partner Statü Yönetimi</span><span class="en">Partner Status Management</span></td>
                                 <td><span class="tr">Günlük/Haftalık IATA raporu</span><span class="en">Daily/Weekly IATA report</span></td>
                                 <td>IATA Portal → CMT-002</td>
+                            </tr>
+                            <tr style="background:rgba(220,38,38,0.05);">
+                                <td><span class="tr">IATA Default İzleme</span><span class="en">IATA Default Monitoring</span></td>
+                                <td><span class="tr">Günlük rapor</span><span class="en">Daily report</span></td>
+                                <td style="color:#dc2626; font-weight:600;"><span class="tr">Aynı gün aksiyon</span><span class="en">Same day action</span></td>
+                            </tr>
+                            <tr style="background:rgba(220,38,38,0.05);">
+                                <td><span class="tr">AWB Stok İptal (Default Acente)</span><span class="en">AWB Stock Cancel (Default Agent)</span></td>
+                                <td><span class="tr">Default/Terminate bildirimi</span><span class="en">Default/Terminate notification</span></td>
+                                <td>STK-017 → STK-007 → STK-006</td>
+                            </tr>
+                            <tr style="background:rgba(220,38,38,0.05);">
+                                <td><span class="tr">Sistem Erişimi Kesme</span><span class="en">System Access Cut</span></td>
+                                <td><span class="tr">Stok iptal sonrası</span><span class="en">After stock cancel</span></td>
+                                <td style="color:#dc2626; font-weight:600;"><span class="tr">Hemen</span><span class="en">Immediate</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -899,6 +920,30 @@
                                 <h5><span class="tr">Toplu Tanımlama Yapılamıyor</span><span class="en">No Bulk Definition</span></h5>
                                 <p><span class="tr">Excel upload yok. Çoklu şube için ayrı ayrı manuel kayıt gerekli.</span>
                                 <span class="en">No Excel upload. Separate manual entries required for multi-branch.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high" style="border-left-color:#dc2626;">
+                            <span class="pain-code" style="background:#dc2626; color:white;">P7</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">4 Ekranda Manuel Deaktivasyon Süreci</span><span class="en">Manual Deactivation in 4 Screens</span></h5>
+                                <p><span class="tr">IATA default/terminate bildirimi geldiğinde 4 farklı ekranda sıralı manuel işlem gerekli (STK-017 → STK-007 → STK-006 → CMT-002). Hata riski yüksek, sıralama kritik.</span>
+                                <span class="en">When IATA default/terminate notification arrives, sequential manual processing in 4 different screens required (STK-017 → STK-007 → STK-006 → CMT-002). High error risk, sequence critical.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high" style="border-left-color:#dc2626;">
+                            <span class="pain-code" style="background:#dc2626; color:white;">P8</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Sıralama Bağımlılığı</span><span class="en">Sequence Dependency</span></h5>
+                                <p><span class="tr">Deaktivasyon işlem sırası yanlış yapılırsa sistem hata veriyor. Önce AWB stok mapping silinmeli, sonra stok tanımı, en son acente pasife alınmalı.</span>
+                                <span class="en">System throws error if deactivation sequence is wrong. First AWB stock mapping must be deleted, then stock definition, finally agent set inactive.</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P9</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">Stok Transferi Manuel</span><span class="en">Manual Stock Transfer</span></h5>
+                                <p><span class="tr">Default acentenin elinde AWB stok varsa önce istasyona transfer edilmeli. Bu da manuel ve zaman alıcı.</span>
+                                <span class="en">If default agent has AWB stock on hand, must be transferred to station first. This is also manual and time-consuming.</span></p>
                             </div>
                         </div>
                     </div>
@@ -1040,6 +1085,11 @@
                             <h5><span class="tr">P2 → Gelişmiş Listing & Export</span><span class="en">P2 → Advanced Listing & Export</span></h5>
                             <p><span class="tr">Esnek filtre seçenekleri, kolon özelleştirme ve tek seferde tam data export.</span><span class="en">Flexible filter options, column customization and full data export at once.</span></p>
                         </div>
+                        <div class="timeline-item mvp" style="border-left-color:#dc2626;">
+                            <span class="timeline-badge mvp" style="background:#fef2f2; color:#dc2626;">MVP</span>
+                            <h5 style="color:#dc2626;"><span class="tr">P7+P8 → Tek Tıkla Deaktivasyon Workflow</span><span class="en">P7+P8 → One-Click Deactivation Workflow</span></h5>
+                            <p><span class="tr">4 adımlı deaktivasyon sürecini (STK-017 → STK-007 → STK-006 → CMT-002) tek butona indiren, sıralamayı otomatik yapan workflow. Kritik risk: default acente ile rezervasyon yapılması.</span><span class="en">Workflow reducing 4-step deactivation process (STK-017 → STK-007 → STK-006 → CMT-002) to single button, auto-handling sequence. Critical risk: booking with default agent.</span></p>
+                        </div>
                         <div class="timeline-item short">
                             <span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
                             <h5><span class="tr">P3 → Talep Yönetim Modülü</span><span class="en">P3 → Request Management Module</span></h5>
@@ -1050,10 +1100,10 @@
                             <h5><span class="tr">P4 → Parent/Child Hierarchy</span><span class="en">P4 → Parent/Child Hierarchy</span></h5>
                             <p><span class="tr">Global müşteri altında alt şirket ve branch ilişkisi kurma, hiyerarşik raporlama.</span><span class="en">Establishing sub-company and branch relationships under global customer, hierarchical reporting.</span></p>
                         </div>
-                        <div class="timeline-item long">
-                            <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
-                            <h5><span class="tr">IATA API Entegrasyonu</span><span class="en">IATA API Integration</span></h5>
-                            <p><span class="tr">Real-time IATA kod doğrulama, otomatik default alert ve status güncelleme</span><span class="en">Real-time IATA code validation, automatic default alert and status update</span></p>
+                        <div class="timeline-item short" style="border-left-color:#dc2626;">
+                            <span class="timeline-badge short" style="background:#fef2f2; color:#dc2626;"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span>
+                            <h5 style="color:#dc2626;"><span class="tr">IATA API Entegrasyonu + Otomatik Alert</span><span class="en">IATA API Integration + Automatic Alert</span></h5>
+                            <p><span class="tr">Default/Terminate bildirimlerinin otomatik alınması, anında alert oluşturması. Manuel günlük rapor takibini ortadan kaldırır.</span><span class="en">Automatic receipt of Default/Terminate notifications, instant alert creation. Eliminates manual daily report tracking.</span></p>
                         </div>
                         <div class="timeline-item long">
                             <span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span>
@@ -1162,6 +1212,7 @@
                         </div>
                         <div class="list-box" style="border-left:3px solid #dc2626;">
                             <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">🚫 Acente deaktivasyon kararı verme</span><span class="en">🚫 Making agent deactivation decision</span></div>
                             <div class="list-item"><span class="tr">🚫 Blacklist kararı verme</span><span class="en">🚫 Making blacklist decision</span></div>
                             <div class="list-item"><span class="tr">🚫 Müşteri kredibilitesi kararı</span><span class="en">🚫 Customer creditworthiness decision</span></div>
                             <div class="list-item"><span class="tr">🚫 Partner reaktivasyon kararı</span><span class="en">🚫 Partner reactivation decision</span></div>
