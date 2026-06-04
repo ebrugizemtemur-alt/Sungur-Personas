@@ -385,12 +385,12 @@
                 <span class="en">Solution Team <span>Specialist</span></span>
             </h1>
             <p class="hero-subtitle">
-                <span class="tr">SSIM, SSM ve FLTRequest mesaj işlemleri, NetLine-COMMIS entegrasyonu ve web servis yönetiminden sorumlu teknik uzman. LFI Service ve otomatik mesaj işleme süreçlerini yönetir. Sistem entegrasyonunun kritik aktörü.</span>
-                <span class="en">Technical specialist responsible for SSIM, SSM and FLTRequest message processing, NetLine-COMMIS integration and web service management. Manages LFI Service and automatic message processing. Critical actor in system integration.</span>
+                <span class="tr">SSIM, SSM, ASM ve FLTRequest mesaj işlemleri, NetLine-COMMIS entegrasyonu ve web servis yönetiminden sorumlu teknik uzman. LFI Service ve otomatik mesaj işleme süreçlerini yönetir. Sistem entegrasyonunun kritik aktörü.</span>
+                <span class="en">Technical specialist responsible for SSIM, SSM, ASM and FLTRequest message processing, NetLine-COMMIS integration and web service management. Manages LFI Service and automatic message processing. Critical actor in system integration.</span>
             </p>
             <div class="hero-quote">
-                <span class="tr">"SSIM dosyaları manuel upload, SSM mesajları otomatik işleniyor. LFI Service dış partner sorgularına yanıt veriyor. MSG005 ekranında mesaj geçmişini takip ediyoruz."</span>
-                <span class="en">"SSIM files are manually uploaded, SSM messages are processed automatically. LFI Service responds to external partner queries. We track message history in MSG005 screen."</span>
+                <span class="tr">"SSIM dosyaları manuel upload, SSM/ASM/FLTRequest mesajları otomatik işleniyor. LFI Service dış partner sorgularına yanıt veriyor. MSG005 ekranında mesaj geçmişini takip ediyoruz."</span>
+                <span class="en">"SSIM files are manually uploaded, SSM/ASM/FLTRequest messages are processed automatically. LFI Service responds to external partner queries. We track message history in MSG005 screen."</span>
             </div>
             <div class="hero-meta">
                 <div class="hero-meta-item">
@@ -462,7 +462,7 @@
                             <h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
                             <div class="segment-item"><strong><span class="tr">SSIM:</span><span class="en">SSIM:</span></strong> <span class="tr">Manuel upload (sezon)</span><span class="en">Manual upload (season)</span></div>
                             <div class="segment-item"><strong><span class="tr">SSM:</span><span class="en">SSM:</span></strong> <span class="tr">Otomatik işleme</span><span class="en">Automatic processing</span></div>
-                            <div class="segment-item"><strong><span class="tr">FLTRequest:</span><span class="en">FLTRequest:</span></strong> <span class="tr">Schedule planner'dan gelen</span><span class="en">From schedule planner</span></div>
+                            <div class="segment-item"><strong><span class="tr">FLTRequest:</span><span class="en">FLTRequest:</span></strong> <span class="tr">Otomatik işleme</span><span class="en">Automatic processing</span></div>
                             <div class="segment-item"><strong><span class="tr">ASM:</span><span class="en">ASM:</span></strong> <span class="tr">Otomatik işleme</span><span class="en">Automatic processing</span></div>
                             <div class="segment-item"><strong><span class="tr">LFI:</span><span class="en">LFI:</span></strong> <span class="tr">Dış partner sorguları</span><span class="en">External partner queries</span></div>
                         </div>
@@ -477,8 +477,8 @@
                 <div id="s1-text" class="view-pane">
                     <div class="summary-box">
                         <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
-                        <p><span class="tr">Solution Team Specialist teknik bir profil olup SSIM, SSM ve FLTRequest mesaj işlemlerinden sorumludur. COMMIS ve NetLine arasındaki entegrasyonu yönetir. LFI Service üzerinden dış partner sorgularına yanıt verir. Sezon geçişlerinde (SSIM upload) yoğunluk yaşar.</span>
-                        <span class="en">Solution Team Specialist is a technical profile responsible for SSIM, SSM and FLTRequest message processing. Manages integration between COMMIS and NetLine. Responds to external partner queries via LFI Service. Experiences high load during season transitions (SSIM upload).</span></p>
+                        <p><span class="tr">Solution Team Specialist teknik bir profil olup SSIM, SSM, ASM ve FLTRequest mesaj işlemlerinden sorumludur. COMMIS ve NetLine arasındaki entegrasyonu yönetir. LFI Service üzerinden dış partner sorgularına yanıt verir. Sezon geçişlerinde (SSIM upload) yoğunluk yaşar.</span>
+                        <span class="en">Solution Team Specialist is a technical profile responsible for SSIM, SSM, ASM and FLTRequest message processing. Manages integration between COMMIS and NetLine. Responds to external partner queries via LFI Service. Experiences high load during season transitions (SSIM upload).</span></p>
                     </div>
                     <div class="evidence">
                         <strong>Sol.Team MoM-1:</strong> "SSIM files are uploaded manually at the beginning of each season, while SSM messages are processed automatically throughout the season."
@@ -599,7 +599,7 @@
                         <span class="en">Four main workflows: 1) SSIM Upload - manual upload at season start. 2) SSM Processing - automatic message receipt and flight update. 3) ASM Processing - automatic message receipt and flight update. 4) FLTRequest - flight update after auto parse/validation. Message history is tracked in MSG005.</span></p>
                     </div>
                     <div class="evidence">
-                        <strong>Sol.Team MoM-2:</strong> "FLTRequest messages are generated when schedule planners need to communicate flight changes to external partners. MSG005 screen is used to track all message history."
+                        <strong>Sol.Team MoM-2:</strong> "FLTRequest messages are processed automatically with the same parse-validation-update flow used for SSM. MSG005 screen is used to track all message history."
                     </div>
                 </div>
             </div>
@@ -711,11 +711,19 @@
                 <div id="s5-chart" class="view-pane active">
                     <div class="pain-list">
                         <div class="pain-item high">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5><span class="tr">SSM Mesaj Hata Takibi</span><span class="en">SSM Message Error Tracking</span></h5>
+                                <p><span class="tr">Başarısız SSM mesajları için detaylı hata nedeni görülemiyor</span>
+                                <span class="en">Detailed error reason cannot be seen for failed SSM messages</span></p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
                             <span class="pain-code">P1</span>
                             <div class="pain-text">
                                 <h5><span class="tr">NetLine-COMMIS Senkronizasyon</span><span class="en">NetLine-COMMIS Synchronization</span></h5>
-                                <p><span class="tr">Zaman zaman senkronizasyon gecikmeleri yaşanıyor — en kritik sorun olup iş akışlarını önemli ölçüde sekteye uğratabilir.</span>
-                                <span class="en">Sometimes synchronization delays occur — the most critical issue that can significantly disrupt workflows.</span></p>
+                                <p><span class="tr">Zaman zaman senkronizasyon gecikmeleri yaşanıyor ve iş akışlarını önemli ölçüde sekteye uğratabiliyor.</span>
+                                <span class="en">Sometimes synchronization delays occur and can significantly disrupt workflows.</span></p>
                             </div>
                         </div>
                         <div class="pain-item high">
@@ -724,14 +732,6 @@
                                 <h5><span class="tr">SSIM Validasyon Karmaşıklığı</span><span class="en">SSIM Validation Complexity</span></h5>
                                 <p><span class="tr">SSIM dosyaları büyük ve kompleks, manuel kontrol zor, hatalar geç fark edilebilir</span>
                                 <span class="en">SSIM files are large and complex, manual checking is difficult, errors may be detected late</span></p>
-                            </div>
-                        </div>
-                        <div class="pain-item high">
-                            <span class="pain-code">P3</span>
-                            <div class="pain-text">
-                                <h5><span class="tr">SSM Mesaj Hata Takibi</span><span class="en">SSM Message Error Tracking</span></h5>
-                                <p><span class="tr">Başarısız SSM mesajları için detaylı hata nedeni görülemiyor</span>
-                                <span class="en">Detailed error reason cannot be seen for failed SSM messages</span></p>
                             </div>
                         </div>
                         <div class="pain-item low">
@@ -747,8 +747,8 @@
                 <div id="s5-text" class="view-pane">
                     <div class="summary-box">
                         <h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
-                        <p><span class="tr">En kritik sorunlar SSIM validasyon karmaşıklığı ve SSM hata takibi. SSIM dosyaları büyük ve kompleks olduğu için manuel kontrol zor. Başarısız SSM mesajları için detaylı hata nedeni görülemiyor. NetLine-COMMIS senkronizasyonunda bazen gecikmeler oluyor.</span>
-                        <span class="en">Most critical issues are SSIM validation complexity and SSM error tracking. SSIM files are large and complex making manual checking difficult. Detailed error reason cannot be seen for failed SSM messages. Sometimes delays occur in NetLine-COMMIS synchronization.</span></p>
+                        <p><span class="tr">En kritik sorun SSM mesaj hata takibi. Başarısız SSM mesajları için detaylı hata nedeni görülemiyor. SSIM validasyon karmaşıklığı manuel kontrolü zorlaştırıyor. NetLine-COMMIS senkronizasyonunda da zaman zaman gecikmeler oluyor.</span>
+                        <span class="en">The most critical issue is SSM message error tracking. Detailed error reason cannot be seen for failed SSM messages. SSIM validation complexity makes manual checking difficult. NetLine-COMMIS synchronization also experiences occasional delays.</span></p>
                     </div>
                 </div>
             </div>
@@ -787,7 +787,6 @@
                         </div>
                         <div class="empathy-quad does">
                             <h4><span class="icon">🎯</span> <span class="tr">YAPAR</span><span class="en">DOES</span></h4>
-                            <div class="empathy-item"><span class="tr">SSIM dosyasını COMMIS'e upload eder</span><span class="en">Uploads SSIM file to COMMIS</span></div>
                             <div class="empathy-item"><span class="tr">MSG005'te mesaj loglarını kontrol eder</span><span class="en">Checks message logs in MSG005</span></div>
                             <div class="empathy-item"><span class="tr">Hatalı mesajları manuel düzeltir</span><span class="en">Manually fixes erroneous messages</span></div>
                         </div>
