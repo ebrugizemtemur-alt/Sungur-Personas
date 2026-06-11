@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Compliance Officer | PRM Persona Analizi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #f5f5f7; color: #1f2937; line-height: 1.6; }
+        body.lang-tr .en { display: none !important; }
+        body.lang-en .tr { display: none !important; }
+        .side-nav { position: fixed; left: 0; top: 0; bottom: 0; width: 72px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 1000; }
+        .side-nav-logo { width: 44px; height: 44px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; color: white; margin-bottom: 24px; cursor: pointer; }
+        .nav-items { display: flex; flex-direction: column; gap: 6px; flex: 1; width: 100%; padding: 0 10px; }
+        .nav-item { width: 52px; height: 52px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #64748b; font-size: 9px; font-weight: 500; transition: all 0.3s; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+        .nav-item.active { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; }
+        .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
+        .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+        /* Mega Menu */
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .module-section { margin-bottom: 24px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #2563eb, #3b82f6); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.com { background: linear-gradient(135deg, #059669, #10b981); }
+        .module-icon.asm { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .module-icon.trm { background: linear-gradient(135deg, #78716c, #a8a29e); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.prm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #a855f7; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+        .main-content { margin-left: 72px; }
+        .hero { background: linear-gradient(135deg, #fef2f2 0%, #fecaca 50%, #fca5a5 100%); padding: 48px 40px; }
+        .hero-content { max-width: 1200px; margin: 0 auto; }
+        .hero-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .badge { background: rgba(220,38,38,0.15); color: #dc2626; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
+        .lang-toggle { display: flex; gap: 4px; background: rgba(255,255,255,0.8); padding: 4px; border-radius: 8px; z-index: 2; position: relative; }
+        .lang-btn { padding: 8px 16px; border: none; background: transparent; color: #6b7280; font-size: 12px; font-weight: 600; cursor: pointer; border-radius: 6px; }
+        .lang-btn.active { background: #dc2626; color: white; }
+        .hero h1 { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
+        .hero h1 span { color: #b91c1c; }
+        .hero-subtitle { font-size: 16px; color: #7f1d1d; max-width: 700px; margin-bottom: 20px; }
+        .hero-quote { border-left: 3px solid #dc2626; padding-left: 16px; font-style: italic; color: #374151; margin-bottom: 24px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .board { max-width: 1200px; margin: 0 auto; padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+        .card { background: #fff; border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; }
+        .card-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: white; }
+        .card-title h2 { font-size: 18px; font-weight: 700; }
+        .card-title p { font-size: 12px; color: #9ca3af; }
+        .card-body { padding: 20px; }
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); padding: 3px; border-radius: 6px; margin-left: auto; }
+        .toggle-btn { padding: 6px 12px; border: none; background: transparent; color: #6b7280; font-size: 11px; font-weight: 500; cursor: pointer; border-radius: 4px; }
+        .toggle-btn.active { background: #dc2626; color: white; }
+        .view-pane { display: none; }
+        .view-pane.active { display: block; }
+        .section-1 .card-icon { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .section-1 { border-left: 4px solid #4f46e5; }
+        .section-2 .card-icon { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .section-2 { border-left: 4px solid #d97706; }
+        .section-3 .card-icon { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .section-3 { border-left: 4px solid #0284c7; }
+        .section-5 .card-icon { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .section-5 { border-left: 4px solid #e11d48; }
+        .section-8 .card-icon { background: linear-gradient(135deg, #ea580c, #f97316); }
+        .section-8 { border-left: 4px solid #ea580c; }
+        .section-9 .card-icon { background: linear-gradient(135deg, #0891b2, #06b6d4); }
+        .section-9 { border-left: 4px solid #0891b2; }
+        .profile-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px; }
+        .pf-label { font-size: 9px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .pf-value { font-size: 13px; font-weight: 600; color: #1f2937; }
+        .segment-card { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .segment-col { padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.02); }
+        .segment-col h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid; }
+        .segment-col.demo h4 { color: #475569; border-color: #475569; }
+        .segment-col.behav h4 { color: #0891b2; border-color: #0891b2; }
+        .segment-col.psycho h4 { color: #9333ea; border-color: #9333ea; }
+        .segment-item { font-size: 12px; color: #374151; margin-bottom: 6px; display: flex; }
+        .segment-item strong { color: #6b7280; min-width: 100px; }
+        .goal-pyramid { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0; }
+        .goal-level { padding: 12px 20px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; color: white; }
+        .goal-level.primary { background: linear-gradient(135deg, #dc2626, #f43f5e); width: 60%; }
+        .goal-level.secondary { background: linear-gradient(135deg, #d97706, #f59e0b); width: 75%; }
+        .goal-level.tertiary { background: linear-gradient(135deg, #0284c7, #0ea5e9); width: 90%; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-box.motivators h4 { color: #059669; }
+        .list-box.demotivators h4 { color: #dc2626; }
+        .list-box.fears h4 { color: #9333ea; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); display: flex; gap: 8px; }
+        .list-item:last-child { border-bottom: none; }
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.06); border-left: 3px solid #d97706; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        .summary-box { background: rgba(220,38,38,0.04); padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+        .summary-box h4 { font-size: 10px; font-weight: 700; color: #dc2626; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-box p { font-size: 13px; color: #374151; line-height: 1.7; }
+        .footer { text-align: center; padding: 32px; color: #9ca3af; font-size: 11px; }
+        .jtbd-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 16px; }
+        .jtbd-table th, .jtbd-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .jtbd-table th { background: rgba(0,0,0,0.02); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+        .flow-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 16px 0; }
+        .flow-step { padding: 10px 16px; border-radius: 8px; font-size: 11px; font-weight: 500; text-align: center; min-width: 100px; }
+        .flow-step.auto { background: #dbeafe; color: #1d4ed8; }
+        .flow-step.manual { background: #fef3c7; color: #b45309; }
+        .flow-step.critical { background: #fecaca; color: #b91c1c; }
+        .flow-arrow { color: #9ca3af; font-size: 16px; }
+        .timeline { position: relative; padding-left: 24px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, #dc2626, #d97706, #16a34a); }
+        .timeline-item { position: relative; padding: 12px 0 12px 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -20px; top: 16px; width: 12px; height: 12px; border-radius: 50%; }
+        .timeline-item.mvp::before { background: #dc2626; }
+        .timeline-item.short::before { background: #d97706; }
+        .timeline-item.long::before { background: #16a34a; }
+        .timeline-item h5 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-item p { font-size: 11px; color: #6b7280; }
+        .timeline-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 600; margin-bottom: 6px; }
+        .timeline-badge.mvp { background: #fef2f2; color: #dc2626; }
+        .timeline-badge.short { background: #fefce8; color: #b45309; }
+        .timeline-badge.long { background: #f0fdf4; color: #16a34a; }
+        .ai-suitable { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+        .ai-box { padding: 16px; border-radius: 10px; }
+        .ai-box.suitable { background: rgba(22,163,74,0.06); border: 1px solid rgba(22,163,74,0.2); }
+        .ai-box.not-suitable { background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.2); }
+        .ai-box h5 { font-size: 11px; font-weight: 700; margin-bottom: 8px; }
+        .ai-box.suitable h5 { color: #16a34a; }
+        .ai-box.not-suitable h5 { color: #dc2626; }
+        .ai-box li { font-size: 11px; color: #374151; margin-bottom: 4px; }
+        @media (max-width: 768px) { .side-nav { width: 60px; } .main-content { margin-left: 60px; } .segment-card, .two-col { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body class="lang-tr">
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()">PRM</div>
+        <div class="nav-items">
+            <a href="Persona_PRM_Master_Data_Specialist.html" class="nav-item"><span class="nav-num">1</span><span class="nav-label">Master Data</span></a>
+            <a href="Persona_PRM_GSA_Account_Manager.html" class="nav-item"><span class="nav-num">2</span><span class="nav-label">GSA Mgr</span></a>
+            <a href="Persona_PRM_Credit_Customer_Specialist.html" class="nav-item"><span class="nav-num">3</span><span class="nav-label">Credit</span></a>
+            <a href="Persona_PRM_Agent_Compliance_Officer.html" class="nav-item active"><span class="nav-num">4</span><span class="nav-label">Compliance</span></a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header"><span class="mega-menu-title">📦 Tüm Modüller</span><button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon bkr">BKR</div><span class="module-name">Booking & Reservation</span><span class="module-count">7</span></div><div class="persona-list"><a href="Persona_IST_General_Reservation.html" class="persona-link"><span class="persona-num">1</span> IST General Reservation</a><a href="Persona_IST_Special_Cargo.html" class="persona-link"><span class="persona-num">2</span> IST Special Cargo</a><a href="Persona_Domestic_Reservation.html" class="persona-link"><span class="persona-num">3</span> Domestic Reservation</a><a href="Persona_GSA_International_Station.html" class="persona-link"><span class="persona-num">4</span> GSA International</a><a href="Persona_Capacity_Planning.html" class="persona-link"><span class="persona-num">5</span> Capacity Planning</a><a href="Persona_Operations_CargoAcceptance.html" class="persona-link"><span class="persona-num">6</span> Cargo Acceptance</a><a href="Persona_Solution_Technical_Team.html" class="persona-link"><span class="persona-num">7</span> Solution Team</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div><div class="persona-list"><a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span> Capacity Analyst</a><a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span> Flight Optimizer</a><a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span> Sales User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span> Pricing Specialist</a><a href="Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span> RM Analyst</a><a href="Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span> Interline Specialist</a><a href="Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span> Sales Manager</a><a href="Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span> Station User</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon flm">FLM</div><span class="module-name">Flight Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_FLM_Network_Planner.html" class="persona-link"><span class="persona-num">1</span> Network Planner</a><a href="Persona_FLM_Schedule_Planner.html" class="persona-link"><span class="persona-num">2</span> Schedule Planner</a><a href="Persona_FLM_COCC_Coordinator.html" class="persona-link"><span class="persona-num">3</span> COCC Coordinator</a><a href="Persona_FLM_Revenue_Capacity_Analyst.html" class="persona-link"><span class="persona-num">4</span> Revenue & Capacity</a><a href="Persona_FLM_Solution_Specialist.html" class="persona-link"><span class="persona-num">5</span> Solution Specialist</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">5</span></div><div class="persona-list"><a href="Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span> Embargo Specialist</a><a href="Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span> Restriction Specialist</a><a href="Persona_COM_Sanctions_Officer.html" class="persona-link"><span class="persona-num">3</span> Sanctions Officer</a><a href="Persona_COM_Service_Standards.html" class="persona-link"><span class="persona-num">4</span> Service Standards</a><a href="Persona_COM_Hub_Operations.html" class="persona-link"><span class="persona-num">5</span> Hub Operations</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon asm">ASM</div><span class="module-name">AWB Stock Management</span><span class="module-count">2</span></div><div class="persona-list"><a href="Persona_ASM_Stock_Management_Specialist.html" class="persona-link"><span class="persona-num">1</span> Stock Management</a><a href="Persona_ASM_Messaging_Specialist.html" class="persona-link"><span class="persona-num">2</span> Messaging Specialist</a></div></div>
+        <div class="module-section"><div class="module-header active"><div class="module-icon prm">PRM</div><span class="module-name">Partner Management</span><span class="module-count">4</span></div><div class="persona-list"><a href="Persona_PRM_Master_Data_Specialist.html" class="persona-link"><span class="persona-num">1</span> Master Data Specialist</a><a href="Persona_PRM_GSA_Account_Manager.html" class="persona-link"><span class="persona-num">2</span> GSA Account Manager</a><a href="Persona_PRM_Credit_Customer_Specialist.html" class="persona-link"><span class="persona-num">3</span> Credit Customer Specialist</a><a href="Persona_PRM_Agent_Compliance_Officer.html" class="persona-link current"><span class="persona-num">4</span> Agent Compliance Officer</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon scm">SCM</div><span class="module-name">Special Cargo Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_SCM_Special_Cargo_Consultant.html" class="persona-link"><span class="persona-num">1</span> Special Cargo Consultant</a></div></div>
+        <div class="module-section"><div class="module-header"><div class="module-icon trm">TRM</div><span class="module-name">Truck Management</span><span class="module-count">1</span></div><div class="persona-list"><a href="Persona_TRM_RFS_Schedule_Planner.html" class="persona-link"><span class="persona-num">1</span> RFS Schedule Planner</a></div></div>
+    </div>
+
+    <div class="main-content">
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-header">
+                <span class="badge">PRM · AGENT COMPLIANCE · PERSONA #4</span>
+                <div class="lang-toggle">
+                    <button class="lang-btn" onclick="switchLang('en')">EN</button>
+                    <button class="lang-btn active" onclick="switchLang('tr')">TR</button>
+                </div>
+            </div>
+            <h1><span class="tr">Agent Compliance <span>Officer</span></span><span class="en">Agent Compliance <span>Officer</span></span></h1>
+            <p class="hero-subtitle">
+                <span class="tr">IATA default ve terminate bildirimlerini günlük izleyen, riskli acentelerin AWB stoklarını iptal eden ve sistem erişimlerini devre dışı bırakan uyumluluk uzmanı. STK-017, STK-006, STK-007 ve CMT-002 ekranları üzerinden çalışır. Kritik finansal risk yönetimi sorumluluğu.</span>
+                <span class="en">Compliance specialist who daily monitors IATA default and terminate notifications, cancels AWB stocks of risky agents and disables system access. Works via STK-017, STK-006, STK-007 and CMT-002 screens. Critical financial risk management responsibility.</span>
+            </p>
+            <div class="hero-quote">
+                <span class="tr">"IATA'dan terminate veya default bildirimi geldiğinde hızlı aksiyon şart. Önce AWB stoğunu iptal ediyorum, sonra stok tanımını siliyorum, en son COMIS'te inactive yapıyorum. Sıralama önemli."</span>
+                <span class="en">"Quick action is essential when terminate or default notification comes from IATA. First I cancel AWB stock, then delete stock definition, finally mark inactive in COMIS. Sequence matters."</span>
+            </div>
+            <div class="hero-meta">
+                <div class="hero-meta-item"><span class="dot" style="background:#dc2626;"></span><span><strong><span class="tr">Kullanıcı:</span><span class="en">User:</span></strong> Master Data / Veri Standardizasyon Şefliği</span></div>
+                <div class="hero-meta-item"><span class="dot" style="background:#f59e0b;"></span><span><strong><span class="tr">Kritiklik:</span><span class="en">Criticality:</span></strong> <span style="color:#dc2626;">★★★★★</span> <span class="tr">Kritik (Risk)</span><span class="en">Critical (Risk)</span></span></div>
+                <div class="hero-meta-item"><span class="dot" style="background:#3b82f6;"></span><span><strong><span class="tr">Ana Sistemler:</span><span class="en">Main Systems:</span></strong> COMIS, IATA Portal</span></div>
+                <div class="hero-meta-item"><span class="dot" style="background:#22c55e;"></span><span><strong><span class="tr">Kaynak:</span><span class="en">Source:</span></strong> 4 MoM</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="board">
+        <section class="card section-1" id="section-1">
+            <div class="card-header">
+                <div class="card-icon">1</div>
+                <div class="card-title"><h2><span class="tr">Persona Profili</span><span class="en">Persona Profile</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s1-chart" class="view-pane active">
+                    <div class="profile-grid">
+                        <div class="pf"><div class="pf-label"><span class="tr">Departman</span><span class="en">Department</span></div><div class="pf-value">Kargo Satış Muhasebe Md.</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Birim</span><span class="en">Unit</span></div><div class="pf-value">Master Data / Veri Standardizasyon</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Tetikleyici</span><span class="en">Trigger</span></div><div class="pf-value">IATA Default/Terminate</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Sıklık</span><span class="en">Frequency</span></div><div class="pf-value"><span class="tr">Günlük izleme</span><span class="en">Daily monitoring</span></div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Ana Ekranlar</span><span class="en">Main Screens</span></div><div class="pf-value">STK-017, STK-006/007, CMT-002</div></div>
+                        <div class="pf"><div class="pf-label"><span class="tr">Risk Tipi</span><span class="en">Risk Type</span></div><div class="pf-value"><span class="tr">Finansal/Tahsilat</span><span class="en">Financial/Collection</span></div></div>
+                    </div>
+                    <div class="segment-card">
+                        <div class="segment-col demo"><h4><span class="tr">Demografik</span><span class="en">Demographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Lokasyon:</span><span class="en">Location:</span></strong> IST Merkez</div>
+                            <div class="segment-item"><strong><span class="tr">Uzmanlık:</span><span class="en">Expertise:</span></strong> IATA, Risk</div>
+                        </div>
+                        <div class="segment-col behav"><h4><span class="tr">Davranışsal</span><span class="en">Behavioral</span></h4>
+                            <div class="segment-item"><strong><span class="tr">İzleme:</span><span class="en">Monitoring:</span></strong> <span class="tr">Günlük IATA rapor</span><span class="en">Daily IATA report</span></div>
+                            <div class="segment-item"><strong><span class="tr">Aksiyon:</span><span class="en">Action:</span></strong> <span class="tr">Acil (aynı gün)</span><span class="en">Urgent (same day)</span></div>
+                        </div>
+                        <div class="segment-col psycho"><h4><span class="tr">Psikografik</span><span class="en">Psychographic</span></h4>
+                            <div class="segment-item"><strong><span class="tr">Öncelik:</span><span class="en">Priority:</span></strong> <span class="tr">Risk minimizasyonu</span><span class="en">Risk minimization</span></div>
+                            <div class="segment-item"><strong><span class="tr">Yaklaşım:</span><span class="en">Approach:</span></strong> <span class="tr">Prosedür odaklı</span><span class="en">Procedure-oriented</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s1-text" class="view-pane">
+                    <div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4>
+                        <p><span class="tr">IATA'dan günlük gelen default (ödeme yapamayan) ve terminate (akreditasyon iptal) raporlarını izleyen, riskli acentelerin sistem erişimini kesen uzman. 4 adımlı deaktivasyon sürecini doğru sırayla uygulamalıdır.</span>
+                        <span class="en">Specialist monitoring daily default (payment failed) and terminate (accreditation cancelled) reports from IATA, cutting system access of risky agents. Must apply 4-step deactivation process in correct sequence.</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card section-2" id="section-2">
+            <div class="card-header">
+                <div class="card-icon">2</div>
+                <div class="card-title"><h2><span class="tr">Hedef, Motivasyon & Korku</span><span class="en">Goals, Motivation & Fears</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s2-chart" class="view-pane active">
+                    <div class="goal-pyramid">
+                        <div class="goal-level primary"><span class="tr">🚨 PRİMER: Riskli acentelerin sistem erişimini hızla kesmek</span><span class="en">🚨 PRIMARY: Quickly cut system access of risky agents</span></div>
+                        <div class="goal-level secondary"><span class="tr">🥈 SEKONDER: Tahsil edilemeyen alacak riskini minimize etmek</span><span class="en">🥈 SECONDARY: Minimize uncollected receivables risk</span></div>
+                        <div class="goal-level tertiary"><span class="tr">🥉 TERSİYER: Deaktivasyon sürecini doğru sırayla uygulamak</span><span class="en">🥉 TERTIARY: Apply deactivation process in correct sequence</span></div>
+                    </div>
+                    <div class="two-col">
+                        <div class="list-box motivators"><h4>✓ <span class="tr">MOTİVATÖRLER</span><span class="en">MOTIVATORS</span></h4>
+                            <div class="list-item">✓ <span class="tr">IATA bildirimi sonrası hızlı aksiyon almak</span><span class="en">Taking quick action after IATA notification</span></div>
+                            <div class="list-item">✓ <span class="tr">Finansal kaybı önlemek</span><span class="en">Preventing financial loss</span></div>
+                        </div>
+                        <div class="list-box demotivators"><h4>✗ <span class="tr">DEMOTİVATÖRLER</span><span class="en">DEMOTIVATORS</span></h4>
+                            <div class="list-item">✗ <span class="tr">4 farklı ekranda manuel işlem zorunluluğu</span><span class="en">Manual processing in 4 different screens mandatory</span></div>
+                            <div class="list-item">✗ <span class="tr">Sıralama hatası yapma riski</span><span class="en">Risk of sequencing error</span></div>
+                        </div>
+                    </div>
+                    <div class="list-box fears" style="margin-top:16px;"><h4>⚠️ <span class="tr">KORKULAR</span><span class="en">FEARS</span></h4>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Kritik:</strong> Default acente ile rezervasyon yapılıp kargo kabul edilmesi</span><span class="en"><strong>Critical:</strong> Booking made and cargo accepted with defaulted agent</span></div>
+                        <div class="list-item">⚠️ <span class="tr"><strong>Yüksek:</strong> Deaktivasyon sırasını yanlış yapmak</span><span class="en"><strong>High:</strong> Wrong deactivation sequence</span></div>
+                    </div>
+                </div>
+                <div id="s2-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4><p><span class="tr">Ana hedef riskli acentelerin sistem erişimini acilen kesmek. En büyük korku default acentenin işlem yapmaya devam etmesi ve tahsil edilemeyecek alacak oluşması.</span><span class="en">Main goal is urgently cutting system access of risky agents. Greatest fear is defaulted agent continuing to transact and creating uncollectable receivables.</span></p></div></div>
+            </div>
+        </section>
+
+        <section class="card section-3" id="section-3">
+            <div class="card-header">
+                <div class="card-icon">3</div>
+                <div class="card-title"><h2><span class="tr">İş Akışı & JTBD</span><span class="en">Workflow & JTBD</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s3-chart" class="view-pane active">
+                    <h4 style="font-size:12px; margin-bottom:12px;"><span class="tr">🚨 Acente Deaktivasyon Akışı (Kritik Sıralama)</span><span class="en">🚨 Agent Deactivation Flow (Critical Sequence)</span></h4>
+                    <div class="flow-h">
+                        <div class="flow-step auto"><span class="tr">IATA Raporu (Günlük)</span><span class="en">IATA Report (Daily)</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step critical"><span class="tr">1. STK-017 Mapping Sil</span><span class="en">1. STK-017 Delete Mapping</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step critical"><span class="tr">2. STK-007 Stok Kontrol</span><span class="en">2. STK-007 Stock Check</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step critical"><span class="tr">3. STK-006 Stok Tanım Sil</span><span class="en">3. STK-006 Delete Stock Def</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step critical"><span class="tr">4. CMT-002 Inactive</span><span class="en">4. CMT-002 Inactive</span></div>
+                    </div>
+                    <table class="jtbd-table">
+                        <thead><tr><th><span class="tr">İş</span><span class="en">Job</span></th><th><span class="tr">Tetikleyici</span><span class="en">Trigger</span></th><th><span class="tr">Aciliyet</span><span class="en">Urgency</span></th></tr></thead>
+                        <tbody>
+                            <tr><td><span class="tr">IATA Default İzleme</span><span class="en">IATA Default Monitoring</span></td><td><span class="tr">Günlük rapor</span><span class="en">Daily report</span></td><td><span class="tr" style="color:#dc2626; font-weight:600;">Aynı gün</span><span class="en" style="color:#dc2626; font-weight:600;">Same day</span></td></tr>
+                            <tr><td><span class="tr">IATA Terminate İzleme</span><span class="en">IATA Terminate Monitoring</span></td><td><span class="tr">Günlük rapor</span><span class="en">Daily report</span></td><td><span class="tr" style="color:#dc2626; font-weight:600;">Aynı gün</span><span class="en" style="color:#dc2626; font-weight:600;">Same day</span></td></tr>
+                            <tr><td><span class="tr">AWB Stok İptal</span><span class="en">AWB Stock Cancellation</span></td><td><span class="tr">Default/Terminate</span><span class="en">Default/Terminate</span></td><td><span class="tr" style="color:#dc2626; font-weight:600;">Hemen</span><span class="en" style="color:#dc2626; font-weight:600;">Immediate</span></td></tr>
+                            <tr><td><span class="tr">Sistem Erişimi Kesme</span><span class="en">System Access Cut</span></td><td><span class="tr">Stok iptal sonrası</span><span class="en">After stock cancel</span></td><td><span class="tr" style="color:#dc2626; font-weight:600;">Hemen</span><span class="en" style="color:#dc2626; font-weight:600;">Immediate</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="s3-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4><p><span class="tr">4 adımlı deaktivasyon sırası kritik: 1) STK-017'de mapping sil, 2) STK-007'de stok var mı kontrol et, 3) STK-006'da stok tanımını sil, 4) CMT-002'de inactive yap. Sıra yanlışsa bağımlılık hataları oluşur.</span><span class="en">4-step deactivation sequence is critical: 1) Delete mapping in STK-017, 2) Check stock exists in STK-007, 3) Delete stock definition in STK-006, 4) Mark inactive in CMT-002. Wrong sequence causes dependency errors.</span></p></div></div>
+            </div>
+        </section>
+
+        <section class="card section-5" id="section-5">
+            <div class="card-header">
+                <div class="card-icon">5</div>
+                <div class="card-title"><h2><span class="tr">Pain Points & Risk</span><span class="en">Pain Points & Risk</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s5-chart" class="view-pane active">
+                    <div class="pain-list">
+                        <div class="pain-item high"><span class="pain-code">P1</span><div class="pain-text"><h5><span class="tr">4 Ekranda Manuel Süreç</span><span class="en">Manual Process in 4 Screens</span></h5><p><span class="tr">Tek bir acente deaktivasyonu için 4 farklı ekranda sıralı manuel işlem gerekli. Hata riski yüksek.</span><span class="en">4 different screens with sequential manual operations required for single agent deactivation. High error risk.</span></p></div></div>
+                        <div class="pain-item high"><span class="pain-code">P2</span><div class="pain-text"><h5><span class="tr">Sıralama Bağımlılığı</span><span class="en">Sequence Dependency</span></h5><p><span class="tr">İşlem sırası yanlış yapılırsa sistem hata veriyor. STK-017 → STK-007 → STK-006 → CMT-002 zorunlu.</span><span class="en">System throws error if sequence is wrong. STK-017 → STK-007 → STK-006 → CMT-002 mandatory.</span></p></div></div>
+                        <div class="pain-item medium"><span class="pain-code">P3</span><div class="pain-text"><h5><span class="tr">Stok Transferi Manuel</span><span class="en">Stock Transfer Manual</span></h5><p><span class="tr">Acentenin elinde AWB stok varsa önce istasyona transfer edilmeli. Bu da manuel ve zaman alıcı.</span><span class="en">If agent has AWB stock on hand, must be transferred to station first. This is also manual and time-consuming.</span></p></div></div>
+                    </div>
+                </div>
+                <div id="s5-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4><p><span class="tr">En kritik sorun 4 ekranda sıralı manuel işlem. Sıra hatası sistem hatasına yol açıyor. Stok transferi de ekstra adım olarak yük bindiriyor.</span><span class="en">Most critical issue is sequential manual process in 4 screens. Sequence error causes system error. Stock transfer adds extra burden.</span></p></div></div>
+            </div>
+        </section>
+
+        <section class="card section-8" id="section-8">
+            <div class="card-header">
+                <div class="card-icon">8</div>
+                <div class="card-title"><h2><span class="tr">Ürün Fırsatları</span><span class="en">Product Opportunities</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s8-chart" class="view-pane active">
+                    <div class="timeline">
+                        <div class="timeline-item mvp"><span class="timeline-badge mvp">MVP</span><h5><span class="tr">P1+P2 → Tek Tıkla Deaktivasyon</span><span class="en">P1+P2 → One-Click Deactivation</span></h5><p><span class="tr">4 adımlı süreci tek butona indiren, sıralamayı otomatik yapan workflow</span><span class="en">Workflow reducing 4-step process to single button, auto-handling sequence</span></p></div>
+                        <div class="timeline-item short"><span class="timeline-badge short"><span class="tr">KISA VADE</span><span class="en">SHORT TERM</span></span><h5><span class="tr">IATA API Entegrasyonu</span><span class="en">IATA API Integration</span></h5><p><span class="tr">Default/Terminate bildirimlerinin otomatik alınması ve alert oluşturması</span><span class="en">Automatic receipt of Default/Terminate notifications and alert creation</span></p></div>
+                        <div class="timeline-item long"><span class="timeline-badge long"><span class="tr">UZUN VADE</span><span class="en">LONG TERM</span></span><h5><span class="tr">Otomatik Deaktivasyon</span><span class="en">Automatic Deactivation</span></h5><p><span class="tr">IATA bildirimi geldiğinde otomatik deaktivasyon (onay ile)</span><span class="en">Automatic deactivation when IATA notification received (with approval)</span></p></div>
+                    </div>
+                </div>
+                <div id="s8-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Kısa Özet</span><span class="en">Summary</span></h4><p><span class="tr">MVP'de tek tıkla deaktivasyon workflow'u kritik. Kısa vadede IATA API entegrasyonu. Uzun vadede approval bazlı otomatik deaktivasyon.</span><span class="en">One-click deactivation workflow critical in MVP. IATA API integration in short term. Approval-based automatic deactivation in long term.</span></p></div></div>
+            </div>
+        </section>
+
+        <section class="card section-9" id="section-9">
+            <div class="card-header">
+                <div class="card-icon">9</div>
+                <div class="card-title"><h2><span class="tr">AI Destek Potansiyeli</span><span class="en">AI Support Potential</span></h2></div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s9-chart" class="view-pane active">
+                    <h4 style="font-size:11px; font-weight:700; color:#0891b2; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; text-align:center;">AI Autonomy Level Scale</h4>
+                    <p style="font-size:12px; color:#6b7280; text-align:center; margin-bottom:24px;">
+                        <span class="tr">Bu persona için AI'ın güvenle ulaşabileceği maksimum otomasyon seviyesi</span>
+                        <span class="en">Maximum automation level AI can safely reach for this persona</span>
+                    </p>
+                    
+                    <!-- Slider Container -->
+                    <div style="display:flex; gap:24px; margin-bottom:32px;">
+                        <!-- Left: Scale Labels -->
+                        <div style="display:flex; flex-direction:column; justify-content:space-between; width:110px; padding:8px 0;">
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#dc2626; font-weight:600;">🚫 YASAK</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI yapmamalı</span><span class="en">AI must not do</span></div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#f59e0b; font-weight:600;">⚠️ ONAY GEREKLİ</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">İnsan onayı şart</span><span class="en">Human approval required</span></div>
+                            </div>
+                            <div style="text-align:right;">
+                                <span style="font-size:9px; color:#16a34a; font-weight:600;">✅ GÜVENLİ</span>
+                                <div style="font-size:8px; color:#9ca3af;"><span class="tr">AI serbest</span><span class="en">AI autonomous</span></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Middle: Slider Track -->
+                        <div style="flex:1; position:relative;">
+                            <!-- Gradient Track -->
+                            <div style="height:260px; border-radius:12px; background: linear-gradient(to bottom, #fef2f2 0%, #fef3c7 45%, #dcfce7 100%); position:relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                                
+                                <!-- TRUST LINE - Güven Sınırı (Seviye 3) -->
+                                <div style="position:absolute; left:0; right:0; top:55%; height:3px; background:#f59e0b; z-index:10;"></div>
+                                <div style="position:absolute; right:8px; top:53%; background:#f59e0b; color:white; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; z-index:11;">
+                                    <span class="tr">⚠️ ONAY SINIRI</span>
+                                    <span class="en">⚠️ APPROVAL LINE</span>
+                                </div>
+                                
+                                <!-- Level Markers -->
+                                <div style="position:absolute; left:12px; top:8%; font-size:10px; color:#b91c1c; font-weight:600;">
+                                    <span class="tr">5 - 🚫 Acente reaktivasyon kararı</span>
+                                    <span class="en">5 - 🚫 Agent reactivation decision</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:25%; font-size:10px; color:#b91c1c; font-weight:600;">
+                                    <span class="tr">4 - 🚫 Deaktivasyon kararı verme</span>
+                                    <span class="en">4 - 🚫 Making deactivation decision</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:60%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">3 - ✅ Potansiyel default tahmini</span>
+                                    <span class="en">3 - ✅ Potential default prediction</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:75%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">2 - ✅ Acente risk skorlaması (ödeme geçmişi)</span>
+                                    <span class="en">2 - ✅ Agent risk scoring (payment history)</span>
+                                </div>
+                                <div style="position:absolute; left:12px; top:90%; font-size:10px; color:#15803d; font-weight:600;">
+                                    <span class="tr">1 - ✅ IATA rapor parsing ve alert oluşturma</span>
+                                    <span class="en">1 - ✅ IATA report parsing and alert creation</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="two-col" style="margin-top:20px;">
+                        <div class="list-box" style="border-left:3px solid #16a34a;">
+                            <h4 style="color:#16a34a;"><span class="tr">✓ AI UYGUN</span><span class="en">✓ AI SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">📄 IATA rapor parsing ve alert oluşturma</span><span class="en">📄 IATA report parsing and alert creation</span></div>
+                            <div class="list-item"><span class="tr">📊 Acente risk skorlaması (ödeme geçmişi analizi)</span><span class="en">📊 Agent risk scoring (payment history analysis)</span></div>
+                            <div class="list-item"><span class="tr">🔮 Potansiyel default tahmini</span><span class="en">🔮 Potential default prediction</span></div>
+                        </div>
+                        <div class="list-box" style="border-left:3px solid #dc2626;">
+                            <h4 style="color:#dc2626;"><span class="tr">⛔ AI UYGUN DEĞİL</span><span class="en">⛔ AI NOT SUITABLE</span></h4>
+                            <div class="list-item"><span class="tr">🚫 Deaktivasyon kararı verme</span><span class="en">🚫 Making deactivation decision</span></div>
+                            <div class="list-item"><span class="tr">🚫 Acente reaktivasyon kararı</span><span class="en">🚫 Agent reactivation decision</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s9-text" class="view-pane"><div class="summary-box"><h4><span class="tr">Özet</span><span class="en">Summary</span></h4><p><span class="tr">Agent Compliance Officer için AI, IATA rapor parsing, risk skorlama ve default tahmini için uygundur (Seviye 1-3). Deaktivasyon ve reaktivasyon kararları (Seviye 4-5) kritik iş kuralları olduğu için insan onayı gerektirir. 4 adımlı deaktivasyon süreci AI tarafından otomatize edilebilir ancak tetikleme kararı insana ait olmalıdır.</span><span class="en">For Agent Compliance Officer, AI is suitable for IATA report parsing, risk scoring and default prediction (Level 1-3). Deactivation and reactivation decisions (Level 4-5) require human approval as critical business rules. The 4-step deactivation process can be automated by AI but triggering decision must belong to human.</span></p></div></div>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <p><span class="tr">PRM - Partner Management | Agent Compliance Officer Persona | Kaynak: 4 MoM</span><span class="en">PRM - Partner Management | Agent Compliance Officer Persona | Source: 4 MoM</span></p>
+    </footer>
+    </div>
+
+    <script>
+        function switchLang(lang) { document.body.className = 'lang-' + lang; document.querySelectorAll('.lang-btn').forEach(btn => { btn.classList.remove('active'); if(btn.textContent === lang.toUpperCase()) btn.classList.add('active'); }); }
+        function toggleView(btn, section, view) { const parent = btn.closest('.toggle-wrap'); parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); document.getElementById(section + '-chart').classList.remove('active'); document.getElementById(section + '-text').classList.remove('active'); document.getElementById(section + '-' + view).classList.add('active'); }
+        function toggleMegaMenu() { document.querySelector('.mega-menu').classList.toggle('active'); document.querySelector('.mega-overlay').classList.toggle('active'); }
+    </script>
+</body>
+</html>

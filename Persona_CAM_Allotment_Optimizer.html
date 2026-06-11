@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAM Persona: Allotment Optimizer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #f5f5f7; color: #1f2937; line-height: 1.6; }
+        .side-nav { position: fixed; left: 0; top: 0; bottom: 0; width: 72px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); display: flex; flex-direction: column; align-items: center; padding: 16px 0; z-index: 1000; box-shadow: 4px 0 20px rgba(0,0,0,0.15); }
+        .side-nav-logo { width: 44px; height: 44px; background: linear-gradient(135deg, #ea580c, #f97316); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 11px; color: white; margin-bottom: 24px; cursor: pointer; transition: transform 0.3s; text-decoration: none; }
+        .side-nav-logo:hover { transform: scale(1.05); }
+        .nav-items { display: flex; flex-direction: column; gap: 6px; flex: 1; width: 100%; padding: 0 10px; overflow-y: auto; }
+        .nav-item { width: 52px; height: 52px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #64748b; font-size: 9px; font-weight: 500; transition: all 0.3s; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
+        .nav-item.active { background: linear-gradient(135deg, #ea580c, #f97316); color: white; box-shadow: 0 4px 12px rgba(234,88,12,0.4); }
+        .nav-item .nav-num { font-size: 16px; font-weight: 700; line-height: 1; }
+        .nav-item .nav-label { margin-top: 2px; text-align: center; line-height: 1.1; }
+        .mega-menu { position: fixed; left: 72px; top: 0; bottom: 0; width: 320px; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 4px 0 30px rgba(0,0,0,0.3); z-index: 999; transform: translateX(-400px); transition: transform 0.3s ease; overflow-y: auto; padding: 20px; }
+        .mega-menu.open { transform: translateX(0); }
+        .mega-menu-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .mega-menu-title { color: white; font-size: 16px; font-weight: 700; }
+        .mega-menu-close { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; color: #94a3b8; font-size: 18px; cursor: pointer; }
+        .mega-menu-close:hover { background: rgba(255,255,255,0.2); color: white; }
+        .module-section { margin-bottom: 16px; }
+        .module-header { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
+        .module-header:hover { background: rgba(255,255,255,0.05); }
+        .module-header.active { background: rgba(255,255,255,0.1); }
+        .module-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px; color: white; }
+        .module-icon.pcm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.flm { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .module-icon.bkr { background: linear-gradient(135deg, #0284c7, #0ea5e9); }
+        .module-icon.cam { background: linear-gradient(135deg, #16a34a, #22c55e); }
+        .module-icon.com { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.asm { background: linear-gradient(135deg, #7c3aed, #a855f7); }
+        .module-icon.trm { background: linear-gradient(135deg, #0891b2, #22d3ee); }
+        .module-icon.scm { background: linear-gradient(135deg, #be185d, #ec4899); }
+        .module-icon.cra { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .module-icon.prm { background: linear-gradient(135deg, #6366f1, #818cf8); }
+        .module-name { color: white; font-size: 13px; font-weight: 600; }
+        .module-count { color: #64748b; font-size: 11px; margin-left: auto; }
+        .persona-list { padding-left: 12px; }
+        .persona-link { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; text-decoration: none; color: #94a3b8; font-size: 12px; transition: all 0.2s; border-left: 2px solid transparent; margin-left: 16px; }
+        .persona-link:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; border-left-color: #64748b; }
+        .persona-link.current { background: rgba(255,255,255,0.1); color: white; border-left-color: #f97316; }
+        .persona-num { width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        .mega-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 998; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .mega-overlay.open { opacity: 1; visibility: visible; }
+        .main-content { margin-left: 72px; }
+        .board { max-width: 1400px; margin: 0 auto; padding: 40px; display: flex; flex-direction: column; gap: 32px; }
+        .card { background: #ffffff; border-radius: 20px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 24px; overflow: hidden; }
+        .card.full { min-width: 100%; }
+        .card-header { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 20px 24px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .card-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px; color: white; flex-shrink: 0; }
+        .card-header-text { flex: 1; min-width: 200px; }
+        .card-header-text h3 { font-size: 18px; font-weight: 700; color: #1f2937; margin-bottom: 2px; }
+        .card-ref { font-size: 11px; color: #9ca3af; }
+        .card-body { padding: 0 24px 24px; }
+        .toggle-wrap { display: flex; background: rgba(0,0,0,0.04); border-radius: 8px; padding: 3px; margin-left: auto; }
+        .toggle-btn { padding: 6px 14px; font-size: 11px; font-weight: 600; border: none; background: transparent; color: #6b7280; cursor: pointer; border-radius: 6px; transition: all 0.2s; }
+        .toggle-btn.active { background: #ea580c; color: white; }
+        .view-pane { display: none; padding-top: 20px; }
+        .view-pane.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .s1 { border-left: 4px solid #4f46e5; } .s2 { border-left: 4px solid #d97706; } .s3 { border-left: 4px solid #0284c7; } .s4 { border-left: 4px solid #0d9488; } .s5 { border-left: 4px solid #e11d48; } .s6 { border-left: 4px solid #9333ea; } .s7 { border-left: 4px solid #059669; } .s8 { border-left: 4px solid #ea580c; } .s9 { border-left: 4px solid #0891b2; }
+        .icon-s1 { background: #4f46e5; } .icon-s2 { background: #d97706; } .icon-s3 { background: #0284c7; } .icon-s4 { background: #0d9488; } .icon-s5 { background: #e11d48; } .icon-s6 { background: #9333ea; } .icon-s7 { background: #059669; } .icon-s8 { background: #ea580c; } .icon-s9 { background: #0891b2; }
+        .hero { background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 50%, #fb923c 100%); padding: 48px 40px; position: relative; overflow: hidden; border-radius: 20px; margin-bottom: 8px; }
+        .hero::before { content: ''; position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(234,88,12,0.2) 0%, transparent 70%); pointer-events: none; }
+        .hero-badge { display: inline-block; background: rgba(234,88,12,0.12); color: #c2410c; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 16px; }
+        .hero h1 { font-size: 42px; font-weight: 800; color: #431407; margin-bottom: 12px; line-height: 1.1; }
+        .hero h1 span { color: #ea580c; }
+        .hero-subtitle { font-size: 16px; color: #7c2d12; max-width: 700px; margin-bottom: 20px; line-height: 1.7; }
+        .hero-quote { border-left: 3px solid #ea580c; padding-left: 16px; font-style: italic; color: #6b7280; margin-bottom: 24px; font-size: 14px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 12px; position: relative; z-index: 2; }
+        .hero-meta-item { display: flex; align-items: center; gap: 10px; background: white; padding: 10px 14px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); font-size: 12px; color: #374151; }
+        .hero-meta-item .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .summary-box { padding: 16px 20px; border-radius: 12px; margin-bottom: 20px; }
+        .summary-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .summary-content { font-size: 14px; color: #374151; line-height: 1.8; }
+        .item-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .item { display: flex; gap: 12px; align-items: flex-start; }
+        .item-num { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+        .item-text { font-size: 13px; color: #374151; }
+        .item-text strong { color: #1f2937; }
+        .evidence { font-size: 11px; font-style: italic; color: #9ca3af; display: block; margin-top: 4px; }
+        .profile-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .pf { background: rgba(0,0,0,0.025); padding: 12px 16px; border-radius: 10px; }
+        .pf-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; font-weight: 600; margin-bottom: 4px; }
+        .pf-value { font-size: 14px; font-weight: 600; color: #1f2937; }
+        .pf-full { grid-column: span 2; background: rgba(234,88,12,0.06); border-left: 3px solid #ea580c; }
+        .persona-card-vis { display: flex; gap: 32px; flex-wrap: wrap; margin-bottom: 24px; }
+        .persona-card-left { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .persona-avatar { width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%); display: flex; align-items: center; justify-content: center; font-size: 48px; box-shadow: 0 8px 24px rgba(234,88,12,0.3); }
+        .persona-card-right { flex: 1; min-width: 300px; }
+        .context-strip { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 20px; }
+        .context-item { flex: 1; min-width: 150px; background: rgba(0,0,0,0.025); padding: 14px 16px; border-radius: 10px; text-align: center; }
+        .context-icon { font-size: 24px; margin-bottom: 6px; }
+        .context-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; font-weight: 600; }
+        .context-value { font-size: 12px; font-weight: 600; color: #374151; margin-top: 4px; }
+        .out-of-scope-box { border-left: 3px solid #dc2626; background: rgba(220,38,38,0.04); padding: 16px 20px; border-radius: 0 12px 12px 0; margin-top: 24px; }
+        .out-of-scope-title { font-size: 12px; font-weight: 700; color: #dc2626; margin-bottom: 12px; }
+        .scope-exclusion-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .scope-exclusion-item { font-size: 11px; color: #6b7280; padding: 6px 10px; background: rgba(0,0,0,0.03); border-radius: 6px; }
+        .goal-box { border-left: 3px solid #d97706; background: rgba(217,119,6,0.06); padding: 16px 20px; border-radius: 0 12px 12px 0; margin-bottom: 20px; }
+        .goal-title { font-size: 11px; font-weight: 700; color: #d97706; text-transform: uppercase; margin-bottom: 8px; }
+        .goal-text { font-size: 14px; font-weight: 600; color: #1f2937; }
+        .criteria-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+        .success-box { border-left: 3px solid #16a34a; background: rgba(22,163,74,0.04); padding: 16px; border-radius: 0 12px 12px 0; }
+        .failure-box { border-left: 3px solid #dc2626; background: rgba(220,38,38,0.04); padding: 16px; border-radius: 0 12px 12px 0; }
+        .criteria-title { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
+        .criteria-list { font-size: 12px; color: #374151; }
+        .criteria-list li { margin-bottom: 6px; }
+        .boundary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+        .boundary-col { padding: 16px; border-radius: 12px; text-align: center; }
+        .boundary-starts { background: rgba(22,163,74,0.08); }
+        .boundary-continues { background: rgba(217,119,6,0.08); }
+        .boundary-ends { background: rgba(220,38,38,0.08); }
+        .boundary-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .boundary-content { font-size: 12px; color: #374151; }
+        .flow-h { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 24px; padding: 20px; background: rgba(0,0,0,0.02); border-radius: 16px; }
+        .flow-step { background: white; border: 2px solid #0284c7; border-radius: 12px; padding: 14px 18px; min-width: 140px; text-align: center; }
+        .flow-step.manual { border-color: #d97706; background: rgba(217,119,6,0.04); }
+        .flow-step.decision { border-color: #7c3aed; background: rgba(124,58,237,0.04); }
+        .flow-step.approve { border-color: #16a34a; background: rgba(22,163,74,0.04); }
+        .flow-num { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #9ca3af; margin-bottom: 4px; }
+        .flow-label { font-size: 13px; font-weight: 700; color: #1f2937; margin-bottom: 4px; }
+        .flow-desc { font-size: 10px; color: #6b7280; }
+        .flow-arrow { font-size: 20px; color: #cbd5e1; }
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .list-box { background: rgba(0,0,0,0.02); padding: 16px; border-radius: 10px; }
+        .list-box h4 { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; }
+        .list-item { font-size: 12px; color: #374151; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .list-item:last-child { border-bottom: none; }
+        .pain-list { display: flex; flex-direction: column; gap: 12px; }
+        .pain-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border-radius: 10px; }
+        .pain-item.high { background: rgba(220,38,38,0.08); border-left: 4px solid #dc2626; }
+        .pain-item.medium { background: rgba(217,119,6,0.08); border-left: 4px solid #d97706; }
+        .pain-item.low { background: rgba(22,163,74,0.08); border-left: 4px solid #16a34a; }
+        .pain-code { font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 4px; background: rgba(0,0,0,0.1); }
+        .pain-text { flex: 1; }
+        .pain-text h5 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .pain-text p { font-size: 11px; color: #6b7280; }
+        .empathy-grid { display: grid; grid-template-columns: 1fr auto 1fr; grid-template-rows: auto auto; gap: 16px; margin-bottom: 24px; }
+        .empathy-center { grid-row: span 2; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .empathy-avatar-sm { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #ea580c 0%, #fb923c 100%); display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 4px 16px rgba(234,88,12,0.3); margin-bottom: 12px; }
+        .empathy-name { font-size: 14px; font-weight: 700; color: #1f2937; text-align: center; }
+        .empathy-role { font-size: 11px; color: #6b7280; text-align: center; }
+        .empathy-quad { padding: 16px; border-radius: 12px; }
+        .empathy-quad.says { background: rgba(236,72,153,0.06); border: 1px solid rgba(236,72,153,0.15); }
+        .empathy-quad.thinks { background: rgba(79,70,229,0.06); border: 1px solid rgba(79,70,229,0.15); }
+        .empathy-quad.does { background: rgba(5,150,105,0.06); border: 1px solid rgba(5,150,105,0.15); }
+        .empathy-quad.feels { background: rgba(225,29,72,0.06); border: 1px solid rgba(225,29,72,0.15); }
+        .empathy-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .empathy-label { font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .empathy-item { font-size: 11px; color: #374151; padding: 6px 0; border-left: 2px solid; padding-left: 10px; margin-bottom: 6px; }
+        .load-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+        .load-area { padding: 16px; border-radius: 12px; }
+        .load-area-high { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .load-area-low { background: rgba(22,163,74,0.06); border-left: 3px solid #16a34a; }
+        .load-title { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px; }
+        .load-list { font-size: 12px; color: #374151; }
+        .load-list li { margin-bottom: 6px; }
+        .stakeholder-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+        .stakeholder-card { border-left: 3px solid; padding: 14px; border-radius: 0 10px 10px 0; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .stakeholder-name { font-size: 13px; font-weight: 700; color: #1f2937; margin-bottom: 4px; }
+        .stakeholder-desc { font-size: 11px; color: #6b7280; }
+        .dependency-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 10px; margin-bottom: 8px; }
+        .dependency-blocked { background: rgba(220,38,38,0.06); border-left: 3px solid #dc2626; }
+        .dependency-risk { background: rgba(245,158,11,0.06); border-left: 3px solid #f59e0b; }
+        .dependency-text { font-size: 12px; color: #374151; }
+        .timeline-vis { position: relative; padding-left: 40px; }
+        .tl-line { position: absolute; left: 12px; top: 0; bottom: 0; width: 4px; background: linear-gradient(to bottom, #dc2626 0%, #f59e0b 50%, #16a34a 100%); border-radius: 2px; }
+        .tl-item { position: relative; margin-bottom: 20px; padding: 16px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .tl-dot { position: absolute; left: -34px; top: 18px; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; }
+        .tl-dot.mvp { background: #dc2626; box-shadow: 0 0 0 2px #dc2626; }
+        .tl-dot.short { background: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+        .tl-dot.long { background: #16a34a; box-shadow: 0 0 0 2px #16a34a; }
+        .tl-phase { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+        .tl-title { font-size: 14px; font-weight: 700; color: #1f2937; margin-bottom: 4px; }
+        .tl-desc { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+        .tl-pain { font-size: 11px; font-style: italic; color: #9ca3af; }
+        .ai-slider { margin-bottom: 24px; }
+        .ai-level { display: flex; align-items: center; gap: 12px; padding: 12px 16px; margin-bottom: 8px; border-radius: 8px; }
+        .ai-level-approval { background: linear-gradient(90deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05)); border-left: 3px solid #f59e0b; }
+        .ai-level-suggest { background: linear-gradient(90deg, rgba(6,182,212,0.15), rgba(6,182,212,0.05)); border-left: 3px solid #06b6d4; }
+        .ai-level-prepare { background: linear-gradient(90deg, rgba(2,132,199,0.15), rgba(2,132,199,0.05)); border-left: 3px solid #0284c7; }
+        .ai-level-safe { background: linear-gradient(90deg, rgba(34,197,94,0.15), rgba(34,197,94,0.05)); border-left: 3px solid #22c55e; }
+        .ai-level-forbidden { background: linear-gradient(90deg, rgba(220,38,38,0.15), rgba(220,38,38,0.05)); border-left: 3px solid #dc2626; }
+        .ai-emoji { font-size: 18px; }
+        .ai-content { flex: 1; }
+        .ai-task { font-size: 12px; font-weight: 600; }
+        .ai-desc { font-size: 10px; color: #6b7280; }
+        .ai-badge { padding: 4px 10px; border-radius: 12px; font-size: 9px; font-weight: 600; }
+        .badge-approve { background: #fef3c7; color: #b45309; }
+        .badge-suggests { background: #cffafe; color: #0891b2; }
+        .badge-prepare { background: #e0f2fe; color: #0369a1; }
+        .badge-free { background: #dcfce7; color: #16a34a; }
+        .badge-noai { background: #fecaca; color: #dc2626; }
+        .highlight-box { background: linear-gradient(135deg, #fff7ed, #ffedd5); border: 2px solid #ea580c; padding: 16px; border-radius: 10px; margin: 16px 0; }
+        .highlight-box h4 { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+        .highlight-box p { font-size: 12px; color: #374151; }
+        .footer { text-align: center; padding: 32px 24px; font-size: 11px; color: #9ca3af; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 20px; }
+        .footer-disclaimer { max-width: 600px; margin: 0 auto 16px; line-height: 1.6; }
+        @media (max-width: 768px) { .board { padding: 20px; } .hero { padding: 32px 24px; } .hero h1 { font-size: 28px; } .profile-grid, .criteria-grid, .boundary-grid, .load-grid { grid-template-columns: 1fr; } .empathy-grid { grid-template-columns: 1fr; } .empathy-center { grid-row: auto; } }
+    </style>
+    <script>
+        function toggleMegaMenu() {
+            document.querySelector('.mega-menu').classList.toggle('open');
+            document.querySelector('.mega-overlay').classList.toggle('open');
+        }
+        function toggleView(btn, section, view) {
+            const card = btn.closest('.card');
+            card.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            card.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+            document.getElementById(section + '-' + view).classList.add('active');
+        }
+    </script>
+</head>
+<body>
+    <nav class="side-nav">
+        <div class="side-nav-logo" onclick="toggleMegaMenu()" title="Tüm Modüller">CAM</div>
+        <div class="nav-items">
+            <a href="Persona_CAM_Capacity_Analyst.html" class="nav-item" title="Capacity Analyst">
+                <span class="nav-num">1</span><span class="nav-label">Analyst</span>
+            </a>
+            <a href="Persona_CAM_Flight_Optimizer.html" class="nav-item" title="Flight Optimizer">
+                <span class="nav-num">2</span><span class="nav-label">Flight</span>
+            </a>
+            <a href="Persona_CAM_Sales_User.html" class="nav-item" title="Sales User">
+                <span class="nav-num">3</span><span class="nav-label">Sales</span>
+            </a>
+            <a href="Persona_CAM_Allotment_Optimizer.html" class="nav-item active" title="Allotment Optimizer">
+                <span class="nav-num">4</span><span class="nav-label">Allotmnt</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="mega-overlay" onclick="toggleMegaMenu()"></div>
+    <div class="mega-menu">
+        <div class="mega-menu-header">
+            <span class="mega-menu-title">📦 Tüm Modüller</span>
+            <button class="mega-menu-close" onclick="toggleMegaMenu()">✕</button>
+        </div>
+        <div class="module-section">
+            <div class="module-header active"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">4</span></div>
+            <div class="persona-list">
+                <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link"><span class="persona-num">1</span>Capacity Analyst</a>
+                <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span>Flight Optimizer</a>
+                <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span>Sales User</a>
+                <a href="Persona_CAM_Allotment_Optimizer.html" class="persona-link current"><span class="persona-num">4</span>Allotment Optimizer</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon pcm">PCM</div><span class="module-name">Pricing Management</span><span class="module-count">5</span></div>
+            <div class="persona-list">
+                <a href="../PCM - Pricing Management/Persona_PCM_Pricing_Specialist.html" class="persona-link"><span class="persona-num">1</span>Pricing Specialist</a>
+                <a href="../PCM - Pricing Management/Persona_PCM_RM_Analyst.html" class="persona-link"><span class="persona-num">2</span>RM Analyst</a>
+                <a href="../PCM - Pricing Management/Persona_PCM_Interline_Specialist.html" class="persona-link"><span class="persona-num">3</span>Interline Specialist</a>
+                <a href="../PCM - Pricing Management/Persona_PCM_Sales_Manager.html" class="persona-link"><span class="persona-num">4</span>Sales Manager</a>
+                <a href="../PCM - Pricing Management/Persona_PCM_Station_User.html" class="persona-link"><span class="persona-num">5</span>Station User</a>
+            </div>
+        </div>
+        <div class="module-section">
+            <div class="module-header"><div class="module-icon com">COM</div><span class="module-name">Compliance Management</span><span class="module-count">2</span></div>
+            <div class="persona-list">
+                <a href="../COM - Compliance Management/Persona_COM_Embargo_Specialist.html" class="persona-link"><span class="persona-num">1</span>Embargo Specialist</a>
+                <a href="../COM - Compliance Management/Persona_COM_Restriction_Specialist.html" class="persona-link"><span class="persona-num">2</span>Restriction Specialist</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+    <div class="board">
+
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-badge">CAPACITY MANAGEMENT · REVENUE OPTIMIZATION · PERSONA STUDY</div>
+            <h1><span>Allotment</span> Optimizer</h1>
+            <p class="hero-subtitle">Specialist role within the Revenue Optimization team, operationally owning allotment processes through ACRM. Opens and closes request periods, evaluates submissions, creates allotments, and manages group and exception scenarios.</p>
+            <div class="hero-quote">"We open the request, evaluate it in ACRM, and create the allotment — operational ownership is ours."</div>
+            <div class="hero-meta">
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#ea580c;"></span>
+                    <span><strong>Team:</strong> Revenue Optimization</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#f59e0b;"></span>
+                    <span><strong>Primary System:</strong> ACRM</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#3b82f6;"></span>
+                    <span><strong>COMIS Screens:</strong> CAP006, CAP012</span>
+                </div>
+                <div class="hero-meta-item">
+                    <span class="dot" style="background:#22c55e;"></span>
+                    <span><strong>Report Ownership:</strong> Capacity Analyst</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 1: PROFILE -->
+        <div class="card full s1">
+            <div class="card-header">
+                <div class="card-icon icon-s1">1</div>
+                <div class="card-header-text">
+                    <h3>Persona Profile</h3>
+                    <span class="card-ref">Organizational Context · Role Boundary · Authority Scope</span>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s1','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s1','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s1-chart" class="view-pane active">
+                    <div class="persona-card-vis">
+                        <div class="persona-card-left">
+                            <div class="persona-avatar">🎯</div>
+                            <div style="text-align:center;">
+                                <div style="font-weight:700; font-size:16px;">Allotment Optimizer</div>
+                                <div style="font-size:12px; color:#6b7280;">Revenue Optimization Team</div>
+                            </div>
+                        </div>
+                        <div class="persona-card-right">
+                            <div class="profile-grid">
+                                <div class="pf">
+                                    <div class="pf-label">Department</div>
+                                    <div class="pf-value">Revenue Optimization</div>
+                                </div>
+                                <div class="pf">
+                                    <div class="pf-label">Level</div>
+                                    <div class="pf-value">Specialist / Senior Specialist</div>
+                                </div>
+                                <div class="pf">
+                                    <div class="pf-label">User Type</div>
+                                    <div class="pf-value">Allotment Operations Owner</div>
+                                </div>
+                                <div class="pf">
+                                    <div class="pf-label">Usage Frequency</div>
+                                    <div class="pf-value">Daily — Intensive during request periods</div>
+                                </div>
+                                <div class="pf">
+                                    <div class="pf-label">Primary Purpose</div>
+                                    <div class="pf-value">Allotment creation, period management, group & exception</div>
+                                </div>
+                                <div class="pf">
+                                    <div class="pf-label">Main Systems</div>
+                                    <div class="pf-value">ACRM (primary), COMIS CAP006, CAP012</div>
+                                </div>
+                                <div class="pf pf-full">
+                                    <div class="pf-label">Archetype Summary</div>
+                                    <div class="pf-value">Operational owner who opens and closes the allotment request period, collects and evaluates requests through ACRM, and creates approved allotments. Manages group allotment and exception scenarios; report ownership remains with the Capacity Analyst.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="context-strip">
+                        <div class="context-item">
+                            <div class="context-icon">🏢</div>
+                            <div class="context-label">Environment</div>
+                            <div class="context-value">Office — Desk-based</div>
+                        </div>
+                        <div class="context-item">
+                            <div class="context-icon">🖥️</div>
+                            <div class="context-label">Primary System</div>
+                            <div class="context-value">ACRM (web-based)</div>
+                        </div>
+                        <div class="context-item">
+                            <div class="context-icon">⚖️</div>
+                            <div class="context-label">Authority</div>
+                            <div class="context-value">Allotment Create / Modify</div>
+                        </div>
+                        <div class="context-item">
+                            <div class="context-icon">📊</div>
+                            <div class="context-label">Report Ownership</div>
+                            <div class="context-value">Capacity Analyst Team</div>
+                        </div>
+                    </div>
+
+                    <div class="out-of-scope-box">
+                        <div class="out-of-scope-title">⛔ NOT IN THIS PERSONA SCOPE</div>
+                        <div class="scope-exclusion-grid">
+                            <div class="scope-exclusion-item">Capacity analysis and reporting ownership (→ Capacity Analyst)</div>
+                            <div class="scope-exclusion-item">ACRM-COMIS synchronization coordination (→ Capacity Analyst)</div>
+                            <div class="scope-exclusion-item">Real-time flight optimization (→ Flight Optimizer)</div>
+                            <div class="scope-exclusion-item">FLT002 / FLT003 screen monitoring (→ Capacity Analyst)</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s1-text" class="view-pane">
+                    <div class="summary-box" style="background:rgba(234,88,12,0.04);">
+                        <div class="summary-title" style="color:#ea580c;">SUMMARY</div>
+                        <div class="summary-content">The Allotment Optimizer is a role within Revenue Optimization teams that carries the operational ownership of allotment processes. While the Capacity Analyst owns analysis and reporting, the Allotment Optimizer opens and closes the request period, evaluates incoming requests from ACRM, creates the approved allotments, and manages group/exception scenarios. COMIS CAP006 and CAP012 are used when needed.</div>
+                    </div>
+                    <div class="item-list">
+                        <div class="item">
+                            <div class="item-num icon-s1">1</div>
+                            <div class="item-text">
+                                <strong>ACRM operational ownership</strong> — Allotment processes are primarily managed through ACRM; COMIS is used when required.
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="item-num icon-s1">2</div>
+                            <div class="item-text">
+                                <strong>Report ownership separation</strong> — Allotment utilization performance reports are viewed in ACRM but report ownership belongs to the Capacity Analyst team.
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="item-num icon-s1">3</div>
+                            <div class="item-text">
+                                <strong>Exception and group management</strong> — Scenarios involving inclusion/exclusion of specific station customers and group customer/station allotments are managed by this team.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: GOALS & MOTIVATION -->
+        <div class="card full s2">
+            <div class="card-header">
+                <div class="card-icon icon-s2">2</div>
+                <div class="card-header-text">
+                    <h3>Goals, Motivation & Success Criteria</h3>
+                    <span class="card-ref">Primary Goals · Fears · Success / Failure Conditions</span>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s2','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s2','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s2-chart" class="view-pane active">
+                    <div class="goal-box">
+                        <div class="goal-title">PRIMARY GOAL</div>
+                        <div class="goal-text">🎯 Evaluate allotment requests on time and create the correct allotments — ensuring operational continuity during technical issues and exception scenarios</div>
+                    </div>
+
+                    <div class="criteria-grid">
+                        <div class="success-box">
+                            <div class="criteria-title" style="color:#16a34a;">✅ Success Conditions</div>
+                            <ul class="criteria-list">
+                                <li>Allotment request period opened and closed on time</li>
+                                <li>Evaluated allotments correctly created in ACRM</li>
+                                <li>Group allotment and exception scenarios processed without errors</li>
+                                <li>Operational support provided during technical issues</li>
+                                <li>Allotment utilization rate at target level</li>
+                            </ul>
+                        </div>
+                        <div class="failure-box">
+                            <div class="criteria-title" style="color:#dc2626;">❌ Failure Conditions</div>
+                            <ul class="criteria-list">
+                                <li>Exception scenario not fully supported in ACRM → complexity switching to COMIS</li>
+                                <li>Group allotment conflict → incorrect capacity distribution</li>
+                                <li>Request period opening late → delays and complaints in requests</li>
+                                <li>ACRM-COMIS dual management difficulty → risk of configuration errors</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="boundary-grid">
+                        <div class="boundary-col boundary-starts">
+                            <div class="boundary-title" style="color:#16a34a;">🟢 Starts When</div>
+                            <div class="boundary-content">When a sales or station allotment request arrives / When the request period initiation time comes</div>
+                        </div>
+                        <div class="boundary-col boundary-continues">
+                            <div class="boundary-title" style="color:#d97706;">🟡 Continues While</div>
+                            <div class="boundary-content">Request evaluation, allotment creation, group/exception management, technical support</div>
+                        </div>
+                        <div class="boundary-col boundary-ends">
+                            <div class="boundary-title" style="color:#dc2626;">🔴 Ends When</div>
+                            <div class="boundary-content">Allotment active, request period closed, performance tracking handed over to Capacity Analyst</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s2-text" class="view-pane">
+                    <div class="summary-box" style="background:rgba(217,119,6,0.04);">
+                        <div class="summary-title" style="color:#d97706;">SUMMARY</div>
+                        <div class="summary-content">The Allotment Optimizer's primary motivation is ensuring the continuity and accuracy of allotment requests. The capacity to manage exception and group allotment scenarios is critical — these scenarios deviate from standard flow and push system limits. The key indicator of success is that allotments are created on time and without errors.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 3: WORKFLOW -->
+        <div class="card full s3">
+            <div class="card-header">
+                <div class="card-icon icon-s3">3</div>
+                <div class="card-header-text">
+                    <h3>Workflow & Intents</h3>
+                    <span class="card-ref">Allotment Lifecycle · Triggers · Decision Points</span>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s3','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s3','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s3-chart" class="view-pane active">
+                    <p style="font-size:11px; color:#6b7280; margin-bottom:12px; font-weight:600;">📋 ALLOTMENT LIFECYCLE FLOW</p>
+                    <div class="flow-h">
+                        <div class="flow-step manual">
+                            <div class="flow-num">1</div>
+                            <div class="flow-label">Open Request Period</div>
+                            <div class="flow-desc">Via ACRM</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-num">2</div>
+                            <div class="flow-label">Collect Requests</div>
+                            <div class="flow-desc">ACRM — Sales & Stations</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step decision">
+                            <div class="flow-num">3</div>
+                            <div class="flow-label">Evaluation</div>
+                            <div class="flow-desc">Standard / Group / Exception?</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual">
+                            <div class="flow-num">4</div>
+                            <div class="flow-label">Create Allotment</div>
+                            <div class="flow-desc">ACRM primary / COMIS if needed</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step approve">
+                            <div class="flow-num">5</div>
+                            <div class="flow-label">Allotment Active</div>
+                            <div class="flow-desc">Performance tracking begins</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step manual">
+                            <div class="flow-num">6</div>
+                            <div class="flow-label">Close Request Period</div>
+                            <div class="flow-desc">Via ACRM</div>
+                        </div>
+                    </div>
+
+                    <div class="two-col" style="margin-top:24px;">
+                        <div class="list-box">
+                            <h4>🎯 RESPONSIBILITIES</h4>
+                            <div class="list-item">✅ Opening and closing the allotment request period</div>
+                            <div class="list-item">✅ Collecting requests from ACRM and tracking the evaluation process</div>
+                            <div class="list-item">✅ Creating evaluated allotments in ACRM</div>
+                            <div class="list-item">✅ Group allotment management (group customer / group station)</div>
+                            <div class="list-item">✅ Exception scenarios (specific customer inclusion/exclusion)</div>
+                            <div class="list-item">✅ Operational support during technical issues</div>
+                            <div class="list-item">✅ Tracking allotment utilization performance reports in ACRM</div>
+                        </div>
+                        <div class="list-box">
+                            <h4>⚡ TRIGGERS</h4>
+                            <div class="list-item">📩 Sales or station allotment request</div>
+                            <div class="list-item">📅 Period initiation time (periodic)</div>
+                            <div class="list-item">🔧 Technical issue notification</div>
+                            <div class="list-item">👥 Group customer / station application</div>
+                            <div class="list-item">⚠️ Exception scenario request (specific customer inclusion/exclusion)</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box" style="margin-top:16px;">
+                        <h4>⚠️ EXCEPTION SCENARIO — Critical Detail</h4>
+                        <p>The scenario where customers of a specific station can use the allotment (or where some customers are excluded) is managed by this team. These configurations that deviate from standard flow may not be fully supported in ACRM; in this case COMIS CAP006 / CAP012 is used.</p>
+                    </div>
+                </div>
+                <div id="s3-text" class="view-pane">
+                    <div class="summary-box" style="background:rgba(2,132,199,0.04);">
+                        <div class="summary-title" style="color:#0284c7;">WORKFLOW SUMMARY</div>
+                        <div class="summary-content">The Allotment Optimizer runs the entire operational flow from period management to allotment creation. The start and end of the process rests with this role. Standard allotments are created in ACRM; for group and exception scenarios, COMIS CAP006/CAP012 is used when needed. The first operational support during technical issues also comes from this team. Report ownership and ACRM-COMIS synchronization coordination remains with the Capacity Analyst.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 4: DATA & INTEGRATION -->
+        <div class="card full s4">
+            <div class="card-header">
+                <div class="card-icon icon-s4">4</div>
+                <div class="card-header-text">
+                    <h3>Data, Authority & Integration</h3>
+                    <span class="card-ref">Systems Used · CRUD Authority · Integration Points</span>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s4','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s4','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s4-chart" class="view-pane active">
+                    <div class="two-col">
+                        <div class="list-box">
+                            <h4 style="color:#ea580c;">🖥️ PRIMARY SYSTEMS</h4>
+                            <div class="list-item"><strong>ACRM (Primary)</strong> — Allotment request management, period opening/closing, allotment creation, performance report viewing</div>
+                            <div class="list-item"><strong>COMIS CAP006</strong> — Allotment creation (when ACRM is insufficient)</div>
+                            <div class="list-item"><strong>COMIS CAP012</strong> — Allotment monitoring and tracking</div>
+                        </div>
+                        <div class="list-box">
+                            <h4 style="color:#ea580c;">⚖️ AUTHORITY SCOPE</h4>
+                            <div class="list-item">✅ Evaluating and approving allotment requests</div>
+                            <div class="list-item">✅ Creating and updating allotments (ACRM + COMIS)</div>
+                            <div class="list-item">✅ Group allotment configuration</div>
+                            <div class="list-item">✅ Exception scenario configuration</div>
+                            <div class="list-item">✅ Opening and closing the request period</div>
+                            <div class="list-item">⚠️ Report ownership — with Capacity Analyst</div>
+                            <div class="list-item">❌ ACRM-COMIS synchronization coordination</div>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box" style="margin-top:16px;">
+                        <h4>📊 Report Ownership Note</h4>
+                        <p>Allotment utilization performance reports are viewed in ACRM and the Allotment Optimizer tracks these reports. However, report ownership — capacity utilization, ACRM forecast consistency, and allotment performance reports — belongs to the <strong>Capacity Analyst team</strong>.</p>
+                    </div>
+                </div>
+                <div id="s4-text" class="view-pane">
+                    <div class="summary-box" style="background:rgba(13,148,136,0.04);">
+                        <div class="summary-title" style="color:#0d9488;">INTEGRATION SUMMARY</div>
+                        <div class="summary-content">ACRM is the primary system for allotment processes. COMIS CAP006 and CAP012 come into play as secondary systems when needed — especially in group allotment and exception scenarios. Although report viewing is done through ACRM, ownership belongs to the Capacity Analyst team.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 5: PAIN POINTS -->
+        <div class="card full s5">
+            <div class="card-header">
+                <div class="card-icon icon-s5">5</div>
+                <div class="card-header-text">
+                    <h3>Pain Points & Risk</h3>
+                    <span class="card-ref">Operational Challenges · System Limitations · Risk Areas</span>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s5','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s5','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s5-chart" class="view-pane active">
+                    <div class="pain-list">
+                        <div class="pain-item high">
+                            <span class="pain-code">P1</span>
+                            <div class="pain-text">
+                                <h5>Exception Scenario Limitations in ACRM</h5>
+                                <p>Exception scenarios involving inclusion/exclusion of specific customers are not fully supported in ACRM. In this case a switch to COMIS is required — dual-system management increases error risk.</p>
+                            </div>
+                        </div>
+                        <div class="pain-item high">
+                            <span class="pain-code">P2</span>
+                            <div class="pain-text">
+                                <h5>Group Allotment Coordination Complexity</h5>
+                                <p>Configuration coordination is complex for allotments covering multiple stations or customer groups. Incorrect configuration leads to wrong capacity distribution.</p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P3</span>
+                            <div class="pain-text">
+                                <h5>ACRM-COMIS Dual System Management</h5>
+                                <p>Some allotment configurations require operations in both systems. Synchronization delays and risk of inconsistency exist.</p>
+                            </div>
+                        </div>
+                        <div class="pain-item medium">
+                            <span class="pain-code">P4</span>
+                            <div class="pain-text">
+                                <h5>Report Ownership Separation — Visibility Limitation</h5>
+                                <p>Being able to see allotment utilization performance reports in ACRM while report ownership is with the Capacity Analyst creates a dependency for operational decisions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s5-text" class="view-pane">
+                    <div class="summary-box" style="background:rgba(225,29,72,0.04);">
+                        <div class="summary-title" style="color:#e11d48;">PAIN POINT SUMMARY</div>
+                        <div class="summary-content">The most critical challenge is that exception scenario configurations cannot be fully handled in ACRM — this means a mandatory switch to COMIS and dual-system management. Group allotment coordination is the second major challenge. The report ownership separation creates a dependency in operational decision-making processes.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 6: MENTAL MODEL -->
+        <div class="card full s6">
+            <div class="card-header">
+                <div class="card-icon icon-s6">6</div>
+                <div class="card-header-text">
+                    <h3>Mental Model & UX Behavior</h3>
+                    <span class="card-ref">Empathy Map · Cognitive Load · Behavioral Patterns</span>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s6','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s6','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s6-chart" class="view-pane active">
+                    <div class="empathy-grid">
+                        <div class="empathy-quad says">
+                            <div class="empathy-header"><span class="empathy-label" style="color:#ec4899;">💬 SAYS</span></div>
+                            <div class="empathy-item" style="border-color:#ec4899;">"ACRM cannot handle this exception scenario, we need to switch to COMIS"</div>
+                            <div class="empathy-item" style="border-color:#ec4899;">"We cannot collect allotment requests without opening the request period"</div>
+                            <div class="empathy-item" style="border-color:#ec4899;">"The group allotment was misconfigured, capacity is conflicting"</div>
+                        </div>
+                        <div class="empathy-center">
+                            <div class="empathy-avatar-sm">🎯</div>
+                            <div class="empathy-name">Allotment Optimizer</div>
+                            <div class="empathy-role">Revenue Optimization</div>
+                        </div>
+                        <div class="empathy-quad thinks">
+                            <div class="empathy-header"><span class="empathy-label" style="color:#4f46e5;">💭 THINKS</span></div>
+                            <div class="empathy-item" style="border-color:#4f46e5;">"How do I resolve this exception scenario in ACRM?"</div>
+                            <div class="empathy-item" style="border-color:#4f46e5;">"Is the group allotment configuration conflicting with others?"</div>
+                            <div class="empathy-item" style="border-color:#4f46e5;">"Utilization rate is low, I should report the reason to the Capacity Analyst"</div>
+                        </div>
+                        <div class="empathy-quad does">
+                            <div class="empathy-header"><span class="empathy-label" style="color:#059669;">🔧 DOES</span></div>
+                            <div class="empathy-item" style="border-color:#059669;">Opens the request period in ACRM, collects requests</div>
+                            <div class="empathy-item" style="border-color:#059669;">Evaluates incoming requests, creates allotments</div>
+                            <div class="empathy-item" style="border-color:#059669;">Switches to COMIS CAP006 in exception cases</div>
+                            <div class="empathy-item" style="border-color:#059669;">Provides operational support during technical issues</div>
+                        </div>
+                        <div class="empathy-quad feels">
+                            <div class="empathy-header"><span class="empathy-label" style="color:#e11d48;">❤️ FEELS</span></div>
+                            <div class="empathy-item" style="border-color:#e11d48;">😤 Frustrated by ACRM not fully handling exception scenarios</div>
+                            <div class="empathy-item" style="border-color:#e11d48;">😊 Satisfied when allotment utilization rate is high</div>
+                            <div class="empathy-item" style="border-color:#e11d48;">😟 Anxious about the error risk that comes with dual-system management</div>
+                        </div>
+                    </div>
+
+                    <div class="load-grid" style="margin-top:16px;">
+                        <div class="load-area load-area-high">
+                            <div class="load-title">🔴 High Cognitive Load</div>
+                            <ul class="load-list">
+                                <li>Exception scenario configuration — evaluating ACRM limitations</li>
+                                <li>Group allotment conflict check</li>
+                                <li>ACRM-COMIS dual system management</li>
+                                <li>Request evaluation prioritization</li>
+                            </ul>
+                        </div>
+                        <div class="load-area load-area-low">
+                            <div class="load-title">🟢 Low Cognitive Load</div>
+                            <ul class="load-list">
+                                <li>Standard allotment creation (routine in ACRM)</li>
+                                <li>Opening/closing the request period</li>
+                                <li>Viewing performance reports</li>
+                                <li>Standard technical support queries</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="s6-text" class="view-pane">
+                    <div class="summary-box" style="background:rgba(147,51,234,0.04);">
+                        <div class="summary-title" style="color:#9333ea;">MENTAL MODEL SUMMARY</div>
+                        <div class="summary-content">The Allotment Optimizer thinks of the operational flow as ACRM-centered. Standard flow is comfortably managed; the actual cognitive load concentrates on exception and group scenarios — evaluating ACRM limitations and deciding when to switch to COMIS.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 7: COLLABORATION -->
+        <div class="card full s7">
+            <div class="card-header">
+                <div class="card-icon icon-s7">7</div>
+                <div class="card-header-text">
+                    <h3>Collaboration & Support</h3>
+                    <span class="card-ref">Stakeholders · Dependencies · Handoffs</span>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s7','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s7','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s7-chart" class="view-pane active">
+                    <div class="stakeholder-grid">
+                        <div class="stakeholder-card" style="border-color:#4f46e5;">
+                            <div class="stakeholder-name">📊 Capacity Analyst</div>
+                            <div class="stakeholder-desc">Report ownership, ACRM-COMIS synchronization coordination. The Allotment Optimizer receives operational support; report and analysis ownership remains with the Capacity Analyst.</div>
+                        </div>
+                        <div class="stakeholder-card" style="border-color:#0891b2;">
+                            <div class="stakeholder-name">✈️ Flight Optimizer</div>
+                            <div class="stakeholder-desc">Operational usage at flight level after allotment becomes active. Allotment Optimizer creates, Flight Optimizer manages.</div>
+                        </div>
+                        <div class="stakeholder-card" style="border-color:#d97706;">
+                            <div class="stakeholder-name">💼 Sales Teams</div>
+                            <div class="stakeholder-desc">Request senders. They submit requests via ACRM throughout the request period.</div>
+                        </div>
+                        <div class="stakeholder-card" style="border-color:#16a34a;">
+                            <div class="stakeholder-name">🏢 Station Managers</div>
+                            <div class="stakeholder-desc">Group station allotment and exception requests. They communicate local customer-based allotment needs.</div>
+                        </div>
+                    </div>
+
+                    <div class="dependency-item dependency-blocked" style="margin-top:20px;">
+                        <span>🔴</span>
+                        <div class="dependency-text"><strong>ACRM Exception Support:</strong> If exception scenario is not supported in ACRM → switch to COMIS CAP006 required → dual-system management</div>
+                    </div>
+                    <div class="dependency-item dependency-risk">
+                        <span>🟡</span>
+                        <div class="dependency-text"><strong>Report Dependency:</strong> Dependent on Capacity Analyst for allotment performance analysis → risk of delay for operational decisions</div>
+                    </div>
+                </div>
+                <div id="s7-text" class="view-pane">
+                    <div class="summary-box" style="background:rgba(5,150,105,0.04);">
+                        <div class="summary-title" style="color:#059669;">COLLABORATION SUMMARY</div>
+                        <div class="summary-content">The Allotment Optimizer collaborates with the Capacity Analyst on reporting and synchronization, with the Flight Optimizer on active allotment usage, and with Sales/Station teams on request management. Operational ownership is with the Allotment Optimizer; analysis and report ownership is with the Capacity Analyst.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 8: PRODUCT OPPORTUNITIES -->
+        <div class="card full s8">
+            <div class="card-header">
+                <div class="card-icon icon-s8">8</div>
+                <div class="card-header-text">
+                    <h3>Product Opportunities</h3>
+                    <span class="card-ref">MVP · Short-Term · Long-Term</span>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s8','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s8','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s8-chart" class="view-pane active">
+                    <div class="timeline-vis">
+                        <div class="tl-line"></div>
+                        <div class="tl-item">
+                            <div class="tl-dot mvp"></div>
+                            <div class="tl-phase" style="color:#dc2626;">MVP</div>
+                            <div class="tl-title">Exception Scenario Support in ACRM</div>
+                            <div class="tl-desc">Native support for specific customer inclusion/exclusion scenarios within ACRM — eliminates the mandatory switch to COMIS.</div>
+                            <div class="tl-pain">&larr; P1 Exception Limitation</div>
+                        </div>
+                        <div class="tl-item">
+                            <div class="tl-dot mvp"></div>
+                            <div class="tl-phase" style="color:#dc2626;">MVP</div>
+                            <div class="tl-title">Group Allotment Conflict Check</div>
+                            <div class="tl-desc">Automatic conflict warning during allotment creation — minimizes the risk of misconfiguration.</div>
+                            <div class="tl-pain">← P2 Group Complexity</div>
+                        </div>
+                        <div class="tl-item">
+                            <div class="tl-dot short"></div>
+                            <div class="tl-phase" style="color:#f59e0b;">SHORT-TERM</div>
+                            <div class="tl-title">Allotment Performance Dashboard</div>
+                            <div class="tl-desc">Summary dashboard for the Allotment Optimizer's own operational visibility in ACRM — report ownership remains with Capacity Analyst but tracking becomes easier.</div>
+                            <div class="tl-pain">&larr; P4 Report Dependency</div>
+                        </div>
+                        <div class="tl-item">
+                            <div class="tl-dot long"></div>
+                            <div class="tl-phase" style="color:#16a34a;">LONG-TERM</div>
+                            <div class="tl-title">Unified Allotment Platform</div>
+                            <div class="tl-desc">Unifying allotment management in ACRM and COMIS onto a single platform — dual system management is eliminated.</div>
+                            <div class="tl-pain">← P3 Dual System Management</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="s8-text" class="view-pane">
+                    <div class="summary-box" style="background:rgba(234,88,12,0.04);">
+                        <div class="summary-title" style="color:#ea580c;">OPPORTUNITY SUMMARY</div>
+                        <div class="summary-content">The highest priority opportunity is moving exception scenario support into ACRM — this single change reduces both error risk and dual-system management. Group conflict control should be completed as MVP. In the long term, a unified allotment platform should be targeted.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECTION 9: AI SUPPORT -->
+        <div class="card full s9">
+            <div class="card-header">
+                <div class="card-icon icon-s9">9</div>
+                <div class="card-header-text">
+                    <h3>AI Support Potential</h3>
+                    <span class="card-ref">AI Suitable Tasks · Human Decision Required · Risk Areas</span>
+                </div>
+                <div class="toggle-wrap">
+                    <button class="toggle-btn active" onclick="toggleView(this,'s9','chart')">Chart</button>
+                    <button class="toggle-btn" onclick="toggleView(this,'s9','text')">Text</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="s9-chart" class="view-pane active">
+                    <div class="ai-slider">
+                        <div class="ai-level ai-level-safe">
+                            <span class="ai-emoji">✅</span>
+                            <div class="ai-content">
+                                <div class="ai-task">Request classification and prioritization suggestion</div>
+                                <div class="ai-desc">Automatically categorize incoming allotment requests (standard / group / exception)</div>
+                            </div>
+                            <span class="ai-badge badge-free">AI: Free</span>
+                        </div>
+                        <div class="ai-level ai-level-prepare">
+                            <span class="ai-emoji">📊</span>
+                            <div class="ai-content">
+                                <div class="ai-task">Exception scenario analysis</div>
+                                <div class="ai-desc">Evaluating whether ACRM can handle the exception and suggesting a COMIS switch</div>
+                            </div>
+                            <span class="ai-badge badge-prepare">AI: Prepares</span>
+                        </div>
+                        <div class="ai-level ai-level-suggest">
+                            <span class="ai-emoji">👥</span>
+                            <div class="ai-content">
+                                <div class="ai-task">Group allotment conflict warning</div>
+                                <div class="ai-desc">Detecting conflicts with existing configurations when creating a new group allotment</div>
+                            </div>
+                            <span class="ai-badge badge-suggests">AI: Suggests</span>
+                        </div>
+                        <div class="ai-level ai-level-approval">
+                            <span class="ai-emoji">🔍</span>
+                            <div class="ai-content">
+                                <div class="ai-task">Performance drop anomaly detection</div>
+                                <div class="ai-desc">Detecting unexpected drops in allotment utilization rate and alerting</div>
+                            </div>
+                            <span class="ai-badge badge-approve">AI: Flags</span>
+                        </div>
+                        <div class="ai-level ai-level-forbidden">
+                            <span class="ai-emoji">🚫</span>
+                            <div class="ai-content">
+                                <div class="ai-task">Allotment approval / rejection decision</div>
+                                <div class="ai-desc">Request evaluation decision requires human judgment — commercial and operational context is critical</div>
+                            </div>
+                            <span class="ai-badge badge-noai">No AI</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="s9-text" class="view-pane">
+                    <div class="summary-box" style="background:rgba(8,145,178,0.04);">
+                        <div class="summary-title" style="color:#0891b2;">AI POTENTIAL SUMMARY</div>
+                        <div class="summary-content">The highest-value AI use case is request classification and exception scenario analysis. Group conflict warning and performance anomaly detection are medium-value applications. The allotment approval/rejection decision absolutely requires human judgment.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="footer-disclaimer">This persona document was prepared within the scope of the SUNGUR project for the Capacity Management module. The Allotment Optimizer role represents the user group within Revenue Optimization teams that carries allotment operational ownership.</div>
+            <div>CAM Module · Allotment Optimizer · SUNGUR Project</div>
+        </footer>
+
+    </div>
+    </div>
+</body>
+</html>

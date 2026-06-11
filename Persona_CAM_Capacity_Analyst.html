@@ -517,6 +517,10 @@
                 <span class="nav-num">3</span>
                 <span class="nav-label">Sales</span>
             </a>
+            <a href="Persona_CAM_Allotment_Optimizer.html" class="nav-item" data-theme="emerald" title="Allotment Optimizer">
+                <span class="nav-num">4</span>
+                <span class="nav-label">Allotmnt</span>
+            </a>
         </div>
     </nav>
 
@@ -568,11 +572,12 @@
         
         <!-- CAM -->
         <div class="module-section">
-            <div class="module-header active"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">3</span></div>
+            <div class="module-header active"><div class="module-icon cam">CAM</div><span class="module-name">Capacity Management</span><span class="module-count">4</span></div>
             <div class="persona-list">
                 <a href="Persona_CAM_Capacity_Analyst.html" class="persona-link current"><span class="persona-num">1</span>Capacity Analyst</a>
                 <a href="Persona_CAM_Flight_Optimizer.html" class="persona-link"><span class="persona-num">2</span>Flight Optimizer</a>
                 <a href="Persona_CAM_Sales_User.html" class="persona-link"><span class="persona-num">3</span>Sales User</a>
+                <a href="Persona_CAM_Allotment_Optimizer.html" class="persona-link"><span class="persona-num">4</span>Allotment Optimizer</a>
             </div>
         </div>
         
@@ -639,7 +644,7 @@
         <section class="hero">
             <div class="hero-badge">CAPACITY MANAGEMENT · KEY USER · PERSONA STUDY</div>
             <h1><span>Capacity</span> Analyst</h1>
-            <p class="hero-subtitle">Manages cargo capacity forecasting, allotment definitions, and approval workflows. Responsible for ensuring accurate capacity data flows from ACRM to COMIS and maintaining hard/soft allotment structures across routes and stations.</p>
+            <p class="hero-subtitle">Owns the analysis of cargo capacity data: monitors ACRM→COMIS synchronization, ensures data consistency, and carries the ownership of capacity reporting. Analyses hard/soft allotment structure; allotment operational execution is the responsibility of the Revenue Optimization team (Allotment Optimizer).</p>
             <div class="hero-quote">"We receive capacity forecasts for passenger aircraft from ACRM. These forecasts appear as the capacity for the corresponding flight."</div>
             <div class="hero-meta">
                 <div class="hero-meta-item">
@@ -652,7 +657,7 @@
                 </div>
                 <div class="hero-meta-item">
                     <span class="dot" style="background:#3b82f6;"></span>
-                    <span><strong>Main Screen:</strong> CAP145, CAP147, ACRM</span>
+                    <span><strong>Main Screen:</strong> CAP145, CAP147, FLT002, FLT003</span>
                 </div>
                 <div class="source-card hero-meta-item">
                     <span class="dot" style="background:#22c55e;"></span>
@@ -719,7 +724,7 @@
                                 </div>
                                 <div class="pf">
                                     <div class="pf-label">User Type</div>
-                                    <div class="pf-value">Primary Allotment Manager</div>
+                                    <div class="pf-value">Analysis Owner & Data Integrity</div>
                                 </div>
                                 <div class="pf">
                                     <div class="pf-label">Usage Frequency</div>
@@ -727,7 +732,7 @@
                                 </div>
                                 <div class="pf">
                                     <div class="pf-label">Primary Purpose</div>
-                                    <div class="pf-value">Allotment definition, approval & monitoring</div>
+                                    <div class="pf-value">ACRM→COMIS sync monitoring, capacity data accuracy, reporting ownership</div>
                                 </div>
                                 <div class="pf">
                                     <div class="pf-label">Main Systems</div>
@@ -735,7 +740,7 @@
                                 </div>
                                 <div class="pf pf-full">
                                     <div class="pf-label">Archetype Summary</div>
-                                    <div class="pf-value">The strategic capacity planner who ensures cargo space is allocated correctly across routes, stations, and customer groups through systematic allotment management.</div>
+                                    <div class="pf-value">Owns the analysis of capacity data: coordinates ACRM→COMIS synchronization, analyses hard/soft allotment structure, and is responsible for the accuracy of capacity reports. Allotment operational execution belongs to the Allotment Optimizer; this role is focused on analysis and data consistency.</div>
                                 </div>
                             </div>
                         </div>
@@ -769,8 +774,8 @@
                         <div class="scope-exclusion-grid">
                             <div class="scope-exclusion-item">Flight Optimization Team (real-time booking)</div>
                             <div class="scope-exclusion-item">Sales Teams (read-only queries)</div>
-                            <div class="scope-exclusion-item">Station Capacity Coordinators</div>
-                            <div class="scope-exclusion-item">Revenue Management</div>
+                            <div class="scope-exclusion-item">Allotment operational execution (→ Allotment Optimizer)</div>
+                            <div class="scope-exclusion-item">Group/exception allotment setup (→ Allotment Optimizer)</div>
                         </div>
                     </div>
                 </div>
@@ -778,7 +783,7 @@
                 <div id="s1-text" class="view-pane">
                     <div class="summary-box" style="background:rgba(79,70,229,0.04);">
                         <div class="summary-title" style="color:#4f46e5;">SUMMARY</div>
-                        <div class="summary-content">The Capacity Analyst persona represents users from the Kargo Kapasite Analiz Şefliği who focus on allotment management rather than real-time booking operations. Key users include Ali Osman Tanır, Büşra Pehlivan, and Bayram Uyu who specialize in defining hard/soft allotments and managing ACRM-COMIS integrations.</div>
+                        <div class="summary-content">The Capacity Analyst persona represents specialists from the Kargo Kapasite Analiz Şefliği such as Ali Osman Tanır, Büşra Pehlivan, and Bayram Uyu. This role owns ACRM→COMIS synchronization analysis, capacity data accuracy, and reporting ownership — not allotment operational execution (Allotment Optimizer). It analyses hard/soft allotment structure, detects data inconsistencies, and is responsible for the accuracy of capacity reports.</div>
                     </div>
                     
                     <div class="item-list">
@@ -1320,7 +1325,7 @@
                         <div class="empathy-center">
                             <div class="empathy-avatar">📊</div>
                             <div class="empathy-name">Capacity Analyst</div>
-                            <div class="empathy-role">Allotment Manager</div>
+                            <div class="empathy-role">Analysis Owner</div>
                         </div>
                         <div class="empathy-quad thinks">
                             <div class="empathy-header">
@@ -1472,6 +1477,11 @@
                                 <div class="stakeholder-name">Stations</div>
                                 <div class="stakeholder-desc">Station allotment information</div>
                                 <span class="stakeholder-badge" style="background:#cffafe; color:#0e7490;">← Read-only</span>
+                            </div>
+                            <div class="stakeholder-card" style="border-color:#ea580c;">
+                                <div class="stakeholder-name">🎯 Allotment Optimizer</div>
+                                <div class="stakeholder-desc">Allotment operational executor. Dependent on Capacity Analyst for report ownership and ACRM→COMIS synchronization coordination.</div>
+                                <span class="stakeholder-badge" style="background:#fff7ed; color:#c2410c;">← Report & Sync</span>
                             </div>
                         </div>
                     </div>

@@ -602,7 +602,9 @@
                         <span class="flow-arrow">→</span>
                         <div class="flow-step auto"><span class="en">Upload to Subrates</span><span class="tr">Subrates'e Yükle</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step decision"><span class="en">Validation Check</span><span class="tr">Doğrulama Kontrolü</span></div>
+                        <div class="flow-step decision"><span class="en">Validation & Duplication</span><span class="tr">Doğrulama & Çoğaltma</span></div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step auto"><span class="en">Download File from Subrates</span><span class="tr">Subrates'ten Dosya İndir</span></div>
                         <span class="flow-arrow">→</span>
                         <div class="flow-step auto"><span class="en">Generate CSV</span><span class="tr">CSV Oluştur</span></div>
                         <span class="flow-arrow">→</span>
@@ -670,7 +672,7 @@
                         <div class="list-box">
                             <h4 style="color: #0d9488;">📥 <span class="en">Data Sources</span><span class="tr">Veri Kaynakları</span></h4>
                             <div class="list-item"><strong>Subrates:</strong> <span class="en">Rate card templates, coefficients</span><span class="tr">Rate card şablonları, katsayılar</span></div>
-                            <div class="list-item"><strong>ACRM:</strong> <span class="en">Contract/spot requests, MCR</span><span class="tr">Sözleşme/spot talepleri, MCR</span></div>
+                            <div class="list-item"><strong><span class="en">Sales Teams</span><span class="tr">Satış Ekipleri</span>:</strong> <span class="en">Tariff/Promo requests</span><span class="tr">Tarife/Promo talepleri</span></div>
                             <div class="list-item"><strong>Sabre:</strong> <span class="en">Complex rate card creation</span><span class="tr">Karmaşık rate card oluşturma</span></div>
                             <div class="list-item"><strong>IATA:</strong> <span class="en">TACT reference prices</span><span class="tr">TACT referans fiyatları</span></div>
                         </div>
@@ -725,8 +727,8 @@
                     </table>
                 </div>
                 <div class="view-pane" data-view="text">
-                    <p><span class="en">The pricing ecosystem involves multiple systems: Subrates for template management and coefficient logic, COMIS as the master pricing database, ACRM for dynamic pricing and approval workflows, and Sabre for complex rate card scenarios. Integration is batch-based (hourly jobs) with no real-time sync. Key screens include TRF018 (rate listing), SHR118 (file upload), and TRF017 (spot management). Currency rates are managed by Accounting in SHR054.</span>
-                    <span class="tr">Fiyatlandırma ekosistemi birden fazla sistem içerir: şablon yönetimi ve katsayı mantığı için Subrates, ana fiyatlandırma veritabanı olarak COMIS, dinamik fiyatlandırma ve onay akışları için ACRM, karmaşık rate card senaryoları için Sabre.</span></p>
+                    <p><span class="en">The pricing ecosystem involves multiple systems with distinct roles: Subrates handles template management and applies coefficient-based duplication logic to generate subrates; COMIS is the master distribution database for static tariff/promo rates (not a management system); ACRM receives price feeds from COMIS hourly and uses them for dynamic spot evaluation and approval workflows. Integration is batch-based with hourly sync (COMIS → ACRM). Key screens include TRF018 (rate listing), SHR118 (file upload), and TRF017 (spot management). Currency rates are managed by Accounting in SHR054.</span>
+                    <span class="tr">Fiyatlandırma ekosistemi belirli rolleri olan birden fazla sistem içerir: Subrates şablon yönetimini yönetir ve katsayı tabanlı çoğaltma mantığını uygulayarak subrate'ler oluşturur; COMIS statik tarife/promo oranları için ana dağıtım veritabanıdır (yönetim sistemi değildir); ACRM, COMIS'ten saatlik fiyat beslemelerini alır ve bunları dinamik spot değerlendirmesi ve onay akışları için kullanır.</span></p>
                     <div class="evidence">MoM-Solution-1: "Every hour, ACRM asks 'which lines were updated/not updated?' - there is accepted delay, not full synchronization"</div>
                 </div>
             </div>
@@ -877,8 +879,8 @@
                     <div class="stakeholder-map">
                         <div class="stakeholder-row">
                             <div class="stakeholder-node provider"><span class="en">Sales Teams</span><span class="tr">Satış Ekipleri</span><br><small>Tariff/Promo requests</small></div>
-                            <div class="stakeholder-node provider">ACRM<br><small>Contract requests</small></div>
-                            <div class="stakeholder-node provider"><span class="en">RM Team</span><span class="tr">RM Ekibi</span><br><small>MCR definitions</small></div>
+                            <div class="stakeholder-node provider"><span class="en">RM Team</span><span class="tr">RM Ekibi</span><br><small>MCR/Hurdle parameters</small></div>
+                            <div class="stakeholder-node provider"><span class="en">Accounting</span><span class="tr">Muhasebe</span><br><small>Currency rates</small></div>
                         </div>
                         <div class="stakeholder-arrow">↓</div>
                         <div class="stakeholder-row">
@@ -886,9 +888,9 @@
                         </div>
                         <div class="stakeholder-arrow">↓</div>
                         <div class="stakeholder-row">
-                            <div class="stakeholder-node consumer">COMIS<br><small>Rate cards</small></div>
+                            <div class="stakeholder-node consumer">COMIS<br><small>Rate cards (distribution)</small></div>
+                            <div class="stakeholder-node consumer">ACRM<br><small>Hourly feed</small></div>
                             <div class="stakeholder-node consumer">TK GO<br><small>Customer prices</small></div>
-                            <div class="stakeholder-node consumer"><span class="en">Accounting</span><span class="tr">Muhasebe</span><br><small>Revenue recognition</small></div>
                         </div>
                     </div>
                     
@@ -908,8 +910,8 @@
                     </div>
                 </div>
                 <div class="view-pane" data-view="text">
-                    <p><span class="en">The Pricing Specialist sits at the intersection of Sales, Revenue Management, and Operations. They receive requests from Sales teams (via email, soon 100% ACRM), MCR parameters from RM, and currency rates from Accounting. Their outputs flow to COMIS (master prices), ACRM (for dynamic evaluation), and ultimately to customer-facing channels like TK GO. Critical dependencies include Subrates availability, ACRM sync job timing, and accurate currency data.</span>
-                    <span class="tr">Fiyatlandırma Uzmanı Satış, Gelir Yönetimi ve Operasyonların kesişim noktasında bulunur. Satış ekiplerinden talepler (e-posta ile, yakında %100 ACRM), RM'den MCR parametreleri ve Muhasebeden döviz kurları alır.</span></p>
+                    <p><span class="en">The Pricing Specialist sits at the intersection of Sales, Revenue Management, and Accounting. They receive tariff/promo requests from Sales teams via email or ACRM, MCR parameters and hurdle rates from RM, and currency rates from Accounting. Their outputs flow to COMIS (master distribution database for static rates), which then feeds ACRM hourly for dynamic evaluation, and to TK GO for customer-facing pricing. Critical dependencies include Subrates availability for template processing and duplication, COMIS-to-ACRM hourly sync reliability, and accurate currency data from Accounting.</span>
+                    <span class="tr">Fiyatlandırma Uzmanı Satış, Gelir Yönetimi ve Muhasebe'nin kesişim noktasında bulunur. Satış ekiplerinden tarife/promo talepleri, RM'den MCR ve hurdle oranları, Muhasebe'den döviz kurları alır. Çıktıları COMIS'e (statik oranlar için ana dağıtım veritabanı) gider, oradan ACRM'ye saatlik beslenme ve müşteri fiyatları için TK GO'ya.</span></p>
                     <div class="evidence">MoM-Solution-1: "Contract requests - 80% ACRM, 20% email. Goal: 100% ACRM"</div>
                 </div>
             </div>

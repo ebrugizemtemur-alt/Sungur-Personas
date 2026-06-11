@@ -583,14 +583,14 @@
                         <span class="flow-arrow">→</span>
                         <div class="flow-step decision"><span class="en">Check Auto Rules</span><span class="tr">Otomatik Kural Kontrolü</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step auto"><span class="en">Auto Approve (70-80%)</span><span class="tr">Otomatik Onay (%70-80)</span></div>
+                        <div class="flow-step auto"><span class="en">Auto Approve (%)</span><span class="tr">Otomatik Onay (%)</span></div>
                     </div>
                     <div class="flow-h">
                         <div class="flow-step reject" style="margin-left: 200px;"><span class="en">Auto Reject (< MCR)</span><span class="tr">Otomatik Red (< MCR)</span></div>
                         <span class="flow-arrow">→</span>
                         <div class="flow-step manual"><span class="en">RM Manual Review</span><span class="tr">RM Manuel İnceleme</span></div>
                         <span class="flow-arrow">→</span>
-                        <div class="flow-step approve"><span class="en">Approve with MCR</span><span class="tr">MCR ile Onayla</span></div>
+                        <div class="flow-step approve"><span class="en">RM Approves (Override Possible)</span><span class="tr">RM Onaylar (Geçersiz Kılma Mümkün)</span></div>
                     </div>
                     
                     <h4 style="font-size: 12px; color: #6b7280; margin-bottom: 12px; margin-top: 20px;">🔢 <span class="en">MCR Calculation Logic</span><span class="tr">MCR Hesaplama Mantığı</span></h4>
@@ -619,9 +619,9 @@
                     </div>
                 </div>
                 <div class="view-pane" data-view="text">
-                    <p><span class="en">The RM Analyst configures auto-approval rules in ACRM that evaluate spot requests against MCR, capacity, and business rules. If requested price ≥ MCR + auto-approve threshold, it's auto-approved. If below MCR, it's auto-rejected OR sent to RM for manual review (e.g., "requests up to 10% below MCR go to RM approval"). MCR calculation is: Bid Price + Hurdle = MCR. Special cases like Allotment (no MCR check, only access rate) and Super Contract (fixed price, no RM logic) bypass normal flow.</span>
-                    <span class="tr">RM Analisti, spot taleplerini MCR, kapasite ve iş kurallarına göre değerlendiren otomatik onay kurallarını ACRM'de yapılandırır.</span></p>
-                    <div class="evidence">MoM-5: "Auto rules MCR, auto reject, auto approval are all defined in ACRM" | MoM-Solution-11: "MCR is absolute and dominant - applies to new bookings and updates"</div>
+                    <p><span class="en">The RM Analyst configures auto-approval rules in ACRM that evaluate spot requests against MCR, capacity, and business rules. Auto-approval percentage is configurable and varies by route/product - not a fixed 70-80%. If requested price ≥ MCR + auto-approve threshold, it's auto-approved. If below MCR, it's auto-rejected OR sent to RM for manual review. MCR calculation is: Bid Price + Hurdle = MCR. RM has unique authority to approve prices below MCR (override). Special cases like Allotment (no MCR check, only access rate) and Super Contract (fixed price, no RM logic) bypass normal flow.</span>
+                    <span class="tr">RM Analisti, spot taleplerini MCR, kapasite ve iş kurallarına göre değerlendiren otomatik onay kurallarını ACRM'de yapılandırır. Otomatik onay yüzdesi yapılandırılabilir ve rota/ürüne göre değişir - %70-80 sabit değildir. MCR altında onaylamak için RM'nin özel yetkisi vardır.</span></p>
+                    <div class="evidence">MoM-5: "Auto rules MCR, auto reject, auto approval are all defined in ACRM" | MoM-Solution-5: "Auto-approval oranı sabit değil, değişkendir" | MoM-5: "RM teams can approve fees below MCR"</div>
                 </div>
             </div>
         </section>
